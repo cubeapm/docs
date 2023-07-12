@@ -1,19 +1,11 @@
 ---
-id: docs
-title: Documentation
-sidebar_label: Documentation
+id: installation
+title: 'Installation'
+slug: /installation
 ---
 
-## Introduction
 
-Cube is written in Go and ReactJS. All the code is packaged in a single binary. Cube can handle 10K traces per second on a single machine with just 2 vCPUs and 8 GB memory (tested on AWS t4g.large instance; on demand pricing: $0.0672/hour, i.e., $1.6/day), and can scale linearly with more resources.
-
-Please follow the instructions below to download and install Cube. We support Linux and Mac platforms with 64-bit Intel/AMD/ARM processors.
-
-
-
-## Install
-**Bare Metal / Virtual Machine**
+## **Bare Metal / Virtual Machine**
 
 Run the following command. It downloads and executes the Cube install script.
 
@@ -26,7 +18,8 @@ The script performs the following tasks:
 
 **By default, Cube UI is accessible at http://localhost:3125.**
 
-**Docker**
+
+## **Docker**
 
 Cube is also available as a Docker image. Run the following command to start Cube in a Docker container.
 
@@ -40,7 +33,8 @@ cubeapm/cubeapm:v1.1.0 \
 ```
 The above command assumes you have a file `config.properties` in your current working directory. See configuration section below for details on configuration.
 
-**Kubernetes**
+
+## **Kubernetes**
 
 Cube can be deployed on Kubernetes using the official Helm charts.
 
