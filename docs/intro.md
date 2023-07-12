@@ -1,47 +1,23 @@
 ---
 sidebar_position: 1
+slug: /intro
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Cube is written in Go and ReactJS. All the code is packaged in a single binary. Cube can handle 10K traces per second on a single machine with just 2 vCPUs and 8 GB memory (tested on AWS t4g.large instance; on demand pricing: $0.0672/hour, i.e., $1.6/day), and can scale linearly with more resources.
+
+Please follow the instructions below to download and install Cube. We support Linux and Mac platforms with 64-bit Intel/AMD/ARM processors.
 
 ## Getting Started
 
-Get started by **creating a new site**.
+Get started by **creating a new server**.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
 
 ### What you'll need
 
 - [Node.js](https://nodejs.org/en/download/) version 16.14 or above:
   - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
 
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+- [Go](https://go.dev/doc/install/) version 1.18 or above:
+  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
