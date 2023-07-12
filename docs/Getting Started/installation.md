@@ -44,7 +44,7 @@ helm repo update
 helm install cubeapm cubeapm/cubeapm
 ```
 
-Please refer to [CubeAPM Helm Chart documentation](https://link-to-helm-chart-docs) for details of various configuration parameters available.
+Please refer to [CubeAPM Helm Chart documentation](https://charts.cubeapm.com/charts/cubeapm/) for details of various configuration parameters available.
 
 
 
