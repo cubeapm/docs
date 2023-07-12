@@ -1,12 +1,12 @@
 ---
 slug: first-blog-post
-title: First Blog Post
+title: CubeAPM
 authors:
-  name: Gao Wei
-  title: Docusaurus Core Team
-  url: https://github.com/wgao19
-  image_url: https://github.com/wgao19.png
-tags: [hola, docusaurus]
+  name: Ashutosh Jha
+  title: CubeAPM Team
+  url: https://github.com/ashutosh887
+  image_url: https://github.com/ashutosh887.png
+tags: [cubeapm, otel]
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet
+My first blog on the CubeAPM Docs website. Feeling Good!
