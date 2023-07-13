@@ -10,45 +10,43 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Great UX',
+    Svg: require('@site/static/img/graphic1.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+      Highly intuitive, so you can find relevant information quickly and fix issues fast. Easy to learn even for newcomers, so no need to spend hours struggling with documentation or watching tutorial videos.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Love for speed',
+    Svg: require('@site/static/img/graphic2.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+     Designed from the ground up for speed so that there's minimal latency between you and actionable information. Uses intelligent algorithms to crunch data and derive actionable metrics quickly.      </>
+    ),
+  },
+  {
+    title: 'High efficiency',
+    Svg: require('@site/static/img/graphic3.svg').default,
+    description: (
+      <>
+       Cube uses smart sampling to identify and retain important events while discarding a large number of normal events. Cube can process gigabytes of data per minute on a single node! See benchmarks for more details.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'OTel Native',
+    Svg: require('@site/static/img/opentelemetry-stacked-color.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Compliant with OpenTelemetry so that you can take full advantage of the rich ecosystem of components.
       </>
     ),
   },
-  {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
-    ),
-  },
+  
+  
+ 
 ];
 
 function Feature({title, Svg, description}: FeatureItem) {
