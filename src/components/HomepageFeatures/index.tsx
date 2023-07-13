@@ -11,7 +11,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Great UX',
-    Svg: require('@site/static/img/graphic1.svg').default,
+    Svg: require('@site/static/img/great-ux.svg').default,
     description: (
       <>
       Highly intuitive, so you can find relevant information quickly and fix issues fast. Easy to learn even for newcomers, so no need to spend hours struggling with documentation or watching tutorial videos.
@@ -20,7 +20,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Love for speed',
-    Svg: require('@site/static/img/graphic2.svg').default,
+    Svg: require('@site/static/img/love-for-speed.svg').default,
     description: (
       <>
      Designed from the ground up for speed so that there's minimal latency between you and actionable information. Uses intelligent algorithms to crunch data and derive actionable metrics quickly.      </>
@@ -28,7 +28,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'High efficiency',
-    Svg: require('@site/static/img/graphic3.svg').default,
+    Svg: require('@site/static/img/high-efficiency.svg').default,
     description: (
       <>
        Cube uses smart sampling to identify and retain important events while discarding a large number of normal events. Cube can process gigabytes of data per minute on a single node! See benchmarks for more details.
@@ -37,7 +37,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'OTel Native',
-    Svg: require('@site/static/img/opentelemetry-stacked-color.svg').default,
+    Svg: require('@site/static/img/otel-native.svg').default,
     description: (
       <>
         Compliant with OpenTelemetry so that you can take full advantage of the rich ecosystem of components.
@@ -67,7 +67,7 @@ export default function HomepageFeatures(): JSX.Element {
   return (
     <section className={styles.features}>
       <div className="container">
-        <div className="row">
+        <div className="row" style={{justifyContent: 'center'}}>
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}
