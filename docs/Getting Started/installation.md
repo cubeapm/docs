@@ -161,4 +161,4 @@ Open Telemetry official documentation is available at https://opentelemetry.io/d
 
 While Open Telemetry documentation is technically sufficient, we are soon coming up with our own documentation which is optimized to get specific tasks done quickly. In the meantime, you can contact us for assistance. We will be happy to help!
 
-[Contact Us](mailto:your-email@example.com)
+[Contact Us](mailto:mailto:contact@spyk.ai)
