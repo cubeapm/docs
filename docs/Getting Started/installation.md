@@ -151,7 +151,7 @@ To enable Sign in with GitHub, you need to create a GitHub app in your GitHub or
 7. The above Client ID and Client Secret can be provided to CubeAPM to enable Sign in with Google.
 
 
-For detailed information about the Cube APM API, refer to the [API Reference](api-reference.md) documentation.
+For detailed information about the Cube APM API, refer to the [API Reference](./reference) documentation.
 
 ## Telemetry
 
