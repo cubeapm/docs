@@ -4,28 +4,28 @@ title: 'PHP Slim'
 slug: /php-slim
 ---
 
-## PHP Slim - Steps for configuring Spyk APM
+## **PHP Slim - Steps for configuring Spyk APM**
 
-**Prerequisites**
+## **Prerequisites**
 
 1. PHP 8.0+
 2. composer
 
-**Installation**
+## **Installation**
 
 1. Add ```"minimum-stability": "beta"``` to your composer.json to allow it to pick correct versions of
 OpenTelemetry packages. The composer.json will look like this:
-```
-{
-"require": {
-...
-},
-"minimum-stability": "beta",
-"config": {
-...
-}
-}
-```
+    ```
+    {
+        "require": {
+            ...
+        },
+        "minimum-stability": "beta",
+        "config": {
+            ...
+        }
+    }
+    ```
 
 2. Install the required dependencies:
 
@@ -73,17 +73,17 @@ OpenTelemetry packages. The composer.json will look like this:
 
 3. Modify the application run command as follows:
 
-```
-OTEL_PHP_AUTOLOAD_ENABLED=true \
-OTEL_SERVICE_NAME=<app_name> \
-OTEL_METRICS_EXPORTER=none \
-OTEL_TRACES_EXPORTER=otlp \
-OTEL_EXPORTER_OTLP_PROTOCOL=grpc \
-OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://traces-ingest.spyk.ai:4317/opentele
-metry.proto.collector.trace.v1.TraceService/Export \
-OTEL_EXPORTER_OTLP_HEADERS='authorization=Bearer <spyk_token>' \
-OTEL_PROPAGATORS=baggage,tracecontext \
-php myapp.php
-```
+    ```
+    OTEL_PHP_AUTOLOAD_ENABLED=true \
+    OTEL_SERVICE_NAME=<app_name> \
+    OTEL_METRICS_EXPORTER=none \
+    OTEL_TRACES_EXPORTER=otlp \
+    OTEL_EXPORTER_OTLP_PROTOCOL=grpc \
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://traces-ingest.spyk.ai:4317/opentele
+    metry.proto.collector.trace.v1.TraceService/Export \
+    OTEL_EXPORTER_OTLP_HEADERS='authorization=Bearer <spyk_token>' \
+    OTEL_PROPAGATORS=baggage,tracecontext \
+    php myapp.php
+    ```
 
 Data should now be visible in your Spyk account.
