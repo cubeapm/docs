@@ -4,7 +4,7 @@ title: 'NodeJS'
 slug: /nodeJs
 ---
 
-## **NodeJS - Steps for configuring Spyk APM**
+## **Steps for configuring CubeAPM**
 
 ## **Installation**
 

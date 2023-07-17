@@ -82,11 +82,11 @@ const config = {
             label: 'Blog',
             position: 'left',
           },
-          {
-            href: 'https://github.com/cubeapm/',
-            label: 'GitHub',
-            position: 'right',
-          },
+          // {
+          //   href: 'https://github.com/cubeapm/',
+          //   label: 'GitHub',
+          //   position: 'right',
+          // },
         ],
       },
       footer: {
@@ -112,10 +112,10 @@ const config = {
                 label: 'LinkedIn',
                 href: 'https://www.linkedin.com/company/spyk-ai/',
               },
-              {
-                label: 'GitHub Pages',
-                href: 'https://cubeapm.github.io/',
-              },
+              // {
+              //   label: 'GitHub Pages',
+              //   href: 'https://cubeapm.github.io/',
+              // },
             ],
           },
           {
@@ -125,10 +125,10 @@ const config = {
                 label: 'Blog',
                 to: '/blog',
               },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/cubeapm/',
-              },
+              // {
+              //   label: 'GitHub',
+              //   href: 'https://github.com/cubeapm/',
+              // },
             ],
           },
         ],

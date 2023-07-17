@@ -4,7 +4,7 @@ title: 'Java'
 slug: /java
 ---
 
-## **Java - Steps for configuring Spyk APM**
+## **Steps for configuring CubeAPM**
 
 ## **Installation** with Auto Instrumentation
 

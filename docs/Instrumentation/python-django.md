@@ -4,7 +4,7 @@ title: 'Python Django'
 slug: /python-django
 ---
 
-## **Python Django - Steps for configuring Spyk APM**
+## **Steps for configuring CubeAPM**
 
 ## **Installation**
 

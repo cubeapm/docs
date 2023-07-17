@@ -4,7 +4,7 @@ title: 'PHP Slim'
 slug: /php-slim
 ---
 
-## **PHP Slim - Steps for configuring Spyk APM**
+## **Steps for configuring CubeAPM**
 
 ## **Prerequisites**
 
@@ -86,4 +86,4 @@ OpenTelemetry packages. The composer.json will look like this:
     php myapp.php
     ```
 
-Data should now be visible in your Spyk account.
+Data should now be visible in your CubeAPM account.
