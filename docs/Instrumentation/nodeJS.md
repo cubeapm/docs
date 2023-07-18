@@ -1,7 +1,7 @@
 ---
 id: nodeJs
 title: 'NodeJS'
-slug: /nodeJs
+slug: /nodejs
 ---
 
 ## Steps to configure CubeAPM
