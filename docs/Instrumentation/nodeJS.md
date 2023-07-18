@@ -4,11 +4,11 @@ title: 'NodeJS'
 slug: /nodeJs
 ---
 
-## **Steps for configuring CubeAPM**
+## Steps to configure CubeAPM
 
-## **Installation**
+### Installation
 
-1. Install dependencies:**
+1. Install dependencies
 
     ```
     npm install --save @opentelemetry/api
@@ -27,8 +27,8 @@ the root of your project directory.
     SPYK_TOKEN: <spyk_token>
     ```
 
-4. Modify the application run command to include the argument "```-r
-path/to/tracing.js```". For example, if the run command is "```node index.js```", then
-change it to "```node -r path/to/tracing.js index.js```". If you use pm2, you can add
+4. Modify the application run command to include the argument ```-r
+path/to/tracing.js```. For example, if the run command is ```node index.js```, then
+change it to ```node -r path/to/tracing.js index.js```. If you use pm2, you can add
 this to ```node_args``` in pm2 config. For example:
 ```node_args: "-r path/to/tracing.js <any_other_args>"```

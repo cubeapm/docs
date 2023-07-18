@@ -4,17 +4,16 @@ title: 'PHP Slim'
 slug: /php-slim
 ---
 
-## **Steps for configuring CubeAPM**
+## Steps to configure CubeAPM
 
-## **Prerequisites**
+### Prerequisites
 
 1. PHP 8.0+
 2. composer
 
-## **Installation**
+### Installation
 
-1. Add ```"minimum-stability": "beta"``` to your composer.json to allow it to pick correct versions of
-OpenTelemetry packages. The composer.json will look like this:
+1. Add ```"minimum-stability": "beta"``` to your composer.json to allow it to pick correct versions of OpenTelemetry packages. The composer.json will look like this:
     ```
     {
         "require": {

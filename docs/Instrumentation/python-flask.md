@@ -1,12 +1,12 @@
 ---
 id: pythonflask
 title: 'Python Flask'
-slug: /pythonflask
+slug: /python-flask
 ---
 
-## **Steps for configuring CubeAPM**
+## Steps to configure CubeAPM
 
-## **Installation**
+### Installation
 
 1. Install dependencies:
 
@@ -40,8 +40,8 @@ slug: /pythonflask
     OTEL_SERVICE_NAME=<app_name>
     ```
 
-## **Notes**
+### Notes
 
 1. Additional steps need to be followed for setups with uWSGI/Gunicorn. Please follow the following resources:
 
-    a.  https://opentelemetry-python.readthedocs.io/en/latest/examples/fork-process-model/README.html
+    1.  https://opentelemetry-python.readthedocs.io/en/latest/examples/fork-process-model/README.html

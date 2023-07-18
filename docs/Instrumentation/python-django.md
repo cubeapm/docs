@@ -4,9 +4,9 @@ title: 'Python Django'
 slug: /python-django
 ---
 
-## **Steps for configuring CubeAPM**
+## Steps to configure CubeAPM
 
-## **Installation**
+### Installation
 
 1. Install dependencies:
 
@@ -42,13 +42,13 @@ slug: /python-django
     OTEL_SERVICE_NAME=<app_name>
     ```
 
-## **Notes**
+### Notes
 
 1. DJANGO_SETTINGS_MODULE environment variable must be set even if configuring the
     integration via command line parameters.
 
 2. Additional steps need to be followed for setups with uWSGI/Gunicorn. Please follow the following resources:
 
-    a. https://opentelemetry-python.readthedocs.io/en/latest/examples/django/README.html#usage-with-auto-instrumentation-and-uwsgi
+    1. https://opentelemetry-python.readthedocs.io/en/latest/examples/django/README.html#usage-with-auto-instrumentation-and-uwsgi
 
-    b. https://opentelemetry-python.readthedocs.io/en/latest/examples/fork-process-model/README.html
+    2. https://opentelemetry-python.readthedocs.io/en/latest/examples/fork-process-model/README.html
