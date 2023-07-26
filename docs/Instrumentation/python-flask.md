@@ -8,15 +8,34 @@ slug: /python-flask
 
 ### Installation
 
-1. Install dependencies:
+1. #### Prerequisites:
+
+    Python 3
+
+2. Set up an environment in a new directory:
 
     ```
-    cd <project_directory>
+    mkdir <your_project_name>
+    cd <your_project_name>
+    python3 -m venv .
+    source ./bin/activate
+    ```
+
+    Now install Flask
+
+    ```
+    pip install flask
+    ```
+
+
+3. Install dependencies:
+
+    ```
     pip install opentelemetry-distro opentelemetry-exporter-otlp
     opentelemetry-bootstrap -a install
     ```
 
-2. Modify the application run command as follows:
+4. Modify the application run command as follows:
 
     ```
     opentelemetry-instrument \

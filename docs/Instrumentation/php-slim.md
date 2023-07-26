@@ -54,7 +54,9 @@ slug: /php-slim
     4. Verify that the extensions are installed and enabled (the following command should list all
         the extensions we just installed:
 
-        ```php -m | grep -P 'grpc|opentelemetry|protobuf'```
+        ```
+        php -m | grep -P 'grpc|opentelemetry|protobuf'
+        ```
 
     5. Add additional dependencies to your application:
 
