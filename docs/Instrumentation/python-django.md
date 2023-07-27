@@ -21,6 +21,12 @@ slug: /python-django
     source ./bin/activate
     ```
 
+    Install django:
+
+    ```
+    python -m pip install Django
+    ```
+
 3. Install dependencies:
 
     ```
