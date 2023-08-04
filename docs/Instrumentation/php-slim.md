@@ -57,6 +57,10 @@ slug: /php-slim
         ```
         php -m | grep -P 'grpc|opentelemetry|protobuf'
         ```
+        Or
+        ```
+        php -m | grep -E 'grpc|opentelemetry|protobuf'
+        ```
 
     5. Add additional dependencies to your application:
 

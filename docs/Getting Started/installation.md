@@ -28,7 +28,7 @@ docker run -d --name cubeapm \
 -p 3125:3125 -p 4317:4317 -p 4318:4318 \
 -v cube_data:/root/data \
 -v ./config.properties:/etc/cubeapm/config.properties \
-cubeapm/cubeapm:v1.1.0 \
+cubeapm/cubeapm:v1.4.0 \
 --config-file /etc/cubeapm/config.properties
 ```
 The above command assumes you have a file `config.properties` in your current working directory. See configuration section below for details on configuration.
