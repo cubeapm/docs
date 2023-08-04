@@ -15,7 +15,7 @@ const config = {
   url: "https://cubeapm.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/docs/",
+  baseUrl: "/",
   trailingSlash: false,
 
   // GitHub pages deployment config.
