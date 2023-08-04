@@ -90,47 +90,7 @@ const config = {
       },
       footer: {
         style: "dark",
-        links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Introduction",
-                to: "/docs/intro",
-              },
-              {
-                label: "Installation",
-                to: "/docs/installation",
-              },
-            ],
-          },
-          {
-            title: "Community",
-            items: [
-              {
-                label: "LinkedIn",
-                href: "https://www.linkedin.com/company/spyk-ai/",
-              },
-              // {
-              //   label: 'GitHub Pages',
-              //   href: 'https://cubeapm.github.io/',
-              // },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              // {
-              //   label: "Blog",
-              //   to: "/blog",
-              // },
-              {
-                label: "GitHub",
-                href: "https://github.com",
-              },
-            ],
-          },
-        ],
+        links: [],
         copyright: `Copyright © ${new Date().getFullYear()} CubeAPM`,
       },
       prism: {
