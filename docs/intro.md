@@ -16,8 +16,8 @@ Get started by **creating a new server**.
 
 ### What you'll need
 
-- [Node.js](https://nodejs.org/en/download/) version 16.14 or above:
+- [Node.js](https://nodejs.org/en/download) version 16.14 or above:
   - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
 
-- [Go](https://go.dev/doc/install/) version 1.18 or above:
+- [Go](https://go.dev/doc/install) version 1.18 or above:
   - When installing Node.js, you are recommended to check all checkboxes related to dependencies.

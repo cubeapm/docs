@@ -44,7 +44,7 @@ helm repo update
 helm install cubeapm cubeapm/cubeapm
 ```
 
-Please refer to [CubeAPM Helm Chart documentation](https://charts.cubeapm.com/charts/cubeapm/) for details of various configuration parameters available.
+Please refer to [CubeAPM Helm Chart documentation](https://charts.cubeapm.com/charts/cubeapm) for details of various configuration parameters available.
 
 
 
@@ -93,7 +93,7 @@ In addition, the following configuration parameters have some default value, but
 
 To enable Sign in with Google, you need to create an OAuth app in your Google Workspace account. The following steps guide you through the process:
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/) → [APIs & Services](https://console.cloud.google.com/apis/).
+1. Go to [Google Cloud Console](https://console.cloud.google.com) → [APIs & Services](https://console.cloud.google.com/apis).
 2. Using the project dropdown menu, create a new project with the name CubeAPM.
 3. Go to OAuth consent screen, and fill the following:
     **Application type**: Internal
@@ -136,7 +136,7 @@ To enable Sign in with GitHub, you need to create a GitHub app in your GitHub or
 
 To enable sending alert notifications to Slack, you need to create an app in your Slack workspace. The following steps guide you through the process:
 
-1. Go to [Slack apps page.](https://api.slack.com/apps/)
+1. Go to [Slack apps page.](https://api.slack.com/apps)
 2. Click on **Create New App** button, and then click on **From scratch** option in the popup.
 3. On the next screen, fill `CubeAPM` for App Name, select the desired Slack workspace, and then click on **Create App** button.
 4. On the next page, look for **Add features and functionality** section, and click on **Bots** button there.
@@ -160,7 +160,7 @@ To enable sending alert notifications to PagerDuty, you need to create an app in
 2. Click on **Create New App** button.
 3. On the next screen, fill `CubeAPM` for App Name, `PagerDuty integration for CubeAPM` for Description, and then click on **Save** button.
 4. On the next page, look for **Events Integration** section, and click on **Add** button there.
-5. On the next page, look for Simple Install Flow, and input `<cube_apm_address>`/ (e.g. https://cubeapm.yourdomain.com/) for **Redirect URLs**.
+5. On the next page, look for Simple Install Flow, and input `<cube_apm_address>`/ (e.g. https://cubeapm.yourdomain.com) for **Redirect URLs**.
 6. Upon filling **Redirect URLs** as above, **Integration Setup URL** will appear below it.
 7. The value of **Integration Setup URL** will contain a URL parameter named **app_id**. Copy the value of app_id (something like AB12XYZ).
 8. Click on **Save** button at the bottom of the page.
