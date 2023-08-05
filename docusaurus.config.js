@@ -21,10 +21,12 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "cubeapm", // Usually your GitHub org/user name.
   projectName: "docs", // Usually your repo name.
-  deploymentBranch: 'gh-pages',
+  deploymentBranch: 'main',
 
-  onBrokenLinks: "ignore",
-  onBrokenMarkdownLinks: "warn",
+  trailingSlash: false,
+
+  // onBrokenLinks: "ignore",
+  // onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -90,47 +92,7 @@ const config = {
       },
       footer: {
         style: "dark",
-        links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Introduction",
-                to: "/docs/intro",
-              },
-              {
-                label: "Installation",
-                to: "/docs/installation",
-              },
-            ],
-          },
-          {
-            title: "Community",
-            items: [
-              {
-                label: "LinkedIn",
-                href: "https://www.linkedin.com/company/spyk-ai/",
-              },
-              // {
-              //   label: 'GitHub Pages',
-              //   href: 'https://cubeapm.github.io/',
-              // },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              // {
-              //   label: "Blog",
-              //   to: "/blog",
-              // },
-              {
-                label: "GitHub",
-                href: "https://github.com",
-              },
-            ],
-          },
-        ],
+        links: [],
         copyright: `Copyright © ${new Date().getFullYear()} CubeAPM`,
       },
       prism: {
