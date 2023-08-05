@@ -17,3 +17,7 @@ The script performs the following tasks:
 2. Set up Cube as a service if `systemctl` is found on the host. A configuration file is also created at the path `/etc/cubeapm/config.properties`.
 
 **By default, Cube UI is accessible at http://localhost:3125.**
+
+## Next Steps
+
+After installing Cube, head over to the [Configure CubeAPM](../02_configure/02_configure.md) section for guidance on providing essential and other useful configuration to Cube.

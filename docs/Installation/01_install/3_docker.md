@@ -16,4 +16,4 @@ cubeapm/cubeapm:v1.4.0 \
 --config-file /etc/cubeapm/config.properties
 ```
 
-The above command assumes you have a file `config.properties` in your current working directory. See configuration section below for details on configuration.
+The above command assumes you have a file `config.properties` in your current working directory. See [Configure CubeAPM](../02_configure/02_configure.md) section for guidance on providing essential and other useful configuration to Cube.

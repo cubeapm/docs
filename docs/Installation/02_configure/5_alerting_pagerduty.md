@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-slug: /install/configure/connect-with-pagerduty-for-alerting
+slug: /install/configure-cubeapm/connect-with-pagerduty-for-alerting
 ---
 
 # Connect with PagerDuty for alerting

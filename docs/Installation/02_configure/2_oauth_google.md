@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-slug: /install/configure/sign-in-with-google
+slug: /install/configure-cubeapm/sign-in-with-google
 ---
 
 # Sign in with Google

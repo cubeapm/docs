@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-slug: /install/configure/sign-in-with-github
+slug: /install/configure-cubeapm/sign-in-with-github
 ---
 
 # Sign in with GitHub

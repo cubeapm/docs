@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-slug: /install/configure/connect-with-slack-for-alerting
+slug: /install/configure-cubeapm/connect-with-slack-for-alerting
 ---
 
 # Connect with Slack for alerting
