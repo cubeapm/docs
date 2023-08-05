@@ -1,5 +1,5 @@
 ---
-slug: /instrumentation/
+slug: /instrumentation
 ---
 
 # Instrumentation

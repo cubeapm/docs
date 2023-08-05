@@ -1,5 +1,5 @@
 ---
-slug: /install/install-cubeapm/
+slug: /install/install-cubeapm
 ---
 
 # Install CubeAPM
