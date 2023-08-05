@@ -21,7 +21,7 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "cubeapm", // Usually your GitHub org/user name.
   projectName: "docs", // Usually your repo name.
-  deploymentBranch: 'main',
+  deploymentBranch: 'gh-pages',
 
   trailingSlash: false,
 
