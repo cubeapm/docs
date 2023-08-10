@@ -4,7 +4,7 @@ slug: /install/configure-cubeapm
 
 # Configure CubeAPM
 
-Run `cube --help` to see a list of available configuration parameters, along with description and examples. Cube can be configured through command line arguments, configuration file, or environment variables. In case of environment variables, please prefix (`CUBE_`) and replace dots (`.`) and dashes (-) with underscores (`_`) in variable names. For example:
+Run `cube --help` to see a list of available configuration parameters, along with description and examples. Cube can be configured through command line arguments, configuration file, or environment variables. In case of environment variables, please prefix (`CUBE_`) and replace dots (`.`) and dashes (`-`) with underscores (`_`) in variable names. For example:
 
 ```
 # command line parameter

@@ -4,14 +4,12 @@ title: "PHP Slim"
 slug: /instrumentation/php-slim
 ---
 
-## Steps to configure CubeAPM
-
-### Prerequisites
+## Prerequisites
 
 1. PHP 8.0+
 2. composer
 
-### Installation
+## Installation
 
 1. Add `"minimum-stability": "beta"` to your composer.json to allow it to pick correct versions of OpenTelemetry packages. The composer.json will look like this:
 
@@ -88,11 +86,19 @@ slug: /instrumentation/php-slim
    OTEL_METRICS_EXPORTER=none \
    OTEL_TRACES_EXPORTER=otlp \
    OTEL_EXPORTER_OTLP_PROTOCOL=grpc \
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://traces-ingest.spyk.ai:4317/opentele
-   metry.proto.collector.trace.v1.TraceService/Export \
-   OTEL_EXPORTER_OTLP_HEADERS='authorization=Bearer <spyk_token>' \
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317/opentelemetry.proto.collector.trace.v1.TraceService/Export \
    OTEL_PROPAGATORS=baggage,tracecontext \
    php myapp.php
    ```
 
 Data should now be visible in your CubeAPM account.
+
+## Troubleshooting
+
+Traces exporter can be changed from `otlp` to `console` to output traces on console.
+
+The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
+
+```
+telnet <ip_address_of_cubeapm_server> 4317
+```

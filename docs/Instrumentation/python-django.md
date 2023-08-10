@@ -4,45 +4,27 @@ title: "Python Django"
 slug: /instrumentation/python-django
 ---
 
-## Steps to configure CubeAPM
+## Prerequisites
 
-### Installation
+Python 3
 
-1. #### Prerequisites:
+## Installation
 
-   Python 3
-
-2. Set up an environment in a new directory:
-
-   ```
-   mkdir <your_project_name>
-   cd <your_project_name>
-   python3 -m venv .
-   source ./bin/activate
-   ```
-
-   Install django:
-
-   ```
-   python -m pip install Django
-   ```
-
-3. Install dependencies:
+1. Install dependencies:
 
    ```
    pip install opentelemetry-distro opentelemetry-exporter-otlp
    opentelemetry-bootstrap -a install
    ```
 
-4. Modify the application run command as follows:
+2. Modify the application run command as follows:
 
    ```
    DJANGO_SETTINGS_MODULE=<django_app_name>.settings \
    opentelemetry-instrument \
        --metrics_exporter none \
        --traces_exporter otlp \
-       --exporter_otlp_traces_endpoint https://traces-ingest.spyk.ai:4317 \
-       --exporter_otlp_headers authorization=Bearer%20<spyk_token> \
+       --exporter_otlp_traces_endpoint http://<ip_address_of_cubeapm_server>:4317 \
        --exporter_otlp_compression gzip \
        --service_name <app_name> \
        python manage.py runserver --noreload
@@ -54,13 +36,22 @@ slug: /instrumentation/python-django
    DJANGO_SETTINGS_MODULE=<django_app_name>.settings
    OTEL_METRICS_EXPORTER=none
    OTEL_TRACES_EXPORTER=otlp
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://traces-ingest.spyk.ai:4317
-   OTEL_EXPORTER_OTLP_HEADERS=authorization=Bearer%20<spyk_token>
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip
    OTEL_SERVICE_NAME=<app_name>
    ```
 
-### Notes
+## Troubleshooting
+
+Traces exporter can be changed from `otlp` to `console` to output traces on console.
+
+The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
+
+```
+telnet <ip_address_of_cubeapm_server> 4317
+```
+
+## Notes
 
 1. DJANGO_SETTINGS_MODULE environment variable must be set even if configuring the
    integration via command line parameters.

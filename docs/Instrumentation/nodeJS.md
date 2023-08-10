@@ -4,77 +4,49 @@ title: "NodeJS"
 slug: /instrumentation/nodejs
 ---
 
-## Steps to configure CubeAPM
-
-### Installation
-
-1. Create a new project directory
-
-   ```
-    mkdir <project_name>
-    cd <project_name>
-   ```
+## Installation
 
 1. Install dependencies
 
-   First create an empty `package.json` file in the current directory:
-
    ```
-   npm init -y
+   npm install --save @opentelemetry/auto-instrumentations-node@^0.38.0
    ```
-
-   Then install `Express` framework in Node.js project:
-
-   ```
-   npm install express
-   ```
-
-   Run the following commands to install the appropriate packages:
-
-   ```
-   npm install --save @opentelemetry/api
-   npm install --save @opentelemetry/sdk-node
-   npm install --save @opentelemetry/auto-instrumentations-node
-   npm install --save @opentelemetry/exporter-trace-otlp-grpc
-   ```
-
-1. Download tracing.js.txt attachment from the email, rename it to tracing.js, and place it at
-   the root of your project directory.
 
 1. Add the following environment variables:
 
    ```
-   SPYK_APPNAME: <appname_to_identify_the_app_on_spyk_dashboard>
-   SPYK_TOKEN: <spyk_token>
+   OTEL_METRICS_EXPORTER=none
+   OTEL_TRACES_EXPORTER=otlp
+   OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+   OTEL_EXPORTER_OTLP_COMPRESSION=gzip
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317
+   OTEL_SERVICE_NAME=<app_name>
+   NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
    ```
 
-   Here's an example of how you can modify the script:
+   For example, if the run command is `node injex.js`, then change it to:
 
    ```
-   export OTEL_TRACES_EXPORTER="otlp"
-   export OTEL_METRICS_EXPORTER="otlp"
-   export OTEL_EXPORTER_OTLP_ENDPOINT="your-endpoint" # Replace with your desired endpoint URL
-   export OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer your-token" # Replace 'your-token' with your actual token value
-   export OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
-   export OTEL_SERVICE_NAME="your-service-name"
-   export NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
+   OTEL_METRICS_EXPORTER=none \
+   OTEL_TRACES_EXPORTER=otlp \
+   OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc \
+   OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
+   OTEL_SERVICE_NAME=<app_name> \
+   NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register" \
    node index.js
    ```
 
-   Alternatively, the following environment variables can be set:
+## Troubleshooting
 
-   ```
-   env OTEL_TRACES_EXPORTER=otlp \
-       OTEL_EXPORTER_OTLP_ENDPOINT=your-endpoint \
-       OTEL_EXPORTER_OTLP_HEADERS="authorization=Bearer your-token" \
-       OTEL_NODE_RESOURCE_DETECTORS="env,host,os" \
-       OTEL_SERVICE_NAME=your-service-name \
-       NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register" \
-       node index.js
-   ```
+The following can be used for debugging:
 
-1. Modify the application run command to include the argument `-r
-path/to/tracing.js`. For example, if the run command is `node index.js`, then
-   change it to `node -r path/to/tracing.js index.js`. If you use pm2, you can add
-   this to `node_args` in pm2 config. For example:
-   `node_args: "-r path/to/tracing.js <any_other_args>"`
+```
+OTEL_LOG_LEVEL=debug
+```
+
+The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
+
+```
+telnet <ip_address_of_cubeapm_server> 4317
+```
