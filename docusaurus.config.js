@@ -74,12 +74,13 @@ const config = {
           src: "img/logo.svg",
         },
         items: [
-          // {
-          //   type: "docSidebar",
-          //   sidebarId: "tutorialSidebar",
-          //   position: "left",
-          //   label: "Docs",
-          // },
+          {
+            type: "docSidebar",
+            sidebarId: "tutorialSidebar",
+            position: "left",
+            href: "https://cubeapm.com/",
+            label: "CubeAPM",
+          },
           // {
           //   to: '/blog',
           //   label: 'Blog',
