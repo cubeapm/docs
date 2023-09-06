@@ -4,6 +4,9 @@ title: "PHP Slim"
 slug: /instrumentation/php-slim
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ## Prerequisites
 
 1. PHP 8.0+
@@ -29,10 +32,18 @@ slug: /instrumentation/php-slim
 
    1. Install the required tools:
 
-      ```
-      sudo apt-get install php-pear php-dev libtool \
-      make gcc autoconf libz-dev zip
-      ```
+      <Tabs groupId="operating-systems">
+         <TabItem value="lin" label="Linux">
+            <pre>
+               sudo apt-get install php-pear php-dev libtool make gcc autoconf libz-dev zip
+            </pre>
+         </TabItem>
+      <TabItem value="mac" label="Mac">
+         <pre>
+            brew install php libtool make gcc autoconf zlib zip
+         </pre>
+      </TabItem>
+      </Tabs>
 
    2. Build the extensions (can take upto 15 minutes):
 
