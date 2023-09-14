@@ -12,14 +12,14 @@ Python 3
 
 1. Install dependencies:
 
-   ```
+   ```shell
    pip install opentelemetry-distro opentelemetry-exporter-otlp
    opentelemetry-bootstrap -a install
    ```
 
 2. Modify the application run command as follows:
 
-   ```
+   ```shell
    DJANGO_SETTINGS_MODULE=<django_app_name>.settings \
    opentelemetry-instrument \
        --metrics_exporter none \
@@ -32,7 +32,7 @@ Python 3
 
    Alternatively, the following environment variables can be set:
 
-   ```
+   ```shell
    DJANGO_SETTINGS_MODULE=<django_app_name>.settings
    OTEL_METRICS_EXPORTER=none
    OTEL_TRACES_EXPORTER=otlp
@@ -47,7 +47,7 @@ Traces exporter can be changed from `otlp` to `console` to output traces on cons
 
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 
-```
+```shell
 telnet <ip_address_of_cubeapm_server> 4317
 ```
 

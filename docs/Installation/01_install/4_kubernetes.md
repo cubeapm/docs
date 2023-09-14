@@ -7,7 +7,7 @@ slug: /install/install-cubeapm/kubernetes
 
 Cube can be deployed on Kubernetes using the official Helm charts.
 
-```sh
+```shell
 helm repo add cubeapm https://charts.cubeapm.com
 helm repo update
 helm install cubeapm cubeapm/cubeapm

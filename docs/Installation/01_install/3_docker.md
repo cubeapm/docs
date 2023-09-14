@@ -7,7 +7,7 @@ slug: /install/install-cubeapm/docker
 
 Cube is also available as a Docker image. Run the following command to start Cube in a Docker container.
 
-```sh
+```shell
 docker run -d --name cubeapm \
 -p 3125:3125 -p 4317:4317 -p 4318:4318 \
 -v cube_data:/root/data \

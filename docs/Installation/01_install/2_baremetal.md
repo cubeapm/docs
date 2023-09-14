@@ -7,7 +7,7 @@ slug: /install/install-cubeapm/bare-metal-virtual-machine
 
 Run the following command. It downloads and executes the Cube install script.
 
-```sh
+```shell
 sudo /bin/bash -c "$(curl -fsSL https://downloads.cubeapm.com/latest/install.sh)"
 ```
 

@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 1. Add `"minimum-stability": "beta"` to your composer.json to allow it to pick correct versions of OpenTelemetry packages. The composer.json will look like this:
 
-   ```
+   ```javascript
    {
        "require": {
            ...
@@ -47,7 +47,7 @@ import TabItem from '@theme/TabItem';
 
    2. Build the extensions (can take upto 15 minutes):
 
-      ```
+      ```shell
       pecl install grpc
       pecl install opentelemetry-beta
       pecl install protobuf
@@ -55,7 +55,7 @@ import TabItem from '@theme/TabItem';
 
    3. Add the extensions to your php.ini file:
 
-      ```
+      ```shell
       [opentelemetry]
       extension=grpc.so
       extension=opentelemetry.so
@@ -80,7 +80,7 @@ import TabItem from '@theme/TabItem';
 
    5. Add additional dependencies to your application:
 
-      ```
+      ```shell
       composer config allow-plugins.php-http/discovery true
       composer require php-http/guzzle7-adapter \
       open-telemetry/sdk \
@@ -94,7 +94,7 @@ import TabItem from '@theme/TabItem';
 
 3. Modify the application run command as follows:
 
-   ```
+   ```shell
    OTEL_PHP_AUTOLOAD_ENABLED=true \
    OTEL_SERVICE_NAME=<app_name> \
    OTEL_METRICS_EXPORTER=none \
@@ -113,6 +113,6 @@ Traces exporter can be changed from `otlp` to `console` to output traces on cons
 
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 
-```
+```shell
 telnet <ip_address_of_cubeapm_server> 4317
 ```
