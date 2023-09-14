@@ -63,17 +63,20 @@ import TabItem from '@theme/TabItem';
       ```
 
    4. Verify that the extensions are installed and enabled (the following command should list all
-      the extensions we just installed:
+      the extensions we just installed):
 
-      ```
-      php -m | grep -P 'grpc|opentelemetry|protobuf'
-      ```
-
-      Or
-
-      ```
-      php -m | grep -E 'grpc|opentelemetry|protobuf'
-      ```
+      <Tabs groupId="operating-systems">
+         <TabItem value="lin" label="Linux">
+            <pre>
+               php -m | grep -P 'grpc|opentelemetry|protobuf'
+            </pre>
+         </TabItem>
+         <TabItem value="mac" label="Mac">
+            <pre>
+               php -m | grep -E 'grpc|opentelemetry|protobuf'
+            </pre>
+         </TabItem>
+      </Tabs>
 
    5. Add additional dependencies to your application:
 
