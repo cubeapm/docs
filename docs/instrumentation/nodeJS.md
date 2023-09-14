@@ -37,6 +37,39 @@ slug: /instrumentation/nodejs
    node index.js
    ```
 
+## Capture Exception StackTraces (optional)
+
+CubeAPM shows stacktraces for any exceptions that occur in your application. However, if you are using the Express framework, you need to add the following code to your Express error handler to capture the stacktraces:
+
+```typescript
+import express, { Express, ErrorRequestHandler } from "express";
+// highlight-next-line
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+
+const app: Express = express();
+
+app.get("/", (req, res) => {
+  throw new Error("Test throw error!");
+});
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  // highlight-start
+  const span = trace.getActiveSpan();
+  if (span) {
+    span.recordException(err);
+  }
+  // highlight-end
+
+  // pass the error to the next middleware
+  // you can do any custom error handling here
+  next(err);
+};
+
+app.use(errorHandler);
+
+app.listen(8080);
+```
+
 ## Troubleshooting
 
 The following can be used for debugging:
