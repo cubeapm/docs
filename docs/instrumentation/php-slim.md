@@ -4,6 +4,9 @@ title: "PHP Slim"
 slug: /instrumentation/php-slim
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ## Prerequisites
 
 1. PHP 8.0+
@@ -29,10 +32,18 @@ slug: /instrumentation/php-slim
 
    1. Install the required tools:
 
-      ```
-      sudo apt-get install php-pear php-dev libtool \
-      make gcc autoconf libz-dev zip
-      ```
+      <Tabs groupId="operating-systems">
+         <TabItem value="lin" label="Linux">
+            <pre>
+               sudo apt-get install php-pear php-dev libtool make gcc autoconf libz-dev zip
+            </pre>
+         </TabItem>
+      <TabItem value="mac" label="Mac">
+         <pre>
+            brew install php libtool make gcc autoconf zlib zip
+         </pre>
+      </TabItem>
+      </Tabs>
 
    2. Build the extensions (can take upto 15 minutes):
 
@@ -52,17 +63,20 @@ slug: /instrumentation/php-slim
       ```
 
    4. Verify that the extensions are installed and enabled (the following command should list all
-      the extensions we just installed:
+      the extensions we just installed):
 
-      ```
-      php -m | grep -P 'grpc|opentelemetry|protobuf'
-      ```
-
-      Or
-
-      ```
-      php -m | grep -E 'grpc|opentelemetry|protobuf'
-      ```
+      <Tabs groupId="operating-systems">
+         <TabItem value="lin" label="Linux">
+            <pre>
+               php -m | grep -P 'grpc|opentelemetry|protobuf'
+            </pre>
+         </TabItem>
+         <TabItem value="mac" label="Mac">
+            <pre>
+               php -m | grep -E 'grpc|opentelemetry|protobuf'
+            </pre>
+         </TabItem>
+      </Tabs>
 
    5. Add additional dependencies to your application:
 
