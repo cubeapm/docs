@@ -20,4 +20,4 @@ The script performs the following tasks:
 
 ## Next Steps
 
-After installing Cube, head over to the [Configure CubeAPM](../02_configure/02_configure.md) section for guidance on providing essential and other useful configuration to Cube.
+After installing Cube, head over to the [Configure CubeAPM](../02_configure/02_configure.md) section for details of all available configuration parameters.
