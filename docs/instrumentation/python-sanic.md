@@ -90,12 +90,12 @@ Python 3
 
 4. Modify the application run command as follows:
 
-```shell
-OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
-OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
-OTEL_SERVICE_NAME=<app_name> \
-sanic server
-```
+   ```shell
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
+   OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
+   OTEL_SERVICE_NAME=<app_name> \
+   sanic server
+   ```
 
 ## Troubleshooting
 
