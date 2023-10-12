@@ -24,7 +24,7 @@ Python 3
    ```python title="tracing.py"
    import os
    from opentelemetry import trace, context
-   from opentelemetry.semconv.trace import SpanAttributes
+   from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
    from opentelemetry.propagate import extract
    from opentelemetry.sdk.trace import TracerProvider
    from opentelemetry.sdk.trace.export import (
@@ -32,9 +32,11 @@ Python 3
       ConsoleSpanExporter,
       SimpleSpanProcessor,
    )
-   from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+   from opentelemetry.semconv.trace import SpanAttributes
+   from opentelemetry.trace.status import Status, StatusCode
+   from sanic import HTTPResponse, Request, Sanic
 
-   def instrument_app(app):
+   def instrument_app(app: Sanic):
       provider = TracerProvider()
       if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
          processor = SimpleSpanProcessor(ConsoleSpanExporter())
@@ -44,27 +46,33 @@ Python 3
       trace.set_tracer_provider(provider)
       tracer = trace.get_tracer(__name__)
 
-      _ENVIRON_SPAN_KEY = "opentelemetry-sanic.span_key"
-      _ENVIRON_ACTIVATION_KEY = "opentelemetry-sanic.activation_key"
+      SPAN_KEY = 'span_key'
+      ACTIVATION_KEY = 'activation_key'
 
       @app.on_request
-      def on_before_request(req):
+      async def on_request(req: Request):
          context.attach(extract(req.headers))
          span = tracer.start_span(
-               req.endpoint,
+               req.method + ' /' + req.route.path,
                kind=trace.SpanKind.SERVER,
          )
          activation = trace.use_span(span, end_on_exit=True)
          activation.__enter__()
          span.set_attribute(SpanAttributes.HTTP_METHOD, req.method)
          span.set_attribute(SpanAttributes.HTTP_ROUTE, req.path)
-         req.ctx.tracing = {_ENVIRON_ACTIVATION_KEY: activation, _ENVIRON_SPAN_KEY: span}
+         req.ctx.cubeapm = {ACTIVATION_KEY: activation, SPAN_KEY: span}
 
       @app.on_response
-      def on_after_request(req, res):
-         if hasattr(req.ctx, "tracing"):
-            req.ctx.tracing[_ENVIRON_SPAN_KEY].set_attribute(SpanAttributes.HTTP_STATUS_CODE, res.status)
-            req.ctx.tracing[_ENVIRON_ACTIVATION_KEY].__exit__(None,None,None)
+      async def on_response(req: Request, res: HTTPResponse):
+         if hasattr(req.ctx, 'cubeapm'):
+               req.ctx.cubeapm[SPAN_KEY].set_attribute(
+                  SpanAttributes.HTTP_STATUS_CODE, res.status)
+               req.ctx.cubeapm[ACTIVATION_KEY].__exit__(None, None, None)
+
+      @app.signal('http.lifecycle.exception')
+      async def on_exception(request:  Request, exception: Exception):
+         request.ctx.cubeapm[SPAN_KEY].record_exception(exception)
+         request.ctx.cubeapm[SPAN_KEY].set_status(Status(StatusCode.ERROR))
    ```
 
 3. Add the highlighted lines below to your project's main file:
@@ -78,9 +86,12 @@ Python 3
    app = Sanic("CubeAPMTestApp")
    # highlight-start
    instrument_app(app)
-   # Additional instrumentation can be enabled by
+   # Additional instrumentations can be enabled by
    # following the docs for respective instrumentations at
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
+   #
+   # A working example with multiple instrumentations is available at
+   # https://github.com/cubeapm/sample_app_python_sanic
    # highlight-end
 
    @app.get("/")
