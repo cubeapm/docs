@@ -209,7 +209,7 @@ collector.env-tag=cube.environment
 # Examples: "http://*.domain.com", "*"
 collector.otlp.http.cors.origins=
 
-# Path to custom labels config file
+# Path to config file for extending CubeAPM metrics with custom labels.
 metrics.custom-labels-config-file=
 
 # Metrics update interval. Must be between 500ms and 1m0s.
@@ -218,6 +218,8 @@ metrics.update-interval=15s
 # Delay before shutdown. During this delay, health check returns non-OK responses so load balancers can route new requests to other servers.
 shutdown-delay=0s
 
+# Path to config file for creating custom indexes on traces.
+traces.custom-indexes-config-file=
 
 
 ## End of CubeAPM configuration parameters
