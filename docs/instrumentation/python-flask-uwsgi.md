@@ -38,9 +38,12 @@ Python 3
    app = Flask(__name__)
    # highlight-start
    FlaskInstrumentor().instrument_app(app)
-   # Additional instrumentation can be enabled by
+   # Additional instrumentations can be enabled by
    # following the docs for respective instrumentations at
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
+   #
+   # A working example with multiple instrumentations is available at
+   # https://github.com/cubeapm/sample_app_python_flask_uwsgi
 
    @postfork
    def init_tracing():
@@ -64,7 +67,7 @@ Python 3
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
-   uwsgi --http :8000 --wsgi-file app.py --callable app --master --enable-threads
+   uwsgi --http :8000 --wsgi-file app.py --callable app --master --enable-threads --need-app
    ```
 
 ## Troubleshooting

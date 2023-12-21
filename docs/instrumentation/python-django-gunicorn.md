@@ -75,9 +75,12 @@ Python 3
 
    # highlight-start
    DjangoInstrumentor().instrument()
-   # Additional instrumentation can be enabled by
+   # Additional instrumentations can be enabled by
    # following the docs for respective instrumentations at
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
+   #
+   # A working example with multiple instrumentations is available at
+   # https://github.com/cubeapm/sample_app_python_django_gunicorn
    # highlight-end
 
    application = get_wsgi_application()

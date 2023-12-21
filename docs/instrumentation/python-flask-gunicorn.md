@@ -73,9 +73,12 @@ Python 3
    app = Flask(__name__)
    # highlight-start
    FlaskInstrumentor().instrument_app(app)
-   # Additional instrumentation can be enabled by
+   # Additional instrumentations can be enabled by
    # following the docs for respective instrumentations at
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
+   #
+   # A working example with multiple instrumentations is available at
+   # https://github.com/cubeapm/sample_app_python_flask_gunicorn
    # highlight-end
 
    @app.route('/roll/<number>')
