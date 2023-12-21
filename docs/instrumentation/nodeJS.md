@@ -44,7 +44,7 @@ CubeAPM shows stacktraces for any exceptions that occur in your application. How
 ```typescript
 import express, { Express, ErrorRequestHandler } from "express";
 // highlight-next-line
-import { trace, SpanStatusCode } from "@opentelemetry/api";
+import { trace } from "@opentelemetry/api";
 
 const app: Express = express();
 

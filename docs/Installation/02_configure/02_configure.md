@@ -43,6 +43,12 @@ In addition, the following configuration parameters have some default value, but
 4. `smtp.from`
 5. `time-zone`
 
+:::info
+For security reasons, CubeAPM requires HTTPS. Hence, it needs to be deployed behind a load balancer or reverse proxy with SSL termination capability.
+
+However, for ease of initial exploration, HTTP can be used with `localhost`/`127.0.0.1` only.
+:::
+
 ## Configuration Reference
 
 Below is the list of all configuration parameters supported by CubeAPM, along with documentation and default values.
