@@ -9,33 +9,67 @@ slug: /instrumentation/nodejs
 1. Install dependencies
 
    ```shell
-   npm install --save @opentelemetry/auto-instrumentations-node@^0.38.0
+   npm install --save @opentelemetry/auto-instrumentations-node
    ```
 
-1. Add the following environment variables:
+1. Create a file `tracing.js` in your project directory, with the following content:
 
-   ```bash
-   OTEL_METRICS_EXPORTER=none
-   OTEL_TRACES_EXPORTER=otlp
-   OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
-   OTEL_EXPORTER_OTLP_COMPRESSION=gzip
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317
-   OTEL_SERVICE_NAME=<app_name>
-   NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
+   ```javascript title="tracing.js"
+   "use strict";
+   const process = require("process");
+   const {
+     diag,
+     DiagConsoleLogger,
+     DiagLogLevel,
+   } = require("@opentelemetry/api");
+   const opentelemetry = require("@opentelemetry/sdk-node");
+   const {
+     getNodeAutoInstrumentations,
+   } = require("@opentelemetry/auto-instrumentations-node");
+   const {
+     OTLPTraceExporter,
+   } = require("@opentelemetry/exporter-trace-otlp-grpc");
+
+   if (process.env.OTEL_LOG_LEVEL === "debug") {
+     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
+   }
+
+   const exporterOptions = {
+     // concurrencyLimit: 1,
+   };
+   const traceExporter =
+     process.env.OTEL_LOG_LEVEL === "debug"
+       ? new opentelemetry.tracing.ConsoleSpanExporter()
+       : new OTLPTraceExporter(exporterOptions);
+
+   const sdk = new opentelemetry.NodeSDK({
+     traceExporter,
+     instrumentations: getNodeAutoInstrumentations({
+       "@opentelemetry/instrumentation-fs": {
+         enabled: false,
+       },
+     }),
+   });
+
+   // initialize the SDK and register with the OpenTelemetry API
+   // this enables the API to record telemetry
+   sdk.start();
    ```
 
-   For example, if the run command is `node index.js`, then change it to:
+1. Modify the application run command as follows:
 
-   ```bash
+   ```shell
    OTEL_METRICS_EXPORTER=none \
-   OTEL_TRACES_EXPORTER=otlp \
-   OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
    OTEL_SERVICE_NAME=<app_name> \
-   NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register" \
-   node index.js
+   NODE_OPTIONS="--require ./tracing.js" \
+   node app.js
    ```
+
+### Sample App
+
+A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express
 
 ## Capture Exception StackTraces (optional)
 
