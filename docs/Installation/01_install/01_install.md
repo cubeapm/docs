@@ -6,7 +6,7 @@ slug: /install/install-cubeapm
 
 ## Supported Platforms
 
-All the code of Cube is compiled and packaged in a single binary with no external dependency. It can be installed on Linux and Mac platforms with 64-bit Intel/AMD/ARM processors.
+All the code of CubeAPM is compiled and packaged in a single binary with no external dependency. It can be installed on Linux and Mac platforms with 64-bit Intel/AMD/ARM processors.
 
 ## Installation Steps
 

@@ -4,7 +4,7 @@ slug: /install/configure-cubeapm
 
 # Configure CubeAPM
 
-Cube can be configured through command line arguments, configuration file, or environment variables. In case of environment variables, please prefix (`CUBE_`) and replace dots (`.`) and dashes (`-`) with underscores (`_`) in variable names. For example:
+CubeAPM can be configured through command line arguments, configuration file, or environment variables. In case of environment variables, please prefix (`CUBE_`) and replace dots (`.`) and dashes (`-`) with underscores (`_`) in variable names. For example:
 
 ```
 # command line parameter
@@ -26,7 +26,7 @@ If a parameter if specified through multiple means, the following order of prefe
 
 ## Essential Configuration
 
-Cube provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for Cube to start up. Following is a list of such parameters:
+CubeAPM provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for CubeAPM to start up. Following is a list of such parameters:
 
 1. `token`
 2. `smtp.url`
@@ -35,7 +35,7 @@ Cube provides reasonable defaults to configuration parameters wherever possible.
 5. `auth.key.session`
 6. `auth.key.tokens`
 
-In addition, the following configuration parameters have some default value, but it is quite likely that you may need to override them as per your environment for Cube to work properly.
+In addition, the following configuration parameters have some default value, but it is quite likely that you may need to override them as per your environment for CubeAPM to work properly.
 
 1. `base-url`
 2. `auth.sys-admins`
@@ -89,7 +89,7 @@ auth.key.tokens=
 
 ## Important Parameters: You will quite likely need to set these as per your environment for CubeAPM to work properly.
 
-# URL used by users to access Cube APM. This is used to generate URLs in emails and alerts.
+# URL used by users to access CubeAPM. This is used to generate URLs in emails and alerts.
 # If you use reverse proxy and sub path specify full url (with sub path).
 # Examples: http://cube.yourdomain.com, https://yourdomain.com/cube, http://10.0.0.1:3125
 base-url=http://localhost:3125

@@ -5,7 +5,7 @@ slug: /install/install-cubeapm/docker
 
 # Docker
 
-Cube is also available as a Docker image. Run the following command to start Cube in a Docker container.
+CubeAPM is also available as a Docker image. Run the following command to start CubeAPM in a Docker container.
 
 ```shell
 docker run -d --name cubeapm \
