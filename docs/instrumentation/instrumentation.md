@@ -1,5 +1,6 @@
 ---
 slug: /instrumentation
+sidebar_position: 3
 ---
 
 # Instrumentation
