@@ -53,7 +53,7 @@ However, for ease of initial exploration, HTTP can be used with `localhost`/`127
 
 Below is the list of all configuration parameters supported by CubeAPM, along with documentation and default values.
 
-```shell
+```shell title="config.properties"
 ## CubeAPM configuration parameters
 
 
@@ -139,9 +139,6 @@ log-level=warn
 
 ## Tuning Parameters
 
-# Static files (e.g. graph images for alerts) retention period
-files.retention=720h
-
 # Metrics retention period. Must be between 24h0m0s and 1440h0m0s.
 metrics.retention=720h
 
@@ -157,6 +154,9 @@ http-host=0.0.0.0
 
 # Port to bind http server on
 http-port=3125
+
+# Port to use for internal http communication between CubeAPM nodes
+http-port-internal=3130
 
 # Port to use for internal distribution of incoming traces data
 cluster.port.distributor=3126
@@ -198,6 +198,14 @@ alertmanager.charts.disable=false
 # Directory to store data in (default "./data")
 data-dir=
 
+# Tag name for environment.
+# If set, the value of this tag in traces and metrics will be used as the value of env label in metrics.
+env-tag=cube.environment
+
+# Default role to be assigned to a new user on signup.
+# Possible values are none, viewer, editor, admin.
+auth.default-role=viewer
+
 # Explicit address to advertise in cluster, e.g. 10.0.0.1. If not specified, CubeAPM will try to detect the address automatically.
 cluster.advertise-address=
 
@@ -207,9 +215,8 @@ cluster.allow-insecure-advertise=false
 # Replication factor for the ingested data. Default is size_of_cluster/2 + 1
 cluster.replication-factor=
 
-# Tag name for environment.
-# If set, the value of this tag in traces will be used as the value of env label in metrics. (default "")
-collector.env-tag=cube.environment
+# [Deprecated] Use env-tag instead.
+#collector.env-tag=cube.environment
 
 # Comma separated list of allowed origins for CORS requests.
 # Examples: "http://*.domain.com", "*"
@@ -220,6 +227,15 @@ metrics.custom-labels-config-file=
 
 # Metrics update interval. Must be between 500ms and 1m0s.
 metrics.update-interval=15s
+
+# Whether to perfer HTTP status code description as error description in the reported metrics. By default, exception name is preferred and HTTP status code description is used if no exception occured.
+metrics.prefer-http-status-as-error-desc=false
+
+# Path to config file for SLOs (Service Level Objectives).
+metrics.slo.config-file=
+
+# Whether to treat HTTP 4xx response as error in the reported metrics.
+metrics.treat-4xx-as-error=false
 
 # Delay before shutdown. During this delay, health check returns non-OK responses so load balancers can route new requests to other servers.
 shutdown-delay=0s
