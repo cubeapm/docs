@@ -64,7 +64,7 @@
         <mxCell id="49m0eSot-eKcQhxgp4xP-17" value="Alerting Engine" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="120" width="200" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="49m0eSot-eKcQhxgp4xP-18" value="Alert Notification Destinations&lt;br&gt;&lt;br&gt;Email&lt;br&gt;Slack&lt;br&gt;PagerDuty&lt;br&gt;..." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="49m0eSot-eKcQhxgp4xP-18" value="Alert Notification Destinations&lt;br&gt;&lt;br&gt;Email&lt;br&gt;Slack&lt;br&gt;PagerDuty&lt;br&gt;Google Chat&lt;br&gt;..." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="520" y="120" width="120" height="120" as="geometry" />
         </mxCell>
         <mxCell id="49m0eSot-eKcQhxgp4xP-19" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.15;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="49m0eSot-eKcQhxgp4xP-17" target="49m0eSot-eKcQhxgp4xP-18" edge="1">
