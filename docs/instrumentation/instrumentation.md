@@ -20,7 +20,7 @@ That's it! New Relic agents can now be used to send data to CubeAPM.
 ![CubeAPM with New Relic](/img/new-relic.svg)
 
 :::info
-NewRelic PHP agent does not support the NEW_RELIC_HOST environment variable. It needs setting the `host` value in newrelic.ini instead.
+NewRelic PHP agent does not support the NEW_RELIC_HOST environment variable. It needs setting the `newrelic.daemon.collector_host` value in newrelic.ini instead.
 :::
 
 ### Multi-environment setup
