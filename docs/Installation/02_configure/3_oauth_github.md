@@ -7,7 +7,8 @@ slug: /install/configure-cubeapm/sign-in-with-github
 
 To enable Sign in with GitHub, you need to create a GitHub app in your GitHub organization. The following steps guide you through the process:
 
-1. Go to Create GitHub app page for your organization (https://github.com/organizations/<org_name>/settings/apps/new). Fill in the following:
+1. Go to Create GitHub app page for your organization (https://github.com/organizations/<code>&lt;org_name></code>/settings/apps/new). 
+   Fill in the following:
    - **GitHub App name**: CubeAPM
    - **Homepage URL**: Address at which CubeAPM is accessible in your environment, e.g., https://cubeapm.yourdomain.com/
    - **Callback URL**: `<cube_apm_address>/api/auth/self-service/methods/oidc/callback/github`, e.g., https://cubeapm.yourdomain.com/api/auth/self-service/methods/oidc/callback/github
