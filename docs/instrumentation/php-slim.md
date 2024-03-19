@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 1. Add `"minimum-stability": "beta"` to your composer.json to allow it to pick correct versions of OpenTelemetry packages. The composer.json will look like this:
 
-   ```javascript
+   ```json
    {
        "require": {
            ...
@@ -34,14 +34,14 @@ import TabItem from '@theme/TabItem';
 
       <Tabs groupId="operating-systems">
          <TabItem value="lin" label="Linux">
-            <pre>
-               sudo apt-get install php-pear php-dev libtool make gcc autoconf libz-dev zip
-            </pre>
+            ```shell
+            sudo apt-get install php-pear php-dev libtool make gcc autoconf libz-dev zip
+            ```
          </TabItem>
       <TabItem value="mac" label="Mac">
-         <pre>
-            brew install php libtool make gcc autoconf zlib zip
-         </pre>
+         ```shell
+         brew install php libtool make gcc autoconf zlib zip
+         ```
       </TabItem>
       </Tabs>
 
@@ -67,14 +67,14 @@ import TabItem from '@theme/TabItem';
 
       <Tabs groupId="operating-systems">
          <TabItem value="lin" label="Linux">
-            <pre>
-               php -m | grep -P 'grpc|opentelemetry|protobuf'
-            </pre>
+            ```shell
+            php -m | grep -P 'grpc|opentelemetry|protobuf'
+            ```
          </TabItem>
          <TabItem value="mac" label="Mac">
-            <pre>
-               php -m | grep -E 'grpc|opentelemetry|protobuf'
-            </pre>
+            ```shell
+            php -m | grep -E 'grpc|opentelemetry|protobuf'
+            ```
          </TabItem>
       </Tabs>
 
