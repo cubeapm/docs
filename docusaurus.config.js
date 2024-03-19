@@ -103,8 +103,8 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} CubeAPM`,
       },
       prism: {
-          lightTheme,
-          darkTheme,
+        theme: lightTheme,
+        darkTheme: darkTheme,
         additionalLanguages: ['bash', 'diff', 'json', 'jsx','markup']
       },
       // Add the plugin configuration here
