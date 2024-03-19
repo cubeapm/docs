@@ -1,10 +1,10 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-// (https://docusaurus.io/docs/migration/v3#prism-react-renderer-v20 
+// (https://docusaurus.io/docs/migration/v3#prism-react-renderer-v20
 // link for reference to update the Docusaurus v3 website.)
 
-const {themes} = require('prism-react-renderer');
+const { themes } = require("prism-react-renderer");
 const lightTheme = themes.github;
 const darkTheme = themes.dracula;
 
@@ -25,7 +25,7 @@ const config = {
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "cubeapm", // Usually your GitHub org/user name.
   projectName: "docs", // Usually your repo name.
-  deploymentBranch: 'gh-pages',
+  deploymentBranch: "gh-pages",
 
   trailingSlash: false,
 
@@ -49,7 +49,7 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          routeBasePath: '/',
+          routeBasePath: "/",
           editUrl: "https://github.com/cubeapm/docs/docs",
         },
         blog: {
@@ -74,7 +74,7 @@ const config = {
         title: "CubeAPM Docs",
         logo: {
           alt: "CubeAPM",
-          href: '/',
+          href: "/",
           src: "img/logo.svg",
         },
         items: [
@@ -105,7 +105,7 @@ const config = {
       prism: {
         theme: lightTheme,
         darkTheme: darkTheme,
-        additionalLanguages: ['bash', 'diff', 'json', 'jsx','markup']
+        additionalLanguages: ["bash", "java", "json"],
       },
       // Add the plugin configuration here
       search: {

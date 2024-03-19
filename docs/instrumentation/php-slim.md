@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 
 1. Add `"minimum-stability": "beta"` to your composer.json to allow it to pick correct versions of OpenTelemetry packages. The composer.json will look like this:
 
-   ```javascript
+   ```json
    {
        "require": {
            ...
