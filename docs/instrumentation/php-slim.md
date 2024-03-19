@@ -34,12 +34,12 @@ import TabItem from '@theme/TabItem';
 
       <Tabs groupId="operating-systems">
          <TabItem value="lin" label="Linux">
-            ```js
+            ```shell
             sudo apt-get install php-pear php-dev libtool make gcc autoconf libz-dev zip
             ```
          </TabItem>
       <TabItem value="mac" label="Mac">
-         ```js
+         ```shell
          brew install php libtool make gcc autoconf zlib zip
          ```
       </TabItem>
@@ -67,12 +67,12 @@ import TabItem from '@theme/TabItem';
 
       <Tabs groupId="operating-systems">
          <TabItem value="lin" label="Linux">
-            ```js
+            ```shell
             php -m | grep -P 'grpc|opentelemetry|protobuf'
             ```
          </TabItem>
          <TabItem value="mac" label="Mac">
-            ```js
+            ```shell
             php -m | grep -E 'grpc|opentelemetry|protobuf'
             ```
          </TabItem>

@@ -1,8 +1,8 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-// const lightCodeTheme = require("prism-react-renderer/themes/github");
-// const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+// (https://docusaurus.io/docs/migration/v3#prism-react-renderer-v20 
+// link for reference to update the Docusaurus v3 website.)
 
 const {themes} = require('prism-react-renderer');
 const lightTheme = themes.github;
@@ -103,8 +103,8 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} CubeAPM`,
       },
       prism: {
-        lightTheme,
-        darkTheme,
+          lightTheme,
+          darkTheme,
         additionalLanguages: ['bash', 'diff', 'json', 'jsx','markup']
       },
       // Add the plugin configuration here
