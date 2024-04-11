@@ -15,8 +15,10 @@ slug: /instrumentation/java
    ```shell
    java -javaagent:</path/opentelemetry-javaagent.jar> \
        -Dotel.metrics.exporter=none \
+       -Dotel.logs.exporter=none \
        -Dotel.traces.exporter=otlp \
-       -Dotel.exporter.otlp.traces.endpoint=http://<ip_address_of_cubeapm_server>:4317 \
+       -Dotel.exporter.otlp.protocol=http/protobuf \
+       -Dotel.exporter.otlp.traces.endpoint=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
        -Dotel.exporter.otlp.compression=gzip \
        -Dotel.service.name=<app_name> \
        -jar <myapp>.jar
@@ -27,8 +29,10 @@ slug: /instrumentation/java
    ```shell
    JAVA_TOOL_OPTIONS=-javaagent:</path/opentelemetry-javaagent.jar>
    OTEL_METRICS_EXPORTER=none
+   OTEL_LOGS_EXPORTER=none
    OTEL_TRACES_EXPORTER=otlp
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317
+   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip
    OTEL_SERVICE_NAME=<app_name>
    ```
