@@ -47,6 +47,8 @@ In addition, the following configuration parameters have some default value, but
 For security reasons, CubeAPM requires HTTPS. Hence, it needs to be deployed behind a load balancer or reverse proxy with SSL termination capability.
 
 However, for ease of initial exploration, HTTP can be used with `localhost`/`127.0.0.1` only.
+
+If you want to allow HTTP, set `auth.cookie.insecure=true` (see Configuration Reference below).
 :::
 
 ## Configuration Reference
@@ -96,6 +98,9 @@ base-url=http://localhost:3125
 
 # Comma separated list of email ids of users to be given sysadmin privilege.
 auth.sys-admins=
+
+# Allow authentication over HTTP. By default, CubeAPM sets secure attribute on cookies so the cookies are sent only over HTTPS.
+auth.cookie.insecure=false
 
 # Comma separated list of all nodes in the cluster, e.g., 10.0.0.1,10.0.0.2,10.0.0.3. Leave empty for single node operation.
 cluster.peers=
