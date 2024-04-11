@@ -95,11 +95,11 @@ receivers:
       network:
       # paging:
       # processes:
-      process:
-        mute_process_name_error: true
-        mute_process_exe_error: true
-        mute_process_io_error: true
-        mute_process_user_error: true
+      # process:
+      #   mute_process_name_error: true
+      #   mute_process_exe_error: true
+      #   mute_process_io_error: true
+      #   mute_process_user_error: true
 
   redis:
     endpoint: localhost:6379
@@ -231,11 +231,11 @@ config:
         network:
         # paging:
         # processes:
-        process:
-          mute_process_name_error: true
-          mute_process_exe_error: true
-          mute_process_io_error: true
-          mute_process_user_error: true
+        # process:
+        #   mute_process_name_error: true
+        #   mute_process_exe_error: true
+        #   mute_process_io_error: true
+        #   mute_process_user_error: true
   service:
     pipelines:
       metrics:
@@ -287,12 +287,12 @@ config:
   receivers:
     k8s_cluster:
       collection_interval: 60s
-      node_conditions_to_report:
-        - Ready
-        - MemoryPressure
       allocatable_types_to_report:
         - cpu
         - memory
+      metrics:
+        k8s.node.condition:
+          enabled: true
   service:
     pipelines:
       metrics:
