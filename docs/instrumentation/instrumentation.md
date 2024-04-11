@@ -36,3 +36,13 @@ For example:
 ```yaml
 app_name: order-service;sandbox
 ```
+
+### Troubleshooting
+
+The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
+
+```shell
+curl -X POST -v -d '[]' 'https://<domain_of_cubeapm_server>/agent_listener/invoke_raw_method?marshal_format=json&protocol_version=17&method=preconnect' -H 'content-type: application/json'
+
+# Expected response: `200 OK` with response message `{"return_value":{"redirect_host":"<domain_of_cubeapm_server>"}}`
+```
