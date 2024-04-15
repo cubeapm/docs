@@ -24,7 +24,7 @@ Python 3
    ```python title="tracing.py"
    import os
    from opentelemetry import trace, context
-   from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+   from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
    from opentelemetry.propagate import extract
    from opentelemetry.sdk.trace import TracerProvider
    from opentelemetry.sdk.trace.export import (
@@ -103,7 +103,9 @@ Python 3
 4. Modify the application run command as follows:
 
    ```shell
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
+   OTEL_LOGS_EXPORTER=none \
+   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    sanic server
@@ -120,5 +122,5 @@ OTEL_LOG_LEVEL=debug
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 
 ```shell
-telnet <ip_address_of_cubeapm_server> 4317
+telnet <ip_address_of_cubeapm_server> 4318
 ```

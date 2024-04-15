@@ -31,7 +31,7 @@ Python 3
       ConsoleSpanExporter,
       SimpleSpanProcessor,
    )
-   from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+   from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
    from opentelemetry.instrumentation.django import DjangoInstrumentor
    # highlight-end
 
@@ -63,7 +63,9 @@ Python 3
 3. Modify the application run command as follows:
 
    ```shell
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4317 \
+   OTEL_LOGS_EXPORTER=none \
+   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
+   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    uwsgi --module=mysite.wsgi:application --http=127.0.0.1:8000 --master --need-app
@@ -80,5 +82,5 @@ OTEL_LOG_LEVEL=debug
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 
 ```shell
-telnet <ip_address_of_cubeapm_server> 4317
+telnet <ip_address_of_cubeapm_server> 4318
 ```
