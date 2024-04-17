@@ -4,7 +4,7 @@ title: "Python Sanic"
 slug: /instrumentation/python-sanic
 ---
 
-As of Oct 2023, OpenTelemetry does not provide auto-instrumentation for Sanic. Still, basic instrumentation can be done as follows.
+As of Apr 2024, OpenTelemetry does not provide auto-instrumentation for Sanic. That said, a fully functional Sanic instrumentation can be achieved as follows.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Python 3
 1. Install dependencies:
 
    ```shell
-   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-grpc
+   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http
    opentelemetry-bootstrap -a install
    ```
 
@@ -103,8 +103,8 @@ Python 3
 4. Modify the application run command as follows:
 
    ```shell
+   OTEL_METRICS_EXPORTER=none \
    OTEL_LOGS_EXPORTER=none \
-   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \

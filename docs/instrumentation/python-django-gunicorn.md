@@ -13,7 +13,7 @@ Python 3
 1. Install dependencies:
 
    ```shell
-   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-grpc
+   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http
    opentelemetry-bootstrap -a install
    ```
 
@@ -90,8 +90,8 @@ Python 3
 
    ```shell
    DJANGO_SETTINGS_MODULE=<django_app_name>.settings \
+   OTEL_METRICS_EXPORTER=none \
    OTEL_LOGS_EXPORTER=none \
-   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \

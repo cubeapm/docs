@@ -61,9 +61,8 @@ slug: /instrumentation/nodejs
    ```shell
    OTEL_METRICS_EXPORTER=none \
    OTEL_LOGS_EXPORTER=none \
-   OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
-   OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \
    node app.js
