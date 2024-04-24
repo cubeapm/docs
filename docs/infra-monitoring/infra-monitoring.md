@@ -108,10 +108,37 @@ receivers:
       server.address:
         enabled: true
 
+  memcached:
+    endpoint: localhost:11211
+    collection_interval: 60s
+
+  mysql:
+    endpoint: localhost:3306
+    username: cubeapm
+    password: mypassword
+    collection_interval: 60s
+    metrics:
+      mysql.commands:
+        enabled: true
+      mysql.connection.count:
+        enabled: true
+      mysql.connection.errors:
+        enabled: true
+      mysql.query.count:
+        enabled: true
+      mysql.query.slow.count:
+        enabled: true
+      mysql.joins:
+        enabled: true
+      mysql.replica.sql_delay:
+        enabled: true
+      mysql.replica.time_behind_source:
+        enabled: true
+
   postgresql:
     endpoint: localhost:5432
     transport: tcp
-    username: postgres
+    username: cubeapm
     password: mypassword
     # databases:
     #   - otel
@@ -121,6 +148,20 @@ receivers:
     tls:
       insecure: true
 
+  mongodb:
+    hosts:
+      - endpoint: localhost:27017
+    # username: cubeapm
+    # password: mypassword
+    collection_interval: 60s
+    tls:
+      insecure: true
+      # ca_file: /etc/otelcol-contrib/global-bundle.pem
+
+  nginx:
+    endpoint: http://localhost:80/status
+    collection_interval: 60s
+
 processors:
   batch:
 
@@ -129,6 +170,12 @@ processors:
       - system
     system:
       hostname_sources: ["os"]
+
+  # resource/cube.environment:
+  #   attributes:
+  #     - key: cube.environment
+  #       value: UNSET
+  #       action: upsert
 
 exporters:
   logging:
@@ -149,11 +196,15 @@ service:
         # by commenting them out here.
         - hostmetrics
         # - redis
+        # - memcached
+        # - mysql
         # - postgresql
+        # - mongodb
+        # - nginx
       processors:
         - batch
         - resourcedetection
-        - resource/cube.environment
+        # - resource/cube.environment
       exporters:
         - otlphttp
         # - logging
