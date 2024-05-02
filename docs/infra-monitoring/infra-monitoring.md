@@ -229,8 +229,9 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
 
 ```yaml
 mode: daemonset
-# image:
-#   tag: 0.89.0
+image:
+  repository: "otel/opentelemetry-collector-contrib"
+  # tag: 0.99.0
 presets:
   kubernetesAttributes:
     enabled: true
@@ -318,8 +319,9 @@ clusterRole:
 
 ```yaml
 mode: deployment
-# image:
-#   tag: 0.89.0
+image:
+  repository: "otel/opentelemetry-collector-contrib"
+  # tag: 0.99.0
 presets:
   clusterMetrics:
     enabled: true
