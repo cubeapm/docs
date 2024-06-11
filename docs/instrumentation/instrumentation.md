@@ -16,14 +16,14 @@ CubeAPM natively supports New Relic agents as well, i.e., CubeAPM can be used to
 
 By default, New Relic agents send data to New Relic servers. However, if an environment variable `NEW_RELIC_HOST` is found, the agents send data to the domain mentioned in this environment variable's value instead of sending to New Relic servers. Thus, by adding the environment variable `NEW_RELIC_HOST=<domain_of_cubeapm_server>` to the application deployment setup, New Relic agent will send data to your CubeAPM servers instead of New Relic servers.
 
-However, there is one more thing that needs to be taken care of. CubeAPM agents send data using HTTPS on port 443. However, CubeAPM expects data on port 3130 over HTTP. So, a load balancer (or HTTP reverse proxy) is needed to accept data on HTTPS/443 and forward to CubeAPM on HTTP/3130.
+However, there is one more thing that needs to be taken care of. New Relic agents send data using HTTPS on port 443. However, CubeAPM expects data on port 3130 over HTTP. So, a load balancer (or HTTP reverse proxy) is needed to accept data on HTTPS/443 and forward to CubeAPM on HTTP/3130.
 
 That's it! New Relic agents can now be used to send data to CubeAPM.
 
 ![CubeAPM with New Relic](/img/new-relic.svg)
 
 :::info
-NewRelic PHP agent does not support the NEW_RELIC_HOST environment variable. It needs setting the `newrelic.daemon.collector_host` value in newrelic.ini instead.
+New Relic PHP agent does not support the NEW_RELIC_HOST environment variable. It needs setting the `newrelic.daemon.collector_host` value in newrelic.ini instead.
 :::
 
 ### Multi-environment setup
@@ -85,3 +85,21 @@ NEW_RELIC_TELEMETRY_ENDPOINT=https://<domain_of_cubeapm_server>/newrelic/aws/lam
 # For multi-environment setup
 NEW_RELIC_TELEMETRY_ENDPOINT=https://<domain_of_cubeapm_server>/newrelic/aws/lambda/v1/env/<environment_name>
 ```
+
+### Infinite Tracing
+
+Using New Relic's infinite tracing with CubeAPM is also easy. By adding the environment variable `NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST=<domain_of_cubeapm_server>` (and optionally `NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_PORT=<desired_port>`) to the application deployment setup, New Relic agent will send infinite tracing data to your CubeAPM servers instead of New Relic servers. Note that NEW_RELIC_HOST is still required.
+
+In case of infinite tracing, New Relic agents send data using gRPCS on port 443. However, CubeAPM expects data on port 3124 over gRPC. So, a load balancer (or gRPC reverse proxy) is needed to accept data on gRPCS/443 and forward to CubeAPM on gRPC/3124.
+
+![CubeAPM with New Relic infinite tracing](/img/new-relic-8t.svg)
+
+:::info
+New Relic PHP agent does not support the NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST environment variable. It needs setting the `newrelic.infinite_tracing.trace_observer.host` value in newrelic.ini instead. Similarly, set `newrelic.infinite_tracing.trace_observer.port` if needed.
+:::
+
+:::info
+In case of Python language, the following package also needs to be installed.
+
+pip install "newrelic[infinite-tracing]"
+:::
