@@ -68,6 +68,10 @@ slug: /instrumentation/nodejs
    node app.js
    ```
 
+:::info
+If the application is running in PM2 cluster mode, then setting NODE_OPTIONS does not work. In this case, add `require('./tracing.js');` as the first line in your application code.
+:::
+
 ### Sample App
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express
