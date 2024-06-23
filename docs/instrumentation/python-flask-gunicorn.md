@@ -97,6 +97,32 @@ Python 3
    gunicorn app:app -c gunicorn.conf.py
    ```
 
+## Capture Exception StackTraces
+
+Any exceptions occuring in your application will be captured and shown on CubeAPM. However, if you are using Flask's global exception handling (e.g., via `app.register_error_handler()`), then you may need to take some extra steps as below to ensure that the exceptions get captured.
+
+```python
+from opentelemetry import trace
+from opentelemetry.trace import Status, StatusCode
+from werkzeug.exceptions import HTTPException
+
+def handle_unhandled_exception(ex):
+   # highlight-start
+   current_span = trace.get_current_span()
+   if current_span:
+      if not isinstance(ex, HTTPException) or ex.code >= 500:
+         current_span.record_exception(ex)
+         current_span.set_status(Status(StatusCode.ERROR))
+   # highlight-end
+
+   # your exception handling logic below
+   print(ex)
+   return ''
+
+
+app.register_error_handler(Exception, handle_unhandled_exception)
+```
+
 ## Troubleshooting
 
 The following can be used for debugging:
