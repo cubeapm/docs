@@ -62,6 +62,12 @@ import TabItem from '@theme/TabItem';
       open-telemetry/sdk \
       open-telemetry/exporter-otlp \
       open-telemetry/opentelemetry-auto-laravel
+
+      # Install instrumentation packages for libraries used in your project.
+      # Visit the below link for a list of available instrumentation packages.
+      # https://opentelemetry.io/ecosystem/registry/?component=instrumentation&language=php
+      #
+      #composer require open-telemetry/opentelemetry-auto-guzzle
       ```
 
 2. Modify the application run command as follows:
