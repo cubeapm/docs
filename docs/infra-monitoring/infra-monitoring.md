@@ -14,3 +14,4 @@ Please follow the links below for installation steps according to deployment env
 - [Bare Metal / Virtual Machine](2_baremetal.md)
 - [Kubernetes](3_kubernetes.md) (via Helm)
 - [AWS](5_cloudwatch.md) (via CloudWatch)
+- [Varnish Cache](6_varnishcache.md)
