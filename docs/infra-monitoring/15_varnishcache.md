@@ -1,11 +1,11 @@
 ---
-sidebar_position: 6 
+sidebar_position: 15
 slug: /infra-monitoring/varnish-cache
 ---
 
 # Varnish Cache
 
-The recommended setup for infra monitoring with CubeAPM is to use OpenTelemetry (OTel) Collector for collecting the metrics(for Varnish) from host machines and sending them to CubeAPM. CubeAPM then provides visualization and alerting on the collected metrics.
+The recommended setup for Varnish Cache metrics monitoring with CubeAPM is to use OpenTelemetry (OTel) Collector for collecting the metrics from host machines and sending them to CubeAPM. CubeAPM then provides visualization and alerting on the collected metrics.
 
 The official OTel Collector helm chart is available at https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector.
 
@@ -19,12 +19,9 @@ sudo ./prometheus_varnish_exporter
 
 The default port is `9131`, accessible at `localhost:9131`, with Prometheus metrics available at `localhost:9131/metrics`.
 
-Here is a OpenTelemetry (OTel) Collector configuration file for monitoring Varnish Cache:
+Here is a OpenTelemetry (OTel) Collector configuration file for Varnish Cache metrics monitoring:
 
-<details>
-<summary>values.yaml</summary>
-
-```yaml
+```yaml title="config.yaml"
 mode: daemonset
 
 image:
@@ -72,7 +69,6 @@ config:
         receivers:
           - prometheus
 ```
-</details>
 
 In the Collector configuration file, set the `Prometheus receiver` to use the Varnish Prometheus endpoint as a scrape target.This example configures targets to scrape the metrics endpoint provided by the Varnish Prometheus exporter.
 
