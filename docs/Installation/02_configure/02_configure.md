@@ -67,18 +67,21 @@ token=
 # URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
 # Example:
 #  smtp.url=smtp://<username>:<password>@<mailserver>:25/?disable_starttls=false
+# Note: username and password must be url-encoded to escape any special characters.
 smtp.url=
 
 # URL of database for storing config data (settings, dashboards, etc.).
 # Example:
 #  database.url=mysql://<username>:<password>@tcp(<host>:3306)/<db_name>
 #  database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
+# Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
 database.url=
 
 # URL of database for storing user accounts data.
 # Example:
 #  auth.database.url=mysql://<username>:<password>@tcp(<host>:3306)/<db_name>
 #  auth.database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
+# Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
 auth.database.url=
 
 # Encryption key for session data. Must be 32 characters long. Can use hex encoded UUID without dashes.
@@ -144,6 +147,9 @@ log-level=warn
 
 ## Tuning Parameters
 
+# Static files (e.g. javascript source maps) retention period
+files.retention=720h
+
 # Metrics retention period. Must be between 24h0m0s and 1440h0m0s.
 metrics.retention=720h
 
@@ -174,6 +180,15 @@ cluster.port.state=3129
 
 # Port to use for internal exchange of data between nodes for serving write requests
 cluster.port.write=3128
+
+# Disable New Relic infinite tracing receiver
+collector.nr.8t-disable=false
+
+# Host to bind New Relic infinite tracing receiver on
+collector.nr.8t-host=0.0.0.0
+
+# Port to bind New Relic infinite tracing receiver on
+collector.nr.8t-port=3124
 
 # Disable OTLP grpc receiver
 collector.otlp.grpc-disable=false
@@ -211,6 +226,12 @@ env-tag=cube.environment
 # Possible values are none, viewer, editor, admin.
 auth.default-role=viewer
 
+# Disable sign-up and sign-in using email/password
+auth.method.email.disable=false
+
+# Disable self-service sign-up. Only admins will be able to add new users.
+auth.selfservice.signup.disable=false
+
 # Explicit address to advertise in cluster, e.g. 10.0.0.1. If not specified, CubeAPM will try to detect the address automatically.
 cluster.advertise-address=
 
@@ -223,15 +244,26 @@ cluster.replication-factor=
 # [Deprecated] Use env-tag instead.
 #collector.env-tag=cube.environment
 
+# Comma separated list of allowed headers for CORS requests.
+# Examples: "http://*.domain.com", "*"
+collector.nr.cors.headers=Content-Type
+
+# Comma separated list of allowed origins for CORS requests.
+# Examples: "http://*.domain.com", "*"
+collector.nr.cors.origins=*
+
 # Comma separated list of allowed origins for CORS requests.
 # Examples: "http://*.domain.com", "*"
 collector.otlp.http.cors.origins=
 
+# Path to config file for transforming ingested spans before further processing.
+collector.span-transforms-config-file=
+
 # Path to config file for extending CubeAPM metrics with custom labels.
 metrics.custom-labels-config-file=
 
-# Metrics update interval. Must be between 500ms and 1m0s.
-metrics.update-interval=15s
+# Whether to disable infrastructure correlation. Infra correlation adds little value but consumes huge resources in case of spot instances.
+metrics.infra-correlation.disable=false
 
 # Whether to perfer HTTP status code description as error description in the reported metrics. By default, exception name is preferred and HTTP status code description is used if no exception occured.
 metrics.prefer-http-status-as-error-desc=false
@@ -241,6 +273,9 @@ metrics.slo.config-file=
 
 # Whether to treat HTTP 4xx response as error in the reported metrics.
 metrics.treat-4xx-as-error=false
+
+# Metrics update interval. Must be between 5s and 1m0s.
+metrics.update-interval=30s
 
 # Delay before shutdown. During this delay, health check returns non-OK responses so load balancers can route new requests to other servers.
 shutdown-delay=0s

@@ -54,6 +54,11 @@ Python 3
          processor = BatchSpanProcessor(OTLPSpanExporter())
       provider.add_span_processor(processor)
       trace.set_tracer_provider(provider)
+
+   # Note: If uWSGI's `lazy-apps = true` option is used for running the
+   # app, then `@postfork` above will not work and `init_tracing` needs
+   # to be called by uncommenting the below line.
+   #init_tracing()
    # highlight-end
 
    @app.route('/roll/<number>')
