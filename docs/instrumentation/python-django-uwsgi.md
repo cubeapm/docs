@@ -25,7 +25,8 @@ Python 3
    # highlight-start
    from uwsgidecorators import postfork
    from opentelemetry import trace
-   from opentelemetry.sdk.trace import TracerProvider
+   from opentelemetry.semconv.resource import ResourceAttributes
+   from opentelemetry.sdk.trace import TracerProvider, Resource
    from opentelemetry.sdk.trace.export import (
       BatchSpanProcessor,
       ConsoleSpanExporter,
@@ -33,6 +34,7 @@ Python 3
    )
    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
    from opentelemetry.instrumentation.django import DjangoInstrumentor
+   from socket import gethostname
    # highlight-end
 
    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
@@ -48,7 +50,10 @@ Python 3
 
    @postfork
    def init_tracing():
-      provider = TracerProvider()
+      provider = TracerProvider(resource=Resource({
+         ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
+         ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
+      }))
       if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
          processor = SimpleSpanProcessor(ConsoleSpanExporter())
       else:

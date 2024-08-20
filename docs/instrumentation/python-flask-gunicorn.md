@@ -23,13 +23,15 @@ Python 3
    # highlight-start
    import os
    from opentelemetry import trace
-   from opentelemetry.sdk.trace import TracerProvider
+   from opentelemetry.semconv.resource import ResourceAttributes
+   from opentelemetry.sdk.trace import TracerProvider, Resource
    from opentelemetry.sdk.trace.export import (
       BatchSpanProcessor,
       ConsoleSpanExporter,
       SimpleSpanProcessor,
    )
    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+   from socket import gethostname
    # highlight-end
 
    bind = "127.0.0.1:8000"
@@ -53,7 +55,10 @@ Python 3
    def post_fork(server, worker):
       server.log.info("Worker spawned (pid: %s)", worker.pid)
 
-      provider = TracerProvider()
+      provider = TracerProvider(resource=Resource({
+         ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
+         ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
+      }))
       if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
          processor = SimpleSpanProcessor(ConsoleSpanExporter())
       else:
