@@ -51,9 +51,10 @@ Python 3
 
    ```python title="main.py"
    from fastapi import FastAPI
+   # highlight-start
    from tracing import init_tracing
-   # highlight-next-line
    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+   # highlight-end
 
    app = FastAPI()
 
