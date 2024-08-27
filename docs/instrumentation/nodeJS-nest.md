@@ -1,7 +1,7 @@
 ---
-id: nodeJs
-title: "NodeJS"
-slug: /instrumentation/nodejs
+id: nodeJs-nest
+title: "NodeJS Nest"
+slug: /instrumentation/nodejs-nest
 ---
 
 ## Installation
@@ -65,7 +65,7 @@ slug: /instrumentation/nodejs
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \
-   node app.js
+   npm run start
    ```
 
 :::info
@@ -74,40 +74,8 @@ If the application is running in PM2 cluster mode, then setting NODE_OPTIONS doe
 
 ### Sample App
 
-A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express
+A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_nest
 
-## Capture Exception StackTraces (optional)
-
-CubeAPM shows stacktraces for any exceptions that occur in your application. However, if you are using the Express framework, you need to add the following code to your Express error handler to capture the stacktraces:
-
-```typescript
-import express, { Express, ErrorRequestHandler } from "express";
-// highlight-next-line
-import { trace } from "@opentelemetry/api";
-
-const app: Express = express();
-
-app.get("/", (req, res) => {
-  throw new Error("Test throw error!");
-});
-
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  // highlight-start
-  const span = trace.getActiveSpan();
-  if (span) {
-    span.recordException(err);
-  }
-  // highlight-end
-
-  // pass the error to the next middleware
-  // you can do any custom error handling here
-  next(err);
-};
-
-app.use(errorHandler);
-
-app.listen(8080);
-```
 
 ## Troubleshooting
 
