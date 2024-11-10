@@ -147,14 +147,20 @@ log-level=warn
 
 ## Tuning Parameters
 
+# Logs retention period. Must be between 24h and 1440h.
+logs.retention=24h
+
+# Metrics retention period. Must be between 24h and 1440h.
+metrics.retention=720h
+
+# Traces retention period. Must be between 24h and 1440h.
+traces.retention=72h
+
 # Static files (e.g. javascript source maps) retention period
 files.retention=720h
 
-# Metrics retention period. Must be between 24h0m0s and 1440h0m0s.
-metrics.retention=720h
-
-# Traces retention period. Must be between 1h0m0s and 720h0m0s.
-traces.retention=72h
+# Minimum query duration for labeling database queries as slow.
+traces.slow-query-threshold=500ms
 
 
 
@@ -219,8 +225,11 @@ alertmanager.charts.disable=false
 data-dir=
 
 # Tag name for environment.
-# If set, the value of this tag in traces and metrics will be used as the value of env label in metrics.
+# If set, the value of this tag in logs, metrics, and traces will be used to segragate them in the UI.
 env-tag=cube.environment
+
+# Path to config file for alerts.
+alerts.config-file=
 
 # Default role to be assigned to a new user on signup.
 # Possible values are none, viewer, editor, admin.
@@ -228,6 +237,12 @@ auth.default-role=viewer
 
 # Disable sign-up and sign-in using email/password
 auth.method.email.disable=false
+
+# Enable sign-up and sign-in using webauthn
+auth.method.webauthn.enable=false
+
+# Enforce Multi-Factor Authentication for all users
+auth.mfa.enforce=false
 
 # Disable self-service sign-up. Only admins will be able to add new users.
 auth.selfservice.signup.disable=false
@@ -245,7 +260,7 @@ cluster.replication-factor=
 #collector.env-tag=cube.environment
 
 # Comma separated list of allowed headers for CORS requests.
-# Examples: "http://*.domain.com", "*"
+# Examples: "Content-Type,tracestate,traceparent", "Content-Type,X-My-Custom-Header"
 collector.nr.cors.headers=Content-Type
 
 # Comma separated list of allowed origins for CORS requests.
@@ -256,14 +271,23 @@ collector.nr.cors.origins=*
 # Examples: "http://*.domain.com", "*"
 collector.otlp.http.cors.origins=
 
+# Percent error traces to sample. Zero means dynamic sampling, which provides good performance while ensuring at least some samples of every kind of error are saved.
+collector.sampling.error-percent=0
+
 # Path to config file for transforming ingested spans before further processing.
 collector.span-transforms-config-file=
+
+# Update HTTP client span name as per called service's name and route.
+collector.span-transforms.enrich-http-client=false
+
+# Access key for AWS CloudWatch integration via Amazon Data Firehose. If provided, CubeAPM will match the access key before accepting data from Amazon Data Firehose.
+metrics.aws.data-firehose-access-key=
 
 # Path to config file for extending CubeAPM metrics with custom labels.
 metrics.custom-labels-config-file=
 
-# Whether to disable infrastructure correlation. Infra correlation adds little value but consumes huge resources in case of spot instances.
-metrics.infra-correlation.disable=false
+# Whether to enable infrastructure correlation.
+metrics.infra-correlation.enable=false
 
 # Whether to perfer HTTP status code description as error description in the reported metrics. By default, exception name is preferred and HTTP status code description is used if no exception occured.
 metrics.prefer-http-status-as-error-desc=false
@@ -274,7 +298,7 @@ metrics.slo.config-file=
 # Whether to treat HTTP 4xx response as error in the reported metrics.
 metrics.treat-4xx-as-error=false
 
-# Metrics update interval. Must be between 5s and 1m0s.
+# Metrics update interval. Must be between 5s and 1m.
 metrics.update-interval=30s
 
 # Delay before shutdown. During this delay, health check returns non-OK responses so load balancers can route new requests to other servers.

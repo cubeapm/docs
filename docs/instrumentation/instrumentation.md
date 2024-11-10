@@ -26,6 +26,18 @@ That's it! New Relic agents can now be used to send data to CubeAPM.
 New Relic PHP agent does not support the NEW_RELIC_HOST environment variable. It needs setting the `newrelic.daemon.collector_host` value in newrelic.ini instead.
 :::
 
+:::info
+New Relic Go agent does not read environment variables by default. `newrelic.ConfigFromEnvironment()` needs to be added to `newrelic.NewApplication()` as below.
+
+```go
+newrelic.NewApplication(
+    newrelic.ConfigFromEnvironment(),
+    ...
+)
+```
+
+:::
+
 ### Multi-environment setup
 
 If you are using multi-environment feature of CubeAPM, you can set your application’s environment name by setting the app name as per the below format:

@@ -33,3 +33,7 @@ img {
   border: 1px solid #999;
   padding: 2px;
 }
+.navbar__logo img {
+  border: none;
+  padding: 0;
+}

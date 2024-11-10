@@ -72,6 +72,21 @@ slug: /instrumentation/nodejs-express
 If the application is running in PM2 cluster mode, then setting NODE_OPTIONS does not work. In this case, add `require('./tracing.js');` as the first line in your application code.
 :::
 
+:::info
+If the application is configured to compile as a **module** (`type: 'module'` in package.json), then make the below changes for the instrumentation to work properly:
+
+<!--
+module => ESM module (mjs)
+default => commonjs (cjs)
+
+The most prominently difference in a module is usually that `import` is used instead of `require`. However, if the project uses typescript, it will use `import` and typescript compiler can still compile it to cjs or mjs depending on configuration in tsconfig.json. So, detecting final type gets a bit tricky with typescript. See the OpenTelemetry documentation link below for more details. Also see: https://github.com/open-telemetry/opentelemetry-js-contrib/issues/1849 -->
+
+1. Change `require` statements to corresponding `import` statements in tracing.js.
+2. Change the commans line arguments (or NODE_OPTIONS) to `--import ./tracing.js --experimental-loader=@opentelemetry/instrumentation/hook.mjs`.
+
+For further details, please refer: https://github.com/open-telemetry/opentelemetry-js/blob/main/doc/esm-support.md
+:::
+
 ### Sample App
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express
