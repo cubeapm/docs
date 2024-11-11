@@ -18,7 +18,7 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
 mode: daemonset
 image:
   repository: "otel/opentelemetry-collector-contrib"
-  # tag: 0.99.0
+  # tag: 0.112.0
 presets:
   kubernetesAttributes:
     enabled: true
@@ -108,8 +108,10 @@ clusterRole:
 mode: deployment
 image:
   repository: "otel/opentelemetry-collector-contrib"
-  # tag: 0.99.0
+  # tag: 0.112.0
 presets:
+  kubernetesEvents:
+    enabled: true
   clusterMetrics:
     enabled: true
 config:
@@ -122,6 +124,10 @@ config:
       metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
       retry_on_failure:
         enabled: false
+    otlphttp/k8s-events:
+      logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
+      headers:
+        Cube-Stream-Fields: event.domain
   processors:
     batch: {}
   receivers:
@@ -144,6 +150,15 @@ config:
           - batch
         receivers:
           - k8s_cluster
+      logs:
+        exporters:
+          # - debug
+          - otlphttp/k8s-events
+        processors:
+          - memory_limiter
+          - batch
+        receivers:
+          - k8sobjects
 ```
 
 </details>
