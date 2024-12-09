@@ -26,6 +26,10 @@ presets:
     enabled: true
   kubeletMetrics:
     enabled: true
+  logsCollection:
+    enabled: true
+    # includeCollectorLogs: true
+    storeCheckpoints: true
 config:
   exporters:
     debug:
@@ -36,6 +40,10 @@ config:
       metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
       retry_on_failure:
         enabled: false
+    otlphttp/logs:
+      logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
+      headers:
+        Cube-Stream-Fields: k8s.namespace.name,k8s.deployment.name,k8s.statefulset.name
   processors:
     batch: {}
     resourcedetection:
@@ -89,6 +97,15 @@ config:
         receivers:
           - hostmetrics
           - kubeletstats
+      logs:
+        exporters:
+          # - debug
+          - otlphttp/logs
+        processors:
+          - memory_limiter
+          - batch
+          - resourcedetection
+          - resource/host.name
 
 clusterRole:
   rules:
