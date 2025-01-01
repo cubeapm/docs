@@ -19,12 +19,12 @@ Here we show the installation steps for Ubuntu. Steps for other linux variants a
 
 ```shell
 # change the link to the appropriate link for your os, cpu architecture, collector version, etc.
-wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.96.0/otelcol-contrib_0.96.0_linux_arm64.deb
+wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.116.1/otelcol-contrib_0.116.1_linux_arm64.deb
 
-dpkg -i otelcol-contrib_0.96.0_linux_arm64.deb
+dpkg -i otelcol-contrib_0.116.1_linux_arm64.deb
 
 # the package file can now be removed
-# rm otelcol-contrib_0.96.0_linux_arm64.deb
+# rm otelcol-contrib_0.116.1_linux_arm64.deb
 
 # edit the config as desired (refer the configuration section below)
 vi /etc/otelcol-contrib/config.yaml
@@ -88,10 +88,7 @@ receivers:
       # paging:
       # processes:
       # process:
-      #   mute_process_name_error: true
-      #   mute_process_exe_error: true
-      #   mute_process_io_error: true
-      #   mute_process_user_error: true
+      #   mute_process_all_errors: true
 
   redis:
     endpoint: localhost:6379
@@ -102,6 +99,7 @@ receivers:
 
   memcached:
     endpoint: localhost:11211
+    transport: tcp
     collection_interval: 60s
 
   mysql:
@@ -126,6 +124,14 @@ receivers:
         enabled: true
       mysql.replica.time_behind_source:
         enabled: true
+      mysql.index.io.wait.time:
+        enabled: false
+      mysql.index.io.wait.count:
+        enabled: false
+      mysql.table.io.wait.time:
+        enabled: false
+      mysql.table.io.wait.count:
+        enabled: false
 
   postgresql:
     endpoint: localhost:5432
@@ -170,7 +176,7 @@ processors:
   #       action: upsert
 
 exporters:
-  logging:
+  debug:
     verbosity: detailed
     sampling_initial: 5
     sampling_thereafter: 1
@@ -199,13 +205,18 @@ service:
         # - resource/cube.environment
       exporters:
         - otlphttp
-        # - logging
+        # - debug
 
   telemetry:
     logs:
       level: info
     metrics:
-      address: 0.0.0.0:8888
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: "localhost"
+                port: 8888
 ```
 
 </details>
