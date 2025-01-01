@@ -30,7 +30,7 @@ AWS ECS can send logs to external services using AWS FireLens, which is a wrappe
        match                 *
        key_name              log
        parser                custom_log_parser
-       # preserve_key          on
+       preserve_key          on
        reserve_data          on
    ```
 
@@ -43,7 +43,7 @@ AWS ECS can send logs to external services using AWS FireLens, which is a wrappe
    [PARSER]
        Name         custom_log_parser
        Format       regex
-       Regex        /^(?<timestamp>\S+ \S+) (?<log_level>[A-Z]+) (?<log>.*)$/m
+       Regex        /^(?<timestamp>\S+ \S+) (?<log_level>[A-Z]+)/
        Time_Key     timestamp
        Time_Format  %Y-%m-%d %H:%M:%S.%L
        Time_Keep    on
