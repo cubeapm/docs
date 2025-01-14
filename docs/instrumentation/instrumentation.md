@@ -114,4 +114,24 @@ New Relic PHP agent does not support the NEW_RELIC_INFINITE_TRACING_TRACE_OBSERV
 In case of Python language, the following package also needs to be installed.
 
 pip install "newrelic[infinite-tracing]"
+
 :::
+
+:::info
+In case of Ruby language, please follow the guide here - https://docs.newrelic.com/docs/apm/agents/ruby-agent/configuration/distributed-tracing-ruby-agent/#configure-agent-inf
+
+:::
+
+:::warning
+Infinite tracing uses GRPC metadata. GRPC metadata is passed in http headers. By default, nginx drops headers with underscore in name, so if nginx is being used in the request path, it needs to be configured to allow underscores in headers - https://nginx.org/en/docs/http/ngx_http_core_module.html#underscores_in_headers
+:::
+
+#### Minimum New Relic Agent version required for infinite tracing
+
+| Language | Minimum Agent Version |
+| -------- | --------------------- |
+| Java     | v8.3.0                |
+| NodeJS   | v10.1.0               |
+| PHP      | v9.14.0               |
+| Python   | v8.7.0                |
+| Ruby     | v8.15.0               |
