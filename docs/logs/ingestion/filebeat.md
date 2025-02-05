@@ -11,7 +11,7 @@ Configure `output.elasticsearch` section in `filebeat.yml` as below:
 ```yaml
 output.elasticsearch:
   hosts:
-    - "http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/elasticsearch"
+    - "http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/elasticsearch/"
   parameters:
     _msg_field: "message"
     _time_field: "@timestamp"
