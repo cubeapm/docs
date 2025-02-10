@@ -1,7 +1,7 @@
 ---
-id: ecs
+id: aws-ecs
 title: "AWS ECS"
-slug: /logs/ingestion/ecs
+slug: /logs/ingestion/aws-ecs
 ---
 
 # AWS ECS
