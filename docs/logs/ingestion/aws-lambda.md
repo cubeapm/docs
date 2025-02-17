@@ -12,6 +12,59 @@ AWS Lambda can send logs to external services using lambda extension layers. Cub
 The lambda will **NOT** stop sending logs to AWS Cloudwatch after the below integrations. Unfortunately, AWS does not provide an official way to stop sending lambda logs to Cloudwatch. A practical workaround is to modify your lambda's IAM permissions to deny the permission to send logs to Cloudwatch, as described here - https://stackoverflow.com/a/59665261.
 :::
 
+## OpenTelemetry
+
+1. (Optional - required for traces but not for logs) Visit https://github.com/open-telemetry/opentelemetry-lambda/releases, and copy the ARN of the layer corresponding to the language in which your lambda is implemented. Fill in the appropriate values for parameters in `< >` to get the actual ARN. Add this ARN as a layer to your lambda.
+
+1. From the same URL above, copy the ARN of the "layer-collector". Fill in the appropriate values for parameters in `< >` to get the actual ARN. Add this ARN as well as a layer to your lambda.
+
+1. Add the below file to the root of your lambda function code and deploy the updated code.
+
+   ```yaml title="collector.yaml"
+   receivers:
+     telemetryapi:
+   exporters:
+     debug:
+       verbosity: detailed
+       sampling_initial: 5
+       sampling_thereafter: 1
+     otlphttp/logs:
+       logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
+       headers:
+         Cube-Stream-Fields: service.name
+     otlphttp/traces:
+       traces_endpoint: http://<cubeapm_endpoint>:4318/v1/traces
+   processors:
+     batch:
+     decouple:
+   service:
+     pipelines:
+       traces:
+         receivers: [telemetryapi]
+         processors: [batch, decouple]
+         exporters:
+           # - debug
+           - otlphttp/traces
+       logs:
+         receivers: [telemetryapi]
+         processors: [batch, decouple]
+         exporters:
+           # - debug
+           - otlphttp/logs
+   ```
+
+1. Add the below environment variables to your lambda.
+
+   ```shell
+   # uncomment following line if traces instrumentation layer (as described in Step 1 above) is added.
+   # AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-handler
+   OPENTELEMETRY_COLLECTOR_CONFIG_URI=/var/task/collector.yaml
+   ```
+
+Lambda logs should now be visible in CubeAPM.
+
+Ref: https://opentelemetry.io/blog/2025/observing-lambdas/
+
 ## New Relic
 
 If your lambda is instrumented using New Relic lambda layer, you can send the logs to CubeAPM by adding the below environment variables to your lambda.
