@@ -156,6 +156,30 @@ receivers:
       insecure: true
       # ca_file: /etc/otelcol-contrib/global-bundle.pem
 
+  kafkametrics:
+    protocol_version: "3.0.0"
+    collection_interval: 60s
+    cluster_alias: kafka-prod
+    brokers: [kafka:9092]
+    topic_match: "^[^_].*$" # Excludes internal topics (starting with _)
+    scrapers:
+      - brokers
+      - topics
+      - consumers
+
+  rabbitmq:
+    endpoint: http://rabbitmq:15672
+    username: admin
+    password: admin
+    collection_interval: 10s
+    metrics:
+      rabbitmq.node.disk_free:
+        enabled: true
+      rabbitmq.node.mem_used:
+        enabled: true
+      rabbitmq.node.mem_limit:
+        enabled: true
+
   nginx:
     endpoint: http://localhost:80/status
     collection_interval: 60s
@@ -199,6 +223,8 @@ service:
         # - postgresql
         # - mongodb
         # - nginx
+        # - kafkametrics
+        # - rabbitmq
       processors:
         - batch
         - resourcedetection
@@ -219,4 +245,29 @@ service:
                 port: 8888
 ```
 
+:::note
+If required, multiple instances of a receiver, such as Redis, can be configured by defining additional sections with unique names. For example, you can create `redis/instance1`, `redis/instance2`, etc., each with its own configuration settings. For example, if you have two Redis instances running on different hosts, you can configure them as follows:
+
+```yaml
+redis/instance1:
+  endpoint: 10.0.0.1:6379
+  collection_interval: 60s
+  resource_attributes:
+    server.address:
+      enabled: true
+
+redis/instance2:
+  endpoint: 10.0.0.2:6379
+  collection_interval: 60s
+  resource_attributes:
+    server.address:
+      enabled: true
+```
+
+:::
+
 </details>
+
+:::info
+This configuration includes common components like redis, mysql, postgresql, etc., but if you do not find what you are looking for, please refer to the comprehensive list of all supported receivers by OpenTelemetry. You can access this list **[here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver).** Clicking on any receiver will direct you to its specific configuration details, which can be integrated into config.yaml.
+:::

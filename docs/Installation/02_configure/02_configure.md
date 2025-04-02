@@ -29,19 +29,15 @@ If a parameter if specified through multiple means, the following order of prefe
 CubeAPM provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for CubeAPM to start up. Following is a list of such parameters:
 
 1. `token`
-2. `smtp.url`
-3. `database.url`
-4. `auth.database.url`
-5. `auth.key.session`
-6. `auth.key.tokens`
+1. `auth.key.session`
+1. `auth.key.tokens`
 
 In addition, the following configuration parameters have some default value, but it is quite likely that you may need to override them as per your environment for CubeAPM to work properly.
 
 1. `base-url`
-2. `auth.sys-admins`
-3. `cluster.peers`
-4. `smtp.from`
-5. `time-zone`
+1. `auth.sys-admins`
+1. `cluster.peers`
+1. `time-zone`
 
 :::info
 For security reasons, CubeAPM requires HTTPS. Hence, it needs to be deployed behind a load balancer or reverse proxy with SSL termination capability.
@@ -64,32 +60,11 @@ Below is the list of all configuration parameters supported by CubeAPM, along wi
 # Account token obtained from CubeAPM. This token is used for authentication with CubeAPM.
 token=
 
-# URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
-# Example:
-#  smtp.url=smtp://<username>:<password>@<mailserver>:25/?disable_starttls=false
-# Note: username and password must be url-encoded to escape any special characters.
-smtp.url=
-
-# URL of database for storing config data (settings, dashboards, etc.).
-# Example:
-#  database.url=mysql://<username>:<password>@tcp(<host>:3306)/<db_name>
-#  database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
-# Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
-database.url=
-
-# URL of database for storing user accounts data.
-# Example:
-#  auth.database.url=mysql://<username>:<password>@tcp(<host>:3306)/<db_name>
-#  auth.database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
-# Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
-auth.database.url=
-
 # Encryption key for session data. Must be 32 characters long. Can use hex encoded UUID without dashes.
 auth.key.session=
 
 # Encryption key for tokens. Must be 32 characters long. Can use hex encoded UUID without dashes.
 auth.key.tokens=
-
 
 
 ## Important Parameters: You will quite likely need to set these as per your environment for CubeAPM to work properly.
@@ -108,9 +83,6 @@ auth.cookie.insecure=false
 # Comma separated list of all nodes in the cluster, e.g., 10.0.0.1,10.0.0.2,10.0.0.3. Leave empty for single node operation.
 cluster.peers=
 
-# Email address of sender. Your SMTP server must be configured to allow sending emails from this address.
-smtp.from=no-reply@cubeapm.com
-
 # Timezone of CubeAPM users. While most of the timezone related operations are done on the browser using browser's time zone setting, a few operations need to be performed on the server and they use this setting.
 # Examples: America/Los_Angeles, Asia/Kolkata, UTC
 time-zone=UTC
@@ -118,6 +90,20 @@ time-zone=UTC
 
 
 ## Optional Parameters
+
+# URL of database for storing config data (settings, dashboards, etc.).
+# Example:
+#  database.url=mysql://<username>:<password>@tcp(<host>:3306)/<db_name>
+#  database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
+# Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
+database.url=memory
+
+# URL of database for storing user accounts data.
+# Example:
+#  auth.database.url=mysql://<username>:<password>@tcp(<host>:3306)/<db_name>
+#  auth.database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
+# Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
+auth.database.url=memory
 
 # Client ID for Sign in with GitHub
 auth.oidc.github.client-id=
@@ -136,6 +122,15 @@ alertmanager.oauth.pagerduty.app-id=
 
 # Bot user OAuth token for sending alert notifications on Slack. Slack bot tokens start with 'xoxb'.
 alertmanager.oauth.slack.token=
+
+# URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
+# Example:
+#  smtp.url=smtp://<username>:<password>@<mailserver>:25/?disable_starttls=false
+# Note: username and password must be url-encoded to escape any special characters.
+smtp.url=
+
+# Email address of sender. Your SMTP server must be configured to allow sending emails from this address.
+smtp.from=no-reply@cubeapm.com
 
 # Disable the built-in demo trace generator
 tracegen.disable=false
