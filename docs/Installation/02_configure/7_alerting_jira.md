@@ -9,7 +9,7 @@ To enable sending alert notifications to Jira, you need to create an API token i
 
 1. Log in to Jira with an account that has administrative privileges. Click on your avatar in the top-right corner, and then click **Manage account**.
 
-   ![Navigate to Profile](/img/configure/alerting/jira/profile2.png)
+   ![Navigate to Profile](/img/configure/alerting/jira/profile.png)
 
 1. In your manage account page, click on **Security** in the top navigation bar.
 
@@ -34,13 +34,13 @@ To enable sending alert notifications to Jira, you need to create an API token i
 
 1. Configure CubeAPM as below.
 
-```shell
-# If you access Jira on https://youraccountid.atlassian.net, the site name is youraccountid
-alertmanager.jira.site-name=<jira_site_name>
-alertmanager.jira.user-email=<email_address_of_jira_account>
-alertmanager.jira.token=<api_token_generated_above>
-# Note that Jira displays expiry date in MM/DD/YYYY format during token creation
-alertmanager.jira.token-expiry-date=<expiry_date_in_YYYY-MM-DD_format>
-```
+   ```shell
+   # If you access Jira on https://youraccountid.atlassian.net, the site name is youraccountid
+   alertmanager.jira.site-name=<jira_site_name>
+   alertmanager.jira.user-email=<email_address_of_jira_account>
+   alertmanager.jira.token=<api_token_generated_above>
+   # Note that Jira displays expiry date in MM/DD/YYYY format during token creation
+   alertmanager.jira.token-expiry-date=<expiry_date_in_YYYY-MM-DD_format>
+   ```
 
-These can be provided in `/etc/cubeapm/config.properties`, or as corresponding `configVars.alertmanager.jira.*` properties in helm chart values file.
+   These can be provided in `/etc/cubeapm/config.properties`, or as corresponding `configVars.alertmanager.jira.*` properties in helm chart values file.
