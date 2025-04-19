@@ -64,6 +64,15 @@ config:
         - key: cube.environment
           value: UNSET
           action: upsert
+    # transform/logs_extract_fields:
+    #   error_mode: ignore
+    #   log_statements:
+    #     - context: log
+    #       statements:
+    #         # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/pkg/ottl/ottlfuncs#extractpatterns
+    #         - set(cache, ExtractPatterns(body, "\\[(?P<log_level>debug|info|warn|warning|error)\\]"))
+    #         - flatten(cache, "")
+    #         - merge_maps(attributes, cache, "upsert")
     transform/logs_parse_json_body:
       error_mode: ignore
       log_statements:
@@ -142,6 +151,7 @@ config:
           - otlphttp/logs
         processors:
           - memory_limiter
+          # - transform/logs_extract_fields
           - transform/logs_parse_json_body
           - batch
           - resourcedetection

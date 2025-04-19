@@ -4,6 +4,12 @@ title: "Java"
 slug: /instrumentation/java
 ---
 
+## Prerequisites
+
+Java 8+
+
+Ref: https://github.com/open-telemetry/opentelemetry-java/blob/main/VERSIONING.md#language-version-compatibility
+
 ## Auto Instrumentation
 
 1. Download the OpenTelemetry Java Agent jar.
@@ -36,6 +42,15 @@ slug: /instrumentation/java
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip
    OTEL_SERVICE_NAME=<app_name>
    ```
+
+For Java applications running on Tomcat, we need to set the CATALINA_OPTS environment variable instead of JAVA_TOOL_OPTIONS. Rest of the steps are the same as above.
+
+```shell
+# Add to <tomcat_home>/bin/setenv.sh
+export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/path/to/opentelemetry-javaagent.jar"
+```
+
+Ref: https://opentelemetry.io/docs/zero-code/java/agent/server-config/
 
 ## Troubleshooting
 

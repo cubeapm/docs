@@ -15,4 +15,4 @@ To enable sending alert notifications to PagerDuty, you need to create an app in
 6. Upon filling **Redirect URLs** as above, **Integration Setup URL** will appear below it.
 7. The value of **Integration Setup URL** will contain a URL parameter named **app_id**. Copy the value of app_id (something like AB12XYZ).
 8. Click on **Save** button at the bottom of the page.
-9. The above app_id can be provided to CubeAPM to enable sending alert notifications to PagerDuty.
+9. The above app_id can be provided to CubeAPM to enable sending alert notifications to PagerDuty (set `alertmanager.oauth.pagerduty.app-id` property in `/etc/cubeapm/config.properties`, or `configVars.alertmanager.oauth.pagerduty.appId` in helm chart values file).

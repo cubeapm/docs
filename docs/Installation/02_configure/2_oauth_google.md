@@ -27,4 +27,4 @@ To enable Sign in with Google, you need to create an OAuth app in your Google Wo
    - **Name**: CubeAPM
    - **Authorised redirect URIs**: `<cube_apm_address>/api/auth/self-service/methods/oidc/callback/google`, e.g., https://cubeapm.yourdomain.com/api/auth/self-service/methods/oidc/callback/google
 7. Save the configuration and copy the Client ID and Client secret.
-8. The above Client ID and Client Secret can be provided to CubeAPM to enable Sign in with Google.
+8. The above Client ID and Client Secret can be provided to CubeAPM to enable Sign in with Google (set `auth.oidc.google.client-id` and `auth.oidc.google.client-secret` properties in `/etc/cubeapm/config.properties`, or `configVars.auth.oidc.google.clientId` and `configVars.auth.oidc.google.clientSecret` in helm chart values file).

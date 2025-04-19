@@ -96,6 +96,9 @@ receivers:
     resource_attributes:
       server.address:
         enabled: true
+    metrics:
+      redis.cmd.calls:
+        enabled: true
 
   memcached:
     endpoint: localhost:11211

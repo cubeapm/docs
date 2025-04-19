@@ -24,6 +24,8 @@ That's it! New Relic agents can now be used to send data to CubeAPM.
 
 :::info
 New Relic PHP agent does not support the NEW_RELIC_HOST environment variable. It needs setting the `newrelic.daemon.collector_host` value in newrelic.ini instead.
+
+Also, while unrelated to CubeAPM, we highly recommend setting `newrelic.transaction_tracer.detail = 0` in newrelic.ini. Without this, the New Relic PHP agent generates a lot of data which degrades application performance.
 :::
 
 :::info
@@ -107,13 +109,11 @@ In case of infinite tracing, New Relic agents send data using gRPCS on port 443.
 ![CubeAPM with New Relic infinite tracing](/img/new-relic-8t.svg)
 
 :::info
-New Relic PHP agent does not support the NEW_RELIC_INFINITE_TRACING_TRACE_OBSERVER_HOST environment variable. It needs setting the `newrelic.infinite_tracing.trace_observer.host` value in newrelic.ini instead. Similarly, set `newrelic.infinite_tracing.trace_observer.port` if needed.
-:::
-
-:::info
 In case of Python language, the following package also needs to be installed.
 
 pip install "newrelic[infinite-tracing]"
+
+Also, if you are using gevent, please check https://stackoverflow.com/questions/60957202/using-grpc-with-gevent for additional consideration.
 
 :::
 
@@ -124,6 +124,8 @@ In case of Ruby language, please follow the guide here - https://docs.newrelic.c
 
 :::warning
 Infinite tracing uses GRPC metadata. GRPC metadata is passed in http headers. By default, nginx drops headers with underscore in name, so if nginx is being used in the request path, it needs to be configured to allow underscores in headers - https://nginx.org/en/docs/http/ngx_http_core_module.html#underscores_in_headers
+
+AWS Application Load Balancer (ALB) also drops headers with underscores if `drop invalid header fields` is turned on.
 :::
 
 #### Minimum New Relic Agent version required for infinite tracing
@@ -132,6 +134,5 @@ Infinite tracing uses GRPC metadata. GRPC metadata is passed in http headers. By
 | -------- | --------------------- |
 | Java     | v8.3.0                |
 | NodeJS   | v10.1.0               |
-| PHP      | v9.14.0               |
 | Python   | v8.7.0                |
 | Ruby     | v8.15.0               |

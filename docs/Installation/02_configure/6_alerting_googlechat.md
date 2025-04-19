@@ -12,4 +12,4 @@ To send alert notifications to Google Chat, you need to create a Webhook in the 
 3. On the popup that appears, click on **Manage webhooks** button at the bottom. Then click on **Add another** button at the bottom.
 4. On the next screen, fill `CubeAPM` for Name, and then click on **Save** button.
 5. On the next screen, look for the `CubeAPM` entry we just added, and click on **Copy** icon next to it.
-6. When creating and alert, the above url can be provided to CubeAPM to send alert notifications to Google Chat.
+6. When creating an alert, the above url can be provided to CubeAPM to send alert notifications to Google Chat.
