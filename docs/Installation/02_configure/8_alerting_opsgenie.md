@@ -9,11 +9,11 @@ To enable sending alert notifications from CubeAPM to Opsgenie, you need to crea
 
 1. In the team's page, click on the **Integrations** tab from the left sidebar and click on the **Add integration** button.
 
-   ![Add Integration](/img/configure/alerting/Opsgenie/add_integration.png)
+   ![Add Integration](/img/configure/alerting/opsgenie/add_integration.png)
 
 1. Search for "API" in the integration list and select the **API** integration.
 
-   ![Select API Integration](/img/configure/alerting/Opsgenie/select_api_integration.png)
+   ![Select API Integration](/img/configure/alerting/opsgenie/select_api_integration.png)
 
 1. Configure the API integration:
 
@@ -21,11 +21,11 @@ To enable sending alert notifications from CubeAPM to Opsgenie, you need to crea
    - Select the team that should receive alerts from this integration.
    - Click **Continue**.
 
-   ![Configure API Integration](/img/configure/alerting/Opsgenie/integration_name.png)
+   ![Configure API Integration](/img/configure/alerting/opsgenie/integration_name.png)
 
 1. After saving, the integration details page will be displayed. **Copy the API Key** and click on **Turn on integration**.
 
-   ![Copy API Key](/img/configure/alerting/Opsgenie/turn_on_integration.png)
+   ![Copy API Key](/img/configure/alerting/opsgenie/turn_on_integration.png)
 
 1. Configure CubeAPM with the copied API key:
 
