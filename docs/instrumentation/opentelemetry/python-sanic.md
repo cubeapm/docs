@@ -1,7 +1,7 @@
 ---
 id: python-sanic
 title: "Python Sanic"
-slug: /instrumentation/python-sanic
+slug: /instrumentation/opentelemetry/python-sanic
 ---
 
 As of Apr 2024, OpenTelemetry does not provide auto-instrumentation for Sanic. That said, a fully functional Sanic instrumentation can be achieved as follows.

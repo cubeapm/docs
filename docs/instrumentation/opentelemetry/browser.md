@@ -1,7 +1,7 @@
 ---
 id: javascript-browser
 title: "JavaScript (browser)"
-slug: /instrumentation/javascript-browser
+slug: /instrumentation/opentelemetry/javascript-browser
 ---
 
 ## Installation

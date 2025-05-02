@@ -1,7 +1,7 @@
 ---
-id: nodeJs-express
-title: "NodeJS Express"
-slug: /instrumentation/nodejs-express
+id: nodeJs-nest
+title: "NodeJS Nest"
+slug: /instrumentation/opentelemetry/nodejs-nest
 ---
 
 ## Installation
@@ -65,64 +65,17 @@ slug: /instrumentation/nodejs-express
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \
-   node app.js
+   npm run start
    ```
 
 :::info
 If the application is running in PM2 cluster mode, then setting NODE_OPTIONS does not work. In this case, add `require('./tracing.js');` as the first line in your application code.
 :::
 
-:::info
-If the application is configured to compile as a **module** (`type: 'module'` in package.json), then make the below changes for the instrumentation to work properly:
-
-<!--
-module => ESM module (mjs)
-default => commonjs (cjs)
-
-The most prominently difference in a module is usually that `import` is used instead of `require`. However, if the project uses typescript, it will use `import` and typescript compiler can still compile it to cjs or mjs depending on configuration in tsconfig.json. So, detecting final type gets a bit tricky with typescript. See the OpenTelemetry documentation link below for more details. Also see: https://github.com/open-telemetry/opentelemetry-js-contrib/issues/1849 -->
-
-1. Change `require` statements to corresponding `import` statements in tracing.js.
-2. Change the commans line arguments (or NODE_OPTIONS) to `--import ./tracing.js --experimental-loader=@opentelemetry/instrumentation/hook.mjs`.
-
-For further details, please refer: https://github.com/open-telemetry/opentelemetry-js/blob/main/doc/esm-support.md
-:::
-
 ### Sample App
 
-A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express
+A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_nest
 
-## Capture Exception StackTraces (optional)
-
-CubeAPM shows stacktraces for any exceptions that occur in your application. However, if you are using the Express framework, you need to add the following code to your Express error handler to capture the stacktraces:
-
-```typescript
-import express, { Express, ErrorRequestHandler } from "express";
-// highlight-next-line
-import { trace } from "@opentelemetry/api";
-
-const app: Express = express();
-
-app.get("/", (req, res) => {
-  throw new Error("Test throw error!");
-});
-
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  // highlight-start
-  const span = trace.getActiveSpan();
-  if (span) {
-    span.recordException(err);
-  }
-  // highlight-end
-
-  // pass the error to the next middleware
-  // you can do any custom error handling here
-  next(err);
-};
-
-app.use(errorHandler);
-
-app.listen(8080);
-```
 
 ## Troubleshooting
 

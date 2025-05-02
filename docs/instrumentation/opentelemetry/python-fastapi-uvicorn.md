@@ -1,7 +1,7 @@
 ---
 id: python-fastapi-uvicorn
 title: "Python FastAPI Uvicorn"
-slug: /instrumentation/python-fastapi-uvicorn
+slug: /instrumentation/opentelemetry/python-fastapi-uvicorn
 ---
 
 ## Prerequisites

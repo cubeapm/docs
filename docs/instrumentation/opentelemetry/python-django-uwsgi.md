@@ -1,7 +1,7 @@
 ---
 id: python-django-uwsgi
 title: "Python Django uWSGI"
-slug: /instrumentation/python-django-uwsgi
+slug: /instrumentation/opentelemetry/python-django-uwsgi
 ---
 
 ## Prerequisites

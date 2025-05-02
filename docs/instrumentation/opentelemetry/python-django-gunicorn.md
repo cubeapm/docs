@@ -1,7 +1,7 @@
 ---
-id: python-flask-gunicorn
-title: "Python Flask Gunicorn"
-slug: /instrumentation/python-flask-gunicorn
+id: python-django-gunicorn
+title: "Python Django Gunicorn"
+slug: /instrumentation/opentelemetry/python-django-gunicorn
 ---
 
 ## Prerequisites
@@ -13,7 +13,7 @@ Python 3
 1. Install dependencies:
 
    ```shell
-   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http opentelemetry-instrumentation-flask
+   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http
    opentelemetry-bootstrap -a install
    ```
 
@@ -68,65 +68,40 @@ Python 3
    # highlight-end
    ```
 
-3. Add the highlighted lines below to your project's main file:
+3. Add the highlighted lines below to your project's `wsgi.py` file:
 
-   ```python title="app.py"
-   from flask import Flask
+   ```python title="wsgi.py"
+   import os
+   from django.core.wsgi import get_wsgi_application
    # highlight-next-line
-   from opentelemetry.instrumentation.flask import FlaskInstrumentor
+   from opentelemetry.instrumentation.django import DjangoInstrumentor
 
-   app = Flask(__name__)
+   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+
    # highlight-start
-   FlaskInstrumentor().instrument_app(app)
+   DjangoInstrumentor().instrument()
    # Additional instrumentations can be enabled by
    # following the docs for respective instrumentations at
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_flask_gunicorn
+   # https://github.com/cubeapm/sample_app_python_django_gunicorn
    # highlight-end
 
-   @app.route('/roll/<number>')
-   def roll(number):
-      return number
+   application = get_wsgi_application()
    ```
 
 4. Modify the application run command as follows:
 
    ```shell
+   DJANGO_SETTINGS_MODULE=<django_app_name>.settings \
    OTEL_METRICS_EXPORTER=none \
    OTEL_LOGS_EXPORTER=none \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
-   gunicorn app:app -c gunicorn.conf.py
+   gunicorn mysite.wsgi -c gunicorn.conf.py
    ```
-
-## Capture Exception StackTraces
-
-Any exceptions occuring in your application will be captured and shown on CubeAPM. However, if you are using Flask's global exception handling (e.g., via `app.register_error_handler()`), then you may need to take some extra steps as below to ensure that the exceptions get captured.
-
-```python
-from opentelemetry import trace
-from opentelemetry.trace import Status, StatusCode
-from werkzeug.exceptions import HTTPException
-
-def handle_unhandled_exception(ex):
-   # highlight-start
-   current_span = trace.get_current_span()
-   if current_span:
-      if not isinstance(ex, HTTPException) or ex.code >= 500:
-         current_span.record_exception(ex)
-         current_span.set_status(Status(StatusCode.ERROR))
-   # highlight-end
-
-   # your exception handling logic below
-   print(ex)
-   return ''
-
-
-app.register_error_handler(Exception, handle_unhandled_exception)
-```
 
 ## Troubleshooting
 
