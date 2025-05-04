@@ -48,9 +48,15 @@ log.level:=error OR log.level:=warn
 log.level:(=error OR =warn)
 log.level:in(error, warn)
 
+# find all logs with values except "error" and "warn" in log.level field
+log.level:!in(error, warn)
+
 # Regex (case-sensitive)
 log.level:~"error|warn"
 
 # Regex (case-insensitive)
 log.level:~"(?i)(error|warn)"
+
+# NOT Regex (case-sensitive)
+log.level:!~"error|warn"
 ```

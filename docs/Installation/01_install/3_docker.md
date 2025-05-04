@@ -12,7 +12,7 @@ docker run -d --name cubeapm \
 -p 3125:3125 -p 3130:3130 -p 4317:4317 -p 4318:4318 \
 -v cube_data:/root/data \
 -v ./config.properties:/etc/cubeapm/config.properties \
-cubeapm/cubeapm:v1.11.0 \
+cubeapm/cubeapm:v1.12.0 \
 --config-file /etc/cubeapm/config.properties
 ```
 
@@ -26,7 +26,7 @@ The following docker compose config installs a fully working three-node cluster 
 version: "3"
 services:
   cubeapm1:
-    image: cubeapm/cubeapm:v1.11.0
+    image: cubeapm/cubeapm:v1.12.0
     volumes:
       - ./data_volume/cubeapm/cubeapm1:/root/data
       # - ./config.properties:/root/config.properties
@@ -45,7 +45,7 @@ services:
         condition: service_healthy
     restart: always
   cubeapm2:
-    image: cubeapm/cubeapm:v1.11.0
+    image: cubeapm/cubeapm:v1.12.0
     volumes:
       - ./data_volume/cubeapm/cubeapm2:/root/data
       # - ./config.properties:/root/config.properties
@@ -67,7 +67,7 @@ services:
         condition: service_healthy
     restart: always
   cubeapm3:
-    image: cubeapm/cubeapm:v1.11.0
+    image: cubeapm/cubeapm:v1.12.0
     volumes:
       - ./data_volume/cubeapm/cubeapm3:/root/data
       # - ./config.properties:/root/config.properties
@@ -136,14 +136,6 @@ services:
       - cubeapm3
     restart: always
 
-  # mailslurper is an SMTP server for delivering emails.
-  # Its UI will be availale at http://localhost:4436.
-  mailslurper:
-    image: oryd/mailslurper:latest-smtps
-    ports:
-      - 4436:4436
-      - 4437:4437
-
 # Inline content in configs is supported starting docker compose 2.23.1
 # (released on Nov 15th, 2023). On older versions, you will get an error
 # "Additional property content is not allowed". In that case, create a regular
@@ -155,18 +147,16 @@ configs:
     content: |
       # Mandatory Parameters
       token=<your_cubeapm_token>
-      smtp.url=smtps://test:test@mailslurper:1025/?skip_ssl_verify=true
-      database.url=mysql://root:root@tcp(mysql:3306)/cubeapm
-      auth.database.url=mysql://root:root@tcp(mysql_auth:3306)/cubeapm_auth
       auth.key.session=ce8b866cedd54b9a893ffd74be689e9d
-      auth.key.tokens=67e49fe8b82546d1a055e5d1f5b43cbf
 
       # Important Parameters
       # base-url=http://localhost:3125
       # auth.sys-admins=you@yourdomain.com
       cluster.peers=cubeapm1,cubeapm2,cubeapm3
-      # smtp.from=no-reply@cubeapm.com
       # time-zone=UTC
+
+      database.url=mysql://root:root@tcp(mysql:3306)/cubeapm
+      auth.database.url=mysql://root:root@tcp(mysql_auth:3306)/cubeapm_auth
 
   nginx:
     content: |
@@ -186,6 +176,8 @@ configs:
               # client_max_body_size 50M;
               location / {
                   proxy_pass http://cubeapm-3125;
+                  proxy_set_header Host $$host;
+                  proxy_pass_request_headers on;
               }
           }
 
@@ -200,6 +192,8 @@ configs:
               client_max_body_size 50M;
               location / {
                   proxy_pass http://cubeapm-3130;
+                  proxy_set_header Host $$host;
+                  proxy_pass_request_headers on;
               }
           }
 

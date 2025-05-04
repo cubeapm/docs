@@ -64,11 +64,31 @@ Below is the list of all configuration parameters supported by CubeAPM, along wi
 # Account token obtained from CubeAPM. This token is used for authentication with CubeAPM.
 token=
 
-# URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
-# Example:
-#  smtp.url=smtp://<username>:<password>@<mailserver>:25/?disable_starttls=false
-# Note: username and password must be url-encoded to escape any special characters.
-smtp.url=
+# Encryption key for session data. Must be 32 characters long. Can use hex encoded UUID without dashes.
+auth.key.session=
+
+
+
+## Important Parameters: You will quite likely need to set these as per your environment for CubeAPM to work properly.
+
+# URL used by users to access CubeAPM. This is used to generate URLs in emails and alerts.
+# If you use reverse proxy and sub path specify full url (with sub path).
+# Examples: http://cube.yourdomain.com, https://yourdomain.com/cube, http://10.0.0.1:3125
+base-url=http://localhost:3125
+
+# Comma separated list of email ids of users to be given sysadmin privilege.
+auth.sys-admins=
+
+# Comma separated list of all nodes in the cluster, e.g., 10.0.0.1,10.0.0.2,10.0.0.3. Leave empty for single node operation.
+cluster.peers=
+
+# Timezone of CubeAPM users. While most of the timezone related operations are done on the browser using browser's time zone setting, a few operations need to be performed on the server and they use this setting.
+# Examples: America/Los_Angeles, Asia/Kolkata, UTC
+time-zone=UTC
+
+
+
+## Optional Parameters
 
 # URL of database for storing config data (settings, dashboards, etc.).
 # Example:
@@ -83,41 +103,6 @@ database.url=
 #  auth.database.url=postgres://<username>:<password>@<host>:5432/<db_name>?sslmode=disable
 # Note: A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
 auth.database.url=
-
-# Encryption key for session data. Must be 32 characters long. Can use hex encoded UUID without dashes.
-auth.key.session=
-
-# Encryption key for tokens. Must be 32 characters long. Can use hex encoded UUID without dashes.
-auth.key.tokens=
-
-
-
-## Important Parameters: You will quite likely need to set these as per your environment for CubeAPM to work properly.
-
-# URL used by users to access CubeAPM. This is used to generate URLs in emails and alerts.
-# If you use reverse proxy and sub path specify full url (with sub path).
-# Examples: http://cube.yourdomain.com, https://yourdomain.com/cube, http://10.0.0.1:3125
-base-url=http://localhost:3125
-
-# Comma separated list of email ids of users to be given sysadmin privilege.
-auth.sys-admins=
-
-# Allow authentication over HTTP. By default, CubeAPM sets secure attribute on cookies so the cookies are sent only over HTTPS.
-auth.cookie.insecure=false
-
-# Comma separated list of all nodes in the cluster, e.g., 10.0.0.1,10.0.0.2,10.0.0.3. Leave empty for single node operation.
-cluster.peers=
-
-# Email address of sender. Your SMTP server must be configured to allow sending emails from this address.
-smtp.from=no-reply@cubeapm.com
-
-# Timezone of CubeAPM users. While most of the timezone related operations are done on the browser using browser's time zone setting, a few operations need to be performed on the server and they use this setting.
-# Examples: America/Los_Angeles, Asia/Kolkata, UTC
-time-zone=UTC
-
-
-
-## Optional Parameters
 
 # Client ID for Sign in with GitHub
 auth.oidc.github.client-id=
@@ -137,8 +122,61 @@ alertmanager.oauth.pagerduty.app-id=
 # Bot user OAuth token for sending alert notifications on Slack. Slack bot tokens start with 'xoxb'.
 alertmanager.oauth.slack.token=
 
+# Name of the site for sending alert notifications on Jira. If you access Jira on https://youraccountid.atlassian.net, the site name is youraccountid.
+alertmanager.jira.site-name=
+
+# API token for sending alert notifications on Jira.
+alertmanager.jira.token=
+
+# Expiry date of the Jira API token in YYYY-MM-DD format. Will be used to remind when the token is about to expire.
+alertmanager.jira.token-expiry-date=
+
+# Email address of Jira user for sending alert notifications on Jira.
+alertmanager.jira.user-email=
+
+# API tokens for sending alert notifications on Opsgenie.
+# Format: team1:token1,team2:token2,...,teamN:tokenN
+alertmanager.opsgenie.tokens=
+
+# URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
+# Example:
+#  smtp.url=smtp://<username>:<password>@<mailserver>:25/?disable_starttls=false
+# Note: username and password must be url-encoded to escape any special characters.
+smtp.url=
+
+# Email address of sender. Your SMTP server must be configured to allow sending emails from this address.
+smtp.from=no-reply@cubeapm.com
+
 # Disable the built-in demo trace generator
 tracegen.disable=false
+
+# The number of concurrent workers. 0 means equal to number of available CPUs.
+logs.backup.concurrency=0
+
+# Path to file with GCS or S3 credentials. Credentials are loaded from default locations if not set.
+# See https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html and https://cloud.google.com/iam/docs/creating-managing-service-account-keys.
+logs.backup.creds-file-path=
+
+# Where to put the backup on the remote storage.
+# Example: s3://bucket/path/to/backup, gs://bucket/path/to/backup, azblob://container/path/to/backup or fs:///path/to/local/backup/dir
+logs.backup.destination=
+
+# Path to file with S3 configs. Configs are loaded from default location if not set.
+# See https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html.
+logs.backup.s3.config-file-path=
+
+# Profile name for S3 configs. If no set, the value of the environment variable will be loaded (AWS_PROFILE or AWS_DEFAULT_PROFILE), or if both not set, DefaultSharedConfigProfile is used.
+logs.backup.s3.config-profile=
+
+# Custom S3 endpoint for use with S3-compatible storages (e.g. MinIO). S3 is used if not set.
+logs.backup.s3.custom-endpoint=
+
+# Prefixing endpoint with bucket name when set false.
+logs.backup.s3.force-path-style=false
+
+# The Storage Class applied to objects uploaded to AWS S3. Supported values are: GLACIER, DEEP_ARCHIVE, GLACIER_IR, INTELLIGENT_TIERING, ONEZONE_IA, OUTPOSTS, REDUCED_REDUNDANCY, STANDARD, STANDARD_IA.
+# See https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html.
+logs.backup.s3.storage-class=
 
 # Minimal allowed log Level. Supported values are debug, info, warn, and error.
 log-level=warn
@@ -147,13 +185,13 @@ log-level=warn
 
 ## Tuning Parameters
 
-# Logs retention period. Must be between 24h and 1440h.
+# Logs retention period. Must be at least 24h.
 logs.retention=24h
 
-# Metrics retention period. Must be between 24h and 1440h.
+# Metrics retention period. Must be at least 24h.
 metrics.retention=720h
 
-# Traces retention period. Must be between 24h and 1440h.
+# Traces retention period. Must be at least 24h.
 traces.retention=72h
 
 # Static files (e.g. javascript source maps) retention period
@@ -161,6 +199,18 @@ files.retention=720h
 
 # Minimum query duration for labeling database queries as slow.
 traces.slow-query-threshold=500ms
+
+# Comma separated list of Datadog tags to be used as stream fields.
+logs.datadog.stream-fields=
+
+# Comma separated list of Datadog tags to ignore.
+logs.datadog.ignore-fields=
+
+# Comma separated list of New Relic tags to be used as stream fields.
+logs.newrelic.stream-fields=service.name,faas.name
+
+# Comma separated list of New Relic tags to ignore.
+logs.newrelic.ignore-fields=
 
 
 
@@ -246,6 +296,9 @@ auth.mfa.enforce=false
 
 # Disable self-service sign-up. Only admins will be able to add new users.
 auth.selfservice.signup.disable=false
+
+# Defines how long a session is active. Once that lifespan has been reached, the user needs to sign in again.
+auth.session.lifespan=24h
 
 # Explicit address to advertise in cluster, e.g. 10.0.0.1. If not specified, CubeAPM will try to detect the address automatically.
 cluster.advertise-address=
