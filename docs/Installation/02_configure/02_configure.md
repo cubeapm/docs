@@ -29,27 +29,14 @@ If a parameter if specified through multiple means, the following order of prefe
 CubeAPM provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for CubeAPM to start up. Following is a list of such parameters:
 
 1. `token`
-2. `smtp.url`
-3. `database.url`
-4. `auth.database.url`
-5. `auth.key.session`
-6. `auth.key.tokens`
+1. `auth.key.session`
 
 In addition, the following configuration parameters have some default value, but it is quite likely that you may need to override them as per your environment for CubeAPM to work properly.
 
 1. `base-url`
-2. `auth.sys-admins`
-3. `cluster.peers`
-4. `smtp.from`
-5. `time-zone`
-
-:::info
-For security reasons, CubeAPM requires HTTPS. Hence, it needs to be deployed behind a load balancer or reverse proxy with SSL termination capability.
-
-However, for ease of initial exploration, HTTP can be used with `localhost`/`127.0.0.1` only.
-
-If you want to allow HTTP, set `auth.cookie.insecure=true` (see Configuration Reference below).
-:::
+1. `auth.sys-admins`
+1. `cluster.peers`
+1. `time-zone`
 
 ## Configuration Reference
 

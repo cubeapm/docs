@@ -223,3 +223,5 @@ service:
 ```
 
 </details>
+
+A sample project with examples of additional Collector configuration, e.g., to monitor Redis, MySQL, etc. is available at https://github.com/cubeapm/sample_infra_monitoring.
