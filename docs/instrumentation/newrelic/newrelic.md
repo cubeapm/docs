@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 
 ## Using CubeAPM with New Relic agents
 
-CubeAPM natively supports New Relic agents as well, i.e., CubeAPM can be used to monitor applications instrumented with New Relic agents as well. Here's how to use New Relic agents with CubeAPM:
+CubeAPM supports New Relic agents, i.e., CubeAPM can be used to monitor applications instrumented with New Relic agents. Here's how to use New Relic agents with CubeAPM:
 
 By default, New Relic agents send data to New Relic servers. However, if an environment variable `NEW_RELIC_HOST` is found, the agents send data to the domain mentioned in this environment variable's value instead of sending to New Relic servers. Thus, by adding the environment variable `NEW_RELIC_HOST=<domain_of_cubeapm_server>` to the application deployment setup, New Relic agent will send data to your CubeAPM servers instead of New Relic servers.
 
