@@ -1,7 +1,7 @@
 ---
-id: php-laravel
-title: "PHP Laravel"
-slug: /instrumentation/php-laravel
+id: php-slim
+title: "PHP Slim"
+slug: /instrumentation/opentelemetry/php-slim
 ---
 
 import Tabs from '@theme/Tabs';
@@ -38,7 +38,7 @@ import TabItem from '@theme/TabItem';
       sudo pecl install protobuf
       ```
 
-   3. Add the extensions to your php.ini file (run `php --ini` to find php.ini file):
+   3. Add the extensions to your php.ini file:
 
       ```shell
       [opentelemetry]
@@ -56,12 +56,13 @@ import TabItem from '@theme/TabItem';
    5. Add additional dependencies to your application:
 
       ```shell
-      composer config allow-plugins.php-http/discovery false
-      composer require guzzlehttp/psr7 \
-      php-http/guzzle7-adapter \
+      composer config allow-plugins.php-http/discovery true
+      composer require php-http/guzzle7-adapter \
       open-telemetry/sdk \
+      open-telemetry/opentelemetry-auto-slim \
       open-telemetry/exporter-otlp \
-      open-telemetry/opentelemetry-auto-laravel
+      open-telemetry/opentelemetry-auto-psr15 \
+      open-telemetry/opentelemetry-auto-psr18
 
       # Install instrumentation packages for libraries used in your project.
       # Visit the below link for a list of available instrumentation packages.
@@ -82,14 +83,10 @@ import TabItem from '@theme/TabItem';
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_PROPAGATORS=baggage,tracecontext \
-   php artisan serve
+   php myapp.php
    ```
 
 Data should now be visible in your CubeAPM account.
-
-## Sample Application
-
-A working example is available at https://github.com/cubeapm/sample_app_php_laravel.
 
 ## Troubleshooting
 

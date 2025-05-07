@@ -1,7 +1,7 @@
 ---
-id: python-flask-uwsgi
-title: "Python Flask uWSGI"
-slug: /instrumentation/python-flask-uwsgi
+id: python-flask-gunicorn
+title: "Python Flask Gunicorn"
+slug: /instrumentation/opentelemetry/python-flask-gunicorn
 ---
 
 ## Prerequisites
@@ -17,12 +17,10 @@ Python 3
    opentelemetry-bootstrap -a install
    ```
 
-2. Add the highlighted lines below to your project's main file:
+2. Modify the gunicorn config file as follows:
 
-   ```python title="app.py"
-   from flask import Flask
+   ```python title="gunicorn.conf.py"
    # highlight-start
-   from uwsgidecorators import postfork
    import os
    from opentelemetry import trace
    from opentelemetry.semconv.resource import ResourceAttributes
@@ -33,22 +31,30 @@ Python 3
       SimpleSpanProcessor,
    )
    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-   from opentelemetry.instrumentation.flask import FlaskInstrumentor
    from socket import gethostname
    # highlight-end
 
-   app = Flask(__name__)
-   # highlight-start
-   FlaskInstrumentor().instrument_app(app)
-   # Additional instrumentations can be enabled by
-   # following the docs for respective instrumentations at
-   # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
-   #
-   # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_flask_uwsgi
+   bind = "127.0.0.1:8000"
 
-   @postfork
-   def init_tracing():
+   # Sample Worker processes
+   workers = 4
+   worker_class = "sync"
+   worker_connections = 1000
+   timeout = 30
+   keepalive = 2
+
+   # Sample logging
+   errorlog = "-"
+   loglevel = "info"
+   accesslog = "-"
+   access_log_format = (
+      '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
+   )
+
+   # highlight-start
+   def post_fork(server, worker):
+      server.log.info("Worker spawned (pid: %s)", worker.pid)
+
       provider = TracerProvider(resource=Resource({
          ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
          ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
@@ -59,11 +65,25 @@ Python 3
          processor = BatchSpanProcessor(OTLPSpanExporter())
       provider.add_span_processor(processor)
       trace.set_tracer_provider(provider)
+   # highlight-end
+   ```
 
-   # Note: If uWSGI's `lazy-apps = true` option is used for running the
-   # app, then `@postfork` above will not work and `init_tracing` needs
-   # to be called by uncommenting the below line.
-   #init_tracing()
+3. Add the highlighted lines below to your project's main file:
+
+   ```python title="app.py"
+   from flask import Flask
+   # highlight-next-line
+   from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
+   app = Flask(__name__)
+   # highlight-start
+   FlaskInstrumentor().instrument_app(app)
+   # Additional instrumentations can be enabled by
+   # following the docs for respective instrumentations at
+   # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
+   #
+   # A working example with multiple instrumentations is available at
+   # https://github.com/cubeapm/sample_app_python_flask_gunicorn/tree/otel
    # highlight-end
 
    @app.route('/roll/<number>')
@@ -71,7 +91,7 @@ Python 3
       return number
    ```
 
-3. Modify the application run command as follows:
+4. Modify the application run command as follows:
 
    ```shell
    OTEL_METRICS_EXPORTER=none \
@@ -79,7 +99,7 @@ Python 3
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
-   uwsgi --http :8000 --wsgi-file app.py --callable app --master --enable-threads --need-app
+   gunicorn app:app -c gunicorn.conf.py
    ```
 
 ## Capture Exception StackTraces

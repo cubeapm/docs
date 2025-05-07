@@ -1,7 +1,7 @@
 ---
 id: python-sanic
 title: "Python Sanic"
-slug: /instrumentation/python-sanic
+slug: /instrumentation/opentelemetry/python-sanic
 ---
 
 As of Apr 2024, OpenTelemetry does not provide auto-instrumentation for Sanic. That said, a fully functional Sanic instrumentation can be achieved as follows.
@@ -42,7 +42,7 @@ Python 3
       provider = TracerProvider(resource=Resource({
          ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
          ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
-      }))   
+      }))
       if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
          processor = SimpleSpanProcessor(ConsoleSpanExporter())
       else:
@@ -97,7 +97,7 @@ Python 3
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_sanic
+   # https://github.com/cubeapm/sample_app_python_sanic/tree/otel
    # highlight-end
 
    @app.get("/")

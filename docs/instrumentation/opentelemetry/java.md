@@ -1,7 +1,7 @@
 ---
 id: java
 title: "Java"
-slug: /instrumentation/java
+slug: /instrumentation/opentelemetry/java
 ---
 
 ## Prerequisites

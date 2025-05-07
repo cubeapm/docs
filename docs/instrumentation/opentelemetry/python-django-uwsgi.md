@@ -1,7 +1,7 @@
 ---
-id: python-django-gunicorn
-title: "Python Django Gunicorn"
-slug: /instrumentation/python-django-gunicorn
+id: python-django-uwsgi
+title: "Python Django uWSGI"
+slug: /instrumentation/opentelemetry/python-django-uwsgi
 ---
 
 ## Prerequisites
@@ -17,11 +17,13 @@ Python 3
    opentelemetry-bootstrap -a install
    ```
 
-2. Modify the gunicorn config file as follows:
+2. Add the highlighted lines below to your project's `wsgi.py` file:
 
-   ```python title="gunicorn.conf.py"
-   # highlight-start
+   ```python title="wsgi.py"
    import os
+   from django.core.wsgi import get_wsgi_application
+   # highlight-start
+   from uwsgidecorators import postfork
    from opentelemetry import trace
    from opentelemetry.semconv.resource import ResourceAttributes
    from opentelemetry.sdk.trace import TracerProvider, Resource
@@ -31,50 +33,9 @@ Python 3
       SimpleSpanProcessor,
    )
    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+   from opentelemetry.instrumentation.django import DjangoInstrumentor
    from socket import gethostname
    # highlight-end
-
-   bind = "127.0.0.1:8000"
-
-   # Sample Worker processes
-   workers = 4
-   worker_class = "sync"
-   worker_connections = 1000
-   timeout = 30
-   keepalive = 2
-
-   # Sample logging
-   errorlog = "-"
-   loglevel = "info"
-   accesslog = "-"
-   access_log_format = (
-      '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
-   )
-
-   # highlight-start
-   def post_fork(server, worker):
-      server.log.info("Worker spawned (pid: %s)", worker.pid)
-
-      provider = TracerProvider(resource=Resource({
-         ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
-         ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
-      }))
-      if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
-         processor = SimpleSpanProcessor(ConsoleSpanExporter())
-      else:
-         processor = BatchSpanProcessor(OTLPSpanExporter())
-      provider.add_span_processor(processor)
-      trace.set_tracer_provider(provider)
-   # highlight-end
-   ```
-
-3. Add the highlighted lines below to your project's `wsgi.py` file:
-
-   ```python title="wsgi.py"
-   import os
-   from django.core.wsgi import get_wsgi_application
-   # highlight-next-line
-   from opentelemetry.instrumentation.django import DjangoInstrumentor
 
    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
@@ -85,22 +46,39 @@ Python 3
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_django_gunicorn
+   # https://github.com/cubeapm/sample_app_python_django_uwsgi/tree/otel
+
+   @postfork
+   def init_tracing():
+      provider = TracerProvider(resource=Resource({
+         ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
+         ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
+      }))
+      if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
+         processor = SimpleSpanProcessor(ConsoleSpanExporter())
+      else:
+         processor = BatchSpanProcessor(OTLPSpanExporter())
+      provider.add_span_processor(processor)
+      trace.set_tracer_provider(provider)
+
+   # Note: If uWSGI's `lazy-apps = true` option is used for running the
+   # app, then `@postfork` above will not work and `init_tracing` needs
+   # to be called by uncommenting the below line.
+   #init_tracing()
    # highlight-end
 
    application = get_wsgi_application()
    ```
 
-4. Modify the application run command as follows:
+3. Modify the application run command as follows:
 
    ```shell
-   DJANGO_SETTINGS_MODULE=<django_app_name>.settings \
    OTEL_METRICS_EXPORTER=none \
    OTEL_LOGS_EXPORTER=none \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
-   gunicorn mysite.wsgi -c gunicorn.conf.py
+   uwsgi --module=mysite.wsgi:application --http=127.0.0.1:8000 --master --need-app
    ```
 
 ## Troubleshooting
