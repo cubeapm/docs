@@ -46,7 +46,7 @@ Python 3
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_django_uwsgi
+   # https://github.com/cubeapm/sample_app_python_django_uwsgi/tree/otel
 
    @postfork
    def init_tracing():

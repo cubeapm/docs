@@ -83,7 +83,7 @@ Python 3
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_flask_gunicorn
+   # https://github.com/cubeapm/sample_app_python_flask_gunicorn/tree/otel
    # highlight-end
 
    @app.route('/roll/<number>')

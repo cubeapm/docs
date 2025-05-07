@@ -85,7 +85,7 @@ Python 3
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_django_gunicorn
+   # https://github.com/cubeapm/sample_app_python_django_gunicorn/tree/otel
    # highlight-end
 
    application = get_wsgi_application()

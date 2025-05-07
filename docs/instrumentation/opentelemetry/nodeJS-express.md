@@ -89,7 +89,7 @@ For further details, please refer: https://github.com/open-telemetry/opentelemet
 
 ### Sample App
 
-A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express
+A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_express/tree/otel
 
 ## Capture Exception StackTraces (optional)
 

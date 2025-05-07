@@ -37,7 +37,7 @@ Python 3
         provider = TracerProvider(resource=Resource({
            ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
            ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
-        }))        
+        }))
         if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
             processor = SimpleSpanProcessor(ConsoleSpanExporter())
         else:
@@ -66,7 +66,7 @@ Python 3
    # https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
    #
    # A working example with multiple instrumentations is available at
-   # https://github.com/cubeapm/sample_app_python_fastapi_uvicorn
+   # https://github.com/cubeapm/sample_app_python_fastapi_uvicorn/tree/otel
    # highlight-end
 
    @app.route('/roll/<number>')

@@ -1,7 +1,7 @@
 ---
-id: nodeJs-express-newrelic
+id: nodeJs-express
 title: "NodeJS Express"
-slug: /instrumentation/newrelic/nodejs-express-newrelic
+slug: /instrumentation/newrelic/nodejs-express
 ---
 
 import Tabs from '@theme/Tabs';
@@ -40,7 +40,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. Load the agent when the application starts.
 
-   <Tabs groupId="start-option">
+   <Tabs>
       <TabItem value="code" label="Code">
          Add the following line at the top of your project's main file.
          ```javascript

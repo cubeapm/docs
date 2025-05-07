@@ -74,8 +74,7 @@ If the application is running in PM2 cluster mode, then setting NODE_OPTIONS doe
 
 ### Sample App
 
-A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_nest
-
+A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_nest/tree/otel
 
 ## Troubleshooting
 
