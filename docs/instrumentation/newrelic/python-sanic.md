@@ -23,7 +23,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.ini">
-         ```javascript
+         ```shell
          [newrelic]
          app_name = <app_name>
          license_key = ABC4567890ABC4567890ABC4567890ABC4567890
@@ -41,41 +41,41 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.ini">
-          ```python title="app.py"
-          from sanic import Sanic
-          # highlight-start
-          import newrelic.agent
-          # highlight-end
-          app = Sanic("SampleApp")
-          # highlight-start
-          newrelic.agent.initialize("newrelic.ini")
-          # highlight-end
-          ```
+         ```python title="app.py"
+         from sanic import Sanic
+         # highlight-start
+         import newrelic.agent
+         # highlight-end
+         app = Sanic("SampleApp")
+         # highlight-start
+         newrelic.agent.initialize("newrelic.ini")
+         # highlight-end
+         ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
-          ```python title="app.py"
-          from sanic import Sanic
-          # highlight-start
-          import newrelic.agent
-          # highlight-end
-          app = Sanic("SampleApp")
-          # highlight-start
-          newrelic.agent.initialize()
-          # highlight-end
-          ```
-        </TabItem>
+         ```python title="app.py"
+         from sanic import Sanic
+         # highlight-start
+         import newrelic.agent
+         # highlight-end
+         app = Sanic("SampleApp")
+         # highlight-start
+         newrelic.agent.initialize()
+         # highlight-end
+         ```
+      </TabItem>
    </Tabs>
 
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
-    <Tabs>
+   <Tabs>
       <TabItem value="file" label="newrelic.ini">
-         ```javascript
-        [newrelic]
-        app_name = <app_name>
-        license_key = ABC4567890ABC4567890ABC4567890ABC4567890
-        // highlight-next-line
-        host = <domain_of_cubeapm_server>
+         ```shell
+         [newrelic]
+         app_name = <app_name>
+         license_key = ABC4567890ABC4567890ABC4567890ABC4567890
+         // highlight-next-line
+         host = <domain_of_cubeapm_server>
          ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
@@ -102,9 +102,11 @@ The following can be used for troubleshooting:
 
 <Tabs>
    <TabItem value="file" label="newrelic.ini">
-      ```javascript
+      ```shell
       [newrelic]
+      # Print New Relic agent logs on screen
       log_file = stdout
+      # Set New Relic agent log level to debug if needed to see detailed logs
       log_level = debug
       ```
    </TabItem>

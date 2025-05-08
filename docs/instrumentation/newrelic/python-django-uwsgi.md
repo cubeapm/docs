@@ -23,7 +23,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.ini">
-         ```javascript
+         ```shell
          [newrelic]
          app_name = <app_name>
          license_key = ABC4567890ABC4567890ABC4567890ABC4567890
@@ -41,50 +41,41 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.ini">
-        ```python title="wsgi.py"
+         ```python title="wsgi.py"
          import os
          # highlight-start
          import newrelic.agent
-
          newrelic.agent.initialize("newrelic.ini")
          # highlight-end
-
          from django.core.wsgi import get_wsgi_application
-
          os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sample_app.settings')
-
          application = get_wsgi_application()
-        ```
+         ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
-        ```python title="wsgi.py"
+         ```python title="wsgi.py"
          import os
          # highlight-start
          import newrelic.agent
-
          newrelic.agent.initialize()
          # highlight-end
-
          from django.core.wsgi import get_wsgi_application
-
          os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sample_app.settings')
-
          application = get_wsgi_application()
-        ```
+         ```
       </TabItem>
    </Tabs>
 
-
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
-    <Tabs>
+   <Tabs>
       <TabItem value="file" label="newrelic.ini">
-         ```javascript
-        [newrelic]
-        app_name = <app_name>
-        license_key = ABC4567890ABC4567890ABC4567890ABC4567890
-        // highlight-next-line
-        host = <domain_of_cubeapm_server>
+         ```shell
+         [newrelic]
+         app_name = <app_name>
+         license_key = ABC4567890ABC4567890ABC4567890ABC4567890
+         // highlight-next-line
+         host = <domain_of_cubeapm_server>
          ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
@@ -105,16 +96,17 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 A working example is available at https://github.com/cubeapm/sample_app_python_django_uwsgi/tree/newrelic
 
-
 ## Troubleshooting
 
 The following can be used for troubleshooting:
 
 <Tabs>
    <TabItem value="file" label="newrelic.ini">
-      ```javascript
+      ```shell
       [newrelic]
+      # Print New Relic agent logs on screen
       log_file = stdout
+      # Set New Relic agent log level to debug if needed to see detailed logs
       log_level = debug
       ```
    </TabItem>
