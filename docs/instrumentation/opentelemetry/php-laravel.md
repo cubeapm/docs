@@ -89,7 +89,7 @@ Data should now be visible in your CubeAPM account.
 
 ## Sample Application
 
-A working example is available at https://github.com/cubeapm/sample_app_php_laravel.
+A working example is available at https://github.com/cubeapm/sample_app_php_laravel/tree/otel.
 
 ## Troubleshooting
 
