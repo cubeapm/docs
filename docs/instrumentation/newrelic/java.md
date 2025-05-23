@@ -9,19 +9,20 @@ import TabItem from '@theme/TabItem';
 
 ## Installation
 
-Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 5.
+Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 4.
 
-1. Download the Java APM agent with this link and then unzip it. (`/newrelic` contains newrelic.jar & newrelic.yml file.)
+1. Download the Java APM agent and unzip it.
 
-    ```
-    curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip 
-    ```
+   ```shell
+   curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+   unzip newrelic-java.zip
+   ```
 
 1. Configure the agent:
 
    <Tabs>
       <TabItem value="file" label="newrelic.yml">
-         ```javascript
+         ```yaml
          app_name: <app_name>
          license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
          ```
@@ -43,9 +44,9 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          ```
       </TabItem>
       <TabItem value="cmd" label="Startup Command">
+         Add `-javaagent:</path/newrelic-agent.jar>` to your application run command, e.g.,
          ```shell
-         java -javaagent:</path/newrelic-agent.jar> \
-         -jar <myapp>.jar
+         java -javaagent:</path/newrelic-agent.jar> -jar <myapp>.jar
          ```
       </TabItem>
    </Tabs>
@@ -54,11 +55,11 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.yml">
-         ```javascript
+         ```yaml
          app_name: <app_name>
          license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
          // highlight-next-line
-         host_name: <domain_of_cubeapm_server>
+         host: <domain_of_cubeapm_server>
          ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
@@ -85,7 +86,7 @@ The following can be used for troubleshooting:
 
 <Tabs>
    <TabItem value="file" label="newrelic.yml">
-      ```javascript
+      ```yaml
       // Print New Relic agent logs on screen
       log: stdout
       // Set New Relic agent log level to debug if needed to see detailed logs
