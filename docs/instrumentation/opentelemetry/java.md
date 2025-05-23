@@ -52,6 +52,10 @@ export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/path/to/opentelemetry-javaagent
 
 Ref: https://opentelemetry.io/docs/zero-code/java/agent/server-config/
 
+## Sample App
+
+A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/otel
+
 ## Troubleshooting
 
 The following can be used for debugging:
