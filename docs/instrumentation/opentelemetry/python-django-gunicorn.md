@@ -103,6 +103,10 @@ Python 3
    gunicorn mysite.wsgi -c gunicorn.conf.py
    ```
 
+## Sample Application
+
+A working example is available at https://github.com/cubeapm/sample_app_python_django_gunicorn/tree/otel.
+
 ## Troubleshooting
 
 The following can be used for debugging:
