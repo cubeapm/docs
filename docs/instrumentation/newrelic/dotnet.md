@@ -78,7 +78,7 @@ The following can be used for troubleshooting:
    <TabItem value="file" label="newrelic.config">
       ```xml
       <configuration xmlns="urn:newrelic-config" agentEnabled="true">
-         <log level="info" />
+         <log level="debug" />
       </configuration>
       ```
    </TabItem>
