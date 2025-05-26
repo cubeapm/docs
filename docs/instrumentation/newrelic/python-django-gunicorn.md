@@ -6,6 +6,7 @@ slug: /instrumentation/newrelic/python-django-gunicorn
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import ProxySetup from './\_proxy_setup.mdx';
 
 ## Installation
 
@@ -66,6 +67,8 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       </TabItem>
    </Tabs>
 
+1. <ProxySetup />
+
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
    <Tabs>
@@ -74,25 +77,23 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          [newrelic]
          app_name = <app_name>
          license_key = ABC4567890ABC4567890ABC4567890ABC4567890
+         // Use your load balancer\'s domain name here
          // highlight-next-line
-         host = <domain_of_cubeapm_server>
+         host = <cubeapm-newrelic.com>,
          ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
          ```shell
          NEW_RELIC_APP_NAME=<app_name>
          NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+         // Use your load balancer\'s domain name here
          // highlight-next-line
-         NEW_RELIC_HOST=<domain_of_cubeapm_server>
+         NEW_RELIC_HOST=<cubeapm-newrelic.com>
          ```
       </TabItem>
    </Tabs>
 
-   :::tip
-   See [Using CubeAPM with New Relic agents](newrelic.md) for details on how to set up `<domain_of_cubeapm_server>`.
-   :::
-
-## Sample App
+### Sample App
 
 A working example is available at https://github.com/cubeapm/sample_app_python_django_gunicorn/tree/newrelic
 
