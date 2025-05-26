@@ -116,6 +116,10 @@ Python 3
    sanic server
    ```
 
+## Sample Application
+
+A working example is available at https://github.com/cubeapm/sample_app_python_sanic/tree/otel.
+
 ## Troubleshooting
 
 The following can be used for debugging:

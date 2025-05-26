@@ -81,6 +81,10 @@ Python 3
    uwsgi --module=mysite.wsgi:application --http=127.0.0.1:8000 --master --need-app
    ```
 
+## Sample Application
+
+A working example is available at https://github.com/cubeapm/sample_app_python_django_uwsgi/tree/otel.
+
 ## Troubleshooting
 
 The following can be used for debugging:
