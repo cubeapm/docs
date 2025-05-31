@@ -1,9 +1,9 @@
 ---
 sidebar_position: 6
-slug: /install/configure-cubeapm/connect-with-google-chat-for-alerting
+slug: /configure/alerting/connect-with-google-chat
 ---
 
-# Connect with Google Chat for alerting
+# Connect with Google Chat
 
 To send alert notifications to Google Chat, you need to create a Webhook in the Google Chat Space in which you want to receive notifications. The following steps guide you through the process:
 

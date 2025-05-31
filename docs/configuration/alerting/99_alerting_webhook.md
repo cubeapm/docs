@@ -1,6 +1,6 @@
 ---
 sidebar_position: 99
-slug: /install/configure-cubeapm/webhook-for-alerting
+slug: /configure/alerting/webhook
 ---
 
 # Webhook for alerting

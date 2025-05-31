@@ -1,9 +1,9 @@
 ---
 sidebar_position: 8
-slug: /install/configure-cubeapm/connect-with-opsgenie-for-alerting
+slug: /configure/alerting/connect-with-opsgenie
 ---
 
-# Connect with Opsgenie for alerting
+# Connect with Opsgenie
 
 To enable sending alert notifications from CubeAPM to Opsgenie, you need to create an API Integration within your Opsgenie team. The following steps guide you through the process:
 

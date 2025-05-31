@@ -1,9 +1,9 @@
 ---
 sidebar_position: 7
-slug: /install/configure-cubeapm/connect-with-jira-for-alerting
+slug: /configure/alerting/connect-with-jira
 ---
 
-# Connect with Jira for alerting
+# Connect with Jira
 
 To enable sending alert notifications to Jira, you need to create an API token in Jira. The following steps guide you through the process:
 

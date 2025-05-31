@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-slug: /install/install-cubeapm/kubernetes
+slug: /install/kubernetes
 ---
 
 # Kubernetes
@@ -21,7 +21,7 @@ CubeAPM can be deployed on Kubernetes using the official Helm chart.
    helm show values cubeapm/cubeapm > values.yaml
    ```
 
-1. Edit the `values.yaml` file to customize the configuration as per your requirements. See [Configure CubeAPM](../02_configure/02_configure.md) section for details of all available configuration parameters.
+1. Edit the `values.yaml` file to customize the configuration as per your requirements. See [Configure CubeAPM](../configuration/configuration.md) section for details of all available configuration parameters.
 
 1. Install CubeAPM using the following command:
 
