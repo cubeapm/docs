@@ -1,9 +1,9 @@
 ---
 sidebar_position: 4
-slug: /install/configure-cubeapm/connect-with-slack-for-alerting
+slug: /configure/alerting/connect-with-slack
 ---
 
-# Connect with Slack for alerting
+# Connect with Slack
 
 To enable sending alert notifications to Slack, you need to create an app in your Slack workspace. The following steps guide you through the process:
 

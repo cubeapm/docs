@@ -1,9 +1,9 @@
 ---
 sidebar_position: 5
-slug: /install/configure-cubeapm/connect-with-pagerduty-for-alerting
+slug: /configure/alerting/connect-with-pagerduty
 ---
 
-# Connect with PagerDuty for alerting
+# Connect with PagerDuty
 
 To enable sending alert notifications to PagerDuty, you need to create an app in your PagerDuty account. The following steps guide you through the process:
 

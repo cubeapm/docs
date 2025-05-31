@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-slug: /install/install-cubeapm/docker
+slug: /install/docker
 ---
 
 # Docker
@@ -16,11 +16,11 @@ cubeapm/cubeapm:v1.12.0 \
 --config-file /etc/cubeapm/config.properties
 ```
 
-The above command assumes you have a file `config.properties` in your current working directory. See [Configure CubeAPM](../02_configure/02_configure.md) section for details of all available configuration parameters.
+The above command assumes you have a file `config.properties` in your current working directory. See [Configure CubeAPM](../configuration/configuration.md) section for details of all available configuration parameters.
 
 ## Docker Compose
 
-The following docker compose config installs a fully working three-node cluster of CubeAPM. After running `docker compose up`, CubeAPM will be availabe on http://localhost:3125. Also, a webmail UI will be available at http://localhost:4436. Any emails sent by CubeAPM will be available on this webmail UI.
+The following docker compose config installs a fully working three-node cluster of CubeAPM. After running `docker compose up`, CubeAPM will be availabe on http://localhost:3125.
 
 ```yaml title="docker-compose.yml"
 version: "3"

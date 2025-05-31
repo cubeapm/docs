@@ -1,6 +1,6 @@
 ---
 sidebar_position: 2
-slug: /install/install-cubeapm/bare-metal-virtual-machine
+slug: /install/bare-metal-virtual-machine
 ---
 
 # Bare Metal / Virtual Machine
@@ -20,4 +20,4 @@ The script performs the following tasks:
 
 ## Next Steps
 
-After installing Cube, head over to the [Configure CubeAPM](../02_configure/02_configure.md) section for details of all available configuration parameters.
+After installing CubeAPM, head over to the [Configure CubeAPM](../configuration/configuration.md) section for details of all available configuration parameters.
