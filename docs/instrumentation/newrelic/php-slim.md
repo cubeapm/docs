@@ -4,6 +4,8 @@ title: "PHP Slim"
 slug: /instrumentation/newrelic/php-slim
 ---
 
+import ProxySetup from './\_proxy_setup.mdx';
+
 ## Installation
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 3.
@@ -12,23 +14,22 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. Configure the agent (the config file is generally available at `/etc/php/<php_version>/mods-available/newrelic.ini`).
 
-    ```shell title="newrelic.ini"
-    newrelic.license = "ABC4567890ABC4567890ABC4567890ABC4567890"
-    newrelic.appname = "<app_name>"
-    ```
+   ```shell title="newrelic.ini"
+   newrelic.license = "ABC4567890ABC4567890ABC4567890ABC4567890"
+   newrelic.appname = "<app_name>"
+   ```
+
+1. <ProxySetup />
 
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
-    ```shell title="newrelic.ini"
-    newrelic.daemon.collector_host = "<domain_of_cubeapm_server>"
+   ```shell title="newrelic.ini"
+   // Use your load balancer\'s domain name here
+   newrelic.daemon.collector_host = "<cubeapm-newrelic.com>"
 
-    # remove irrelevant spans from traces (optional but highly recommended)
-    newrelic.transaction_tracer.detail = 0
-    ```
-
-   :::tip
-   See [Using CubeAPM with New Relic agents](newrelic.md) for details on how to set up `<domain_of_cubeapm_server>`.
-   :::
+   # remove irrelevant spans from traces (optional but highly recommended)
+   newrelic.transaction_tracer.detail = 0
+   ```
 
 ## Sample App
 
@@ -38,7 +39,7 @@ A working example is available at https://github.com/cubeapm/sample_app_php_slim
 
 The following can be used for troubleshooting:
 
- ```shell title="newrelic.ini"
+```shell title="newrelic.ini"
 newrelic.loglevel = "debug"
 # newrelic.logfile = "/var/log/newrelic/php_agent.log"
 

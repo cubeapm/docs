@@ -1,0 +1,39 @@
+Set up a proxy for New Relic agent
+
+New Relic agent has a limitation: it only send data over HTTPS on port 443. However, CubeAPM receives data on port 3130 over HTTP. To bridge this gap, you need to set up a proxy (load balancer or HTTP reverse proxy) that:
+
+- Accepts HTTPS traffic on port 443 from the New Relic agent
+- Forwards this traffic to your CubeAPM server on port 3130 over HTTP
+
+For example, you can set up an AWS Application Load Balancer (ALB) with the following configuration:
+
+- **Listener Configuration:**
+
+  - Protocol: HTTPS
+  - Port: 443
+  - Domain name: `cubeapm-newrelic.yourdomain.com` (example domain for your load balancer)
+  - SSL/TLS Certificate: Certificate for `cubeapm-newrelic.yourdomain.com` or `\*.yourdomain.com` (from ACM or imported)
+
+- **Target Group Configuration:**
+
+  - Protocol: HTTP
+  - Port: 3130
+  - Target: Your CubeAPM server IP or DNS name (e.g., `cubeapm-server.yourdomain.com`)
+  - Health check path: `/health`
+
+- **Security Groups:**
+
+  - **Load Balancer Security Group:**
+
+    - Inbound rule: Allow HTTPS (port 443) from your application servers' IPs or security groups
+    - Outbound rule: Allow HTTP (port 3130) to the CubeAPM server's IP or security group
+
+  - **CubeAPM Server Security Group:**
+    - Inbound rule: Allow HTTP (port 3130) from the load balancer's security group
+    - Outbound rule: Allow all traffic (or as per your security requirements)
+
+The New Relic agent will connect to the load balancer's domain name (`cubeapm-newrelic.yourdomain.com` in this example), which will then forward the traffic to your CubeAPM server on port 3130.
+
+:::info
+For more details on proxy setup options, refer to the [New Relic integration documentation](https://docs.cubeapm.com/instrumentation/newrelic).
+:::
