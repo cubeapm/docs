@@ -78,14 +78,16 @@ The following can be used for troubleshooting:
    <TabItem value="file" label="newrelic.config">
       ```xml
       <configuration xmlns="urn:newrelic-config" agentEnabled="true">
-         <log level="debug" />
+         <log level="debug" console="true" />
       </configuration>
       ```
    </TabItem>
    <TabItem value="env" label="Environment Variables">
       ```shell
-      # Print New Relic agent logs on screen  
-      NEW_RELIC_LOG_CONSOLE=true 
+      # Print New Relic agent logs on screen
+      NEW_RELIC_LOG_CONSOLE=true
+      # Set New Relic agent log level to debug if needed to see detailed logs
+      NEW_RELIC_LOG_LEVEL=debug
       ```
    </TabItem>
 </Tabs>
