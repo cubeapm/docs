@@ -128,6 +128,10 @@ def handle_unhandled_exception(ex):
 app.register_error_handler(Exception, handle_unhandled_exception)
 ```
 
+## Sample Application
+
+A working example is available at https://github.com/cubeapm/sample_app_python_flask_gunicorn/tree/otel.
+
 ## Troubleshooting
 
 The following can be used for debugging:

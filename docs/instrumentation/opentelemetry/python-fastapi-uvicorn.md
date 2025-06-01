@@ -85,6 +85,10 @@ Python 3
    uvicorn main:app --host=0.0.0.0 --port=8000 --workers=4
    ```
 
+## Sample Application
+
+A working example is available at https://github.com/cubeapm/sample_app_python_fastapi_uvicorn/tree/otel.
+
 ## Troubleshooting
 
 The following can be used for debugging:
