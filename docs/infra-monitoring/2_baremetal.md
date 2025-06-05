@@ -15,7 +15,17 @@ There are two variants of OTel Collector available - **core** (names starting wi
 
 ## Installation
 
-Here we show the installation steps for Ubuntu. Steps for other linux variants are similar. (See the bottom of this section for installation on Windows)
+### Method 1: Simplified Installation (Recommended)
+
+We provide a simplified installation script that automatically detects your OS and architecture, and installs the appropriate OpenTelemetry Collector Contrib version with custom configuration.
+
+```shell
+sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cubeapm/Otel-contrib-installation/main/otel-contrib-install.sh)"
+```
+
+### Method 2: Manual Installation
+
+Here we show the manual installation steps for Ubuntu. Steps for other linux variants are similar. (See the bottom of this section for installation on Windows)
 
 ```shell
 # change the link to the appropriate link for your os, cpu architecture, collector version, etc.

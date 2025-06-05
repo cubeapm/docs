@@ -6,6 +6,8 @@ slug: /instrumentation/newrelic/dotnet
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import ProxySetup from './\_proxy_setup.mdx';
+
 
 ## Installation
 
@@ -33,6 +35,9 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          ```
       </TabItem>
    </Tabs>
+
+
+1. <ProxySetup />
 
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
