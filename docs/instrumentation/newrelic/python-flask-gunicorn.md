@@ -77,18 +77,18 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          [newrelic]
          app_name = <app_name>
          license_key = ABC4567890ABC4567890ABC4567890ABC4567890
-         // Use your load balancer\'s domain name here
+         # Use your load balancer\'s domain name here
          // highlight-next-line
-         host = <cubeapm-newrelic.com>
+         host = <cubeapm-newrelic.yourdomain.com>
          ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
          ```shell
          NEW_RELIC_APP_NAME=<app_name>
          NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         // Use your load balancer\'s domain name here
+         # Use your load balancer\'s domain name here
          // highlight-next-line
-         NEW_RELIC_HOST=<cubeapm-newrelic.com>
+         NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
          ```
       </TabItem>
    </Tabs>

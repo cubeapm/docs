@@ -24,8 +24,8 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
    ```shell title="newrelic.ini"
-   // Use your load balancer\'s domain name here
-   newrelic.daemon.collector_host = "<cubeapm-newrelic.com>"
+   # Use your load balancer\'s domain name here
+   newrelic.daemon.collector_host = "<cubeapm-newrelic.yourdomain.com>"
 
    # remove irrelevant spans from traces (optional but highly recommended)
    newrelic.transaction_tracer.detail = 0
