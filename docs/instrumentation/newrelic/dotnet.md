@@ -8,6 +8,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import ProxySetup from './\_proxy_setup.mdx';
 
+
 ## Installation
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 3.
@@ -34,6 +35,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          ```
       </TabItem>
    </Tabs>
+
 
 1. <ProxySetup />
 
