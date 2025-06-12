@@ -12,10 +12,10 @@ import ProxySetup from './\_proxy_setup.mdx';
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 4.
 
-1. Please include this gem in the Gemfile:
+1. Add dependencies in Gemfile:
 
-   ```shell
-   gem 'newrelic_rpm'.
+   ```ruby
+   gem 'newrelic_rpm'
    ```
 
 1. Configure the agent:

@@ -11,25 +11,24 @@ slug: /instrumentation/opentelemetry/ruby-rails
 
 ## Installation
 
-1. Please include these gems in the Gemfile:
+1. Add dependencies in Gemfile:
 
-   ```shell
+   ```ruby
    gem 'opentelemetry-sdk'
    gem 'opentelemetry-exporter-otlp'
    gem 'opentelemetry-instrumentation-all'
    ```
 
-1. Create a file `opentelemetry.rb` in your project directory, with the following content:
+1. Create a file `config/initializers/opentelemetry.rb` in your project directory, with the following content:
 
-    ```shell
-    # config/initializers/opentelemetry.rb
-    require 'opentelemetry/sdk'
-    require 'opentelemetry/instrumentation/all'
-    require 'opentelemetry-exporter-otlp'
-    OpenTelemetry::SDK.configure do |c|
-        c.use_all() # enables all instrumentation!
-    end
-    ```
+   ```ruby title="config/initializers/opentelemetry.rb"
+   require 'opentelemetry/sdk'
+   require 'opentelemetry/instrumentation/all'
+   require 'opentelemetry-exporter-otlp'
+   OpenTelemetry::SDK.configure do |c|
+       c.use_all() # enables all instrumentation!
+   end
+   ```
 
 1. Modify the application run command as follows:
 
