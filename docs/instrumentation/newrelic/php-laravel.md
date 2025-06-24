@@ -6,6 +6,10 @@ slug: /instrumentation/newrelic/php-laravel
 
 import ProxySetup from './\_proxy_setup.mdx';
 
+## Prerequisites
+
+New Relic PHP agent version >= 10.0.0
+
 ## Installation
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 3.
