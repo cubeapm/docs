@@ -1,6 +1,6 @@
 ---
-sidebar_position: 2
-slug: /configure/sign-in-with-google
+sidebar_position: 1
+slug: /configure/single-sign-on/sign-in-with-google
 ---
 
 # Sign in with Google
