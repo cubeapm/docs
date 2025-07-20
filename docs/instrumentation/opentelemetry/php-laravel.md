@@ -40,7 +40,7 @@ import TabItem from '@theme/TabItem';
 
    3. Add the extensions to your php.ini file (run `php --ini` to find php.ini file):
 
-      ```shell
+      ```ini
       [opentelemetry]
       extension=opentelemetry.so
       extension=protobuf.so

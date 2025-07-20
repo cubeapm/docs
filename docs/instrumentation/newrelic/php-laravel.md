@@ -18,20 +18,20 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. Configure the agent (the config file is generally available at `/etc/php/<php_version>/mods-available/newrelic.ini`).
 
-   ```shell title="newrelic.ini"
-   newrelic.license = "ABC4567890ABC4567890ABC4567890ABC4567890"
-   newrelic.appname = "<app_name>"
+   ```ini title="newrelic.ini"
+   newrelic.license = ABC4567890ABC4567890ABC4567890ABC4567890
+   newrelic.appname = <app_name>
    ```
 
 1. <ProxySetup />
 
 1. Tell the agent to connect with CubeAPM instead of New Relic:
 
-   ```shell title="newrelic.ini"
-   # Use your load balancer\'s domain name here
-   newrelic.daemon.collector_host = "<cubeapm-newrelic.yourdomain.com>"
+   ```ini title="newrelic.ini"
+   ; Use your load balancer's domain name here
+   newrelic.daemon.collector_host = <cubeapm-newrelic.yourdomain.com>
 
-   # remove irrelevant spans from traces (optional but highly recommended)
+   ; remove irrelevant spans from traces (optional but highly recommended)
    newrelic.transaction_tracer.detail = 0
    ```
 
@@ -43,10 +43,10 @@ A working example is available at https://github.com/cubeapm/sample_app_php_lara
 
 The following can be used for troubleshooting:
 
-```shell title="newrelic.ini"
-newrelic.loglevel = "debug"
-# newrelic.logfile = "/var/log/newrelic/php_agent.log"
+```ini title="newrelic.ini"
+newrelic.loglevel = debug
+; newrelic.logfile = /var/log/newrelic/php_agent.log
 
-newrelic.daemon.loglevel = "debug"
-# newrelic.daemon.logfile = "/var/log/newrelic/newrelic-daemon.log"
+newrelic.daemon.loglevel = debug
+; newrelic.daemon.logfile = /var/log/newrelic/newrelic-daemon.log
 ```
