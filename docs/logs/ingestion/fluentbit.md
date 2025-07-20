@@ -41,7 +41,7 @@ Specify `es` output section in `fluentbit.conf` as below:
 Reference: [Fluentbit Elasticsearch documentation](https://docs.fluentbit.io/manual/pipeline/outputs/elasticsearch).
 
 :::info
-es plugin adds `/_bulk` at the end of the `path`, so we added `&_dummy=` to the end of the path to avoid unintended modification of the path.
+es plugin adds `/_bulk` at the end of the `path`, so we added `&dummy=` to the end of the path to avoid unintended modification of the path.
 :::
 
 ## Loki
