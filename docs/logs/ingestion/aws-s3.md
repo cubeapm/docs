@@ -39,7 +39,7 @@ CubeAPM provides a pre-built Lambda function to process S3 logs and forward them
 1. **Download the Lambda function** from the CubeAPM GitHub repository:
 
    ```
-   https://github.com/cubeapm/cubeapm-lambda-s3-logs
+   https://github.com/cubeapm/aws_logs_forwarder_lambda
    ```
 
 2. **Deploy the Lambda function**:
