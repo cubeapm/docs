@@ -33,6 +33,9 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    ; remove irrelevant spans from traces (optional but highly recommended)
    newrelic.transaction_tracer.detail = 0
+
+   ; don't report E_WARNING as errors (optional)
+   newrelic.error_collector.ignore_errors = E_WARNING
    ```
 
 ## Sample App

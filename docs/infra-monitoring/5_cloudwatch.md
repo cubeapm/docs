@@ -52,3 +52,13 @@ It usually takes ~5 minutes for CloudWatch to start streaming data, and another 
 1. Check the CloudWatch metric stream page in the AWS console. The page shows some graphs about the number of updates published by CloudWatch. Check these graphs to see if data has been generated. It usually takes ~5 minutes for CloudWatch to start streaming data.
 
 1. Check the Amazon Data Firehose stream page in the AWS console. The page shows some graphs about the data received (from CloudWatch) and sent (to CubeAPM). Check these graphs to see if data has been received and sent, and also if there have been any errors. If the graphs show any errors, check out the s3 bucket created by the Data Firehose stream for error logs.
+
+## Alerting on CloudWatch metrics
+
+The alerting process for CloudWatch metrics is the same as that for other metrics. However, CloudWatch metrics typically come with a delay of 2-3 minutes. So, it is highly recommended to set the alerting conditions accordingly. For example, if the normal query is `<query>`, then instead use `last_over_time(<query>[10m])` as the query for alerting. This gets latest available value over the last 10 minutes, thus avoiding alerts misbehaving due to data unavailability.
+
+Also, we recommend creating an alert with the below query to get notificed in case of excessive delays:
+
+```
+lag({__name__=~"amazonaws.com/.*"}[30m]) keep_metric_names >= 5m
+```

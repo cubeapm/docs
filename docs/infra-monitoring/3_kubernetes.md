@@ -200,6 +200,12 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
        - apiGroups: [""]
          resources: ["nodes/proxy"]
          verbs: ["get"]
+
+   tolerations:
+     # If some nodes (like control plane nodes) are tainted, pods won’t get
+     # scheduled unless they have matching tolerations. This toleration
+     # allows the pod to be scheduled on any tainted node.
+     - operator: Exists
    ```
 
    </details>
