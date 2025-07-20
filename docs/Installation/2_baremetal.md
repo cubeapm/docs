@@ -15,6 +15,10 @@ The script performs the following tasks:
 
 1. Detect CPU platform and OS of the host machine and download appropriate CubeAPM binary file.
 2. Set up CubeAPM as a service if `systemctl` is found on the host. A configuration file is also created at the path `/etc/cubeapm/config.properties`.
+3. Start CubeAPM service:
+   ```shell
+   sudo systemctl start cube.service
+   ```
 
 **By default, CubeAPM UI is accessible at http://localhost:3125.**
 
