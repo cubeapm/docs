@@ -8,17 +8,47 @@ slug: /logs/ingestion/aws-firehose
 
 CubeAPM supports collecting logs from AWS services through Amazon Data Firehose. AWS services can send logs through two primary paths:
 
-1. **AWS Services → CloudWatch Logs → Firehose → CubeAPM** - Most AWS services (e.g., AWS Lambda, API Gateway, EC2) send their logs to CloudWatch Logs first, which can then be forwarded to Firehose.
+Amazon Data Firehose always sends data to port 443 (HTTPS) and this is not configurable. Since CubeAPM listens on port 3130, you must set up a load balancer or reverse proxy to forward traffic from port 443 to port 3130 on your CubeAPM instance.
 
-   ![AWS CloudWatch Firehose Log Flow](/img/aws-cloudwatch-firehose-flow.svg)
+1. **AWS Services → CloudWatch Logs → Firehose → Load Balancer → CubeAPM** - Most AWS services (e.g., AWS Lambda, API Gateway, EC2) send their logs to CloudWatch Logs first, which can then be forwarded to Firehose.
 
-2. **AWS Services → Firehose → CubeAPM** - Some AWS services (e.g., AWS WAF) can send logs directly to Firehose, bypassing CloudWatch Logs entirely.
+   ![AWS CloudWatch Firehose Log Flow](/img/aws-cloudwatch-firehose-cubeapm.svg)
 
-   ![AWS CloudWatch Firehose Log Flow](/img/aws-firehose-flow.svg)
+2. **AWS Services → Firehose → Load Balancer → CubeAPM** - Some AWS services (e.g., AWS WAF) can send logs directly to Firehose, bypassing CloudWatch Logs entirely.
+
+   ![AWS CloudWatch Firehose Log Flow](/img/aws-firehose-cubeapm-flow.svg)
 
 ## Setup Instructions
 
-### Step 1: Create Amazon Data Firehose Stream
+### Step 1: Set Up Load Balancer
+
+Since Amazon Data Firehose sends data to port 443 (HTTPS) and CubeAPM listens on port 3130, you need to set up a load balancer to forward traffic.
+
+#### AWS Application Load Balancer (ALB)
+
+1. **Create an Application Load Balancer**:
+
+   - Go to **AWS Console** → **EC2** → **Load Balancers**
+   - Click **Create Load Balancer** → **Application Load Balancer**
+   - Configure basic settings:
+     - **Name**: `cubeapm-firehose-alb`
+     - **Scheme**: Internal
+     - **IP address type**: IPv4
+
+2. **Configure Listeners and Routing**:
+
+   - **Listener**: HTTPS:443
+   - **Target Group**: Create a new target group
+     - **Target type**: Instance or IP addresses
+     - **Protocol**: HTTP
+     - **Port**: 3130
+     - **Health check path**: `/health` (or appropriate health check endpoint)
+
+3. **SSL Certificate**:
+   - Use AWS Certificate Manager (ACM) to create or import an SSL certificate
+   - Associate the certificate with the HTTPS listener
+
+### Step 2: Create Amazon Data Firehose Stream
 
 1. Go to AWS Console and navigate to **Amazon Data Firehose**.
 2. Click **Create Firehose stream**.
@@ -29,7 +59,7 @@ CubeAPM supports collecting logs from AWS services through Amazon Data Firehose.
 4. **Transform records** (optional): Leave blank or skip this step
 5. Configure **Destination settings**:
    - **HTTP endpoint name**: Provide a descriptive name (e.g., `CubeAPM-Logs-Endpoint`)
-   - **HTTP endpoint URL**: `https://<cubeapm_domain>:3130/api/logs/firehose/generic`
+   - **HTTP endpoint URL**: `https://<load-balancer-domain>/api/logs/insert/firehose/generic`
    - **Authentication**: Choose **Use access key**
    - **Access key** (optional): Leave blank
    - **Content encoding**: Select **GZIP**
@@ -44,7 +74,7 @@ For multi-environment setup, you can add additional parameters to identify the e
 - **Parameter value**: `<environment_name>`
   :::
 
-### Step 2: Configure IAM Permissions
+### Step 3: Configure IAM Permissions
 
 After creating the stream, go to the **Configuration** tab and configure **Service access**:
 
@@ -72,7 +102,7 @@ After creating the stream, go to the **Configuration** tab and configure **Servi
 }
 ```
 
-### Step 3: Configure Log Source
+### Step 4: Configure Log Source
 
 Choose the appropriate method based on your AWS service:
 
@@ -109,7 +139,7 @@ The subscription filter requires permission to deliver logs to Firehose:
 4. Click **Create subscription filter**
 5. Configure the subscription filter:
    - **Destination**: Choose **Amazon Data Firehose**
-   - **Amazon Data Firehose stream**: Select the Firehose stream created in Step 1
+   - **Amazon Data Firehose stream**: Select the Firehose stream created in Step 2
    - **Subscription filter pattern**: Leave empty to send all logs, or add a pattern to filter specific logs
    - **Subscription filter name**: Give an appropriate name
 
