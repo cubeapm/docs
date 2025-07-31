@@ -13,7 +13,7 @@ Python 3
 1. Install dependencies:
 
    ```shell
-   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http
+   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http opentelemetry-instrumentation-system-metrics
    opentelemetry-bootstrap -a install
    ```
 
@@ -25,14 +25,22 @@ Python 3
    # highlight-start
    from uwsgidecorators import postfork
    from opentelemetry import trace
-   from opentelemetry.semconv.resource import ResourceAttributes
-   from opentelemetry.sdk.trace import TracerProvider, Resource
+   from opentelemetry.sdk import resources
+   from opentelemetry.sdk.trace import TracerProvider
    from opentelemetry.sdk.trace.export import (
       BatchSpanProcessor,
       ConsoleSpanExporter,
       SimpleSpanProcessor,
    )
    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+   from opentelemetry import metrics
+   from opentelemetry.sdk.metrics import MeterProvider
+   from opentelemetry.sdk.metrics.export import (
+    ConsoleMetricExporter,
+    PeriodicExportingMetricReader,
+   )
+   from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
+   from opentelemetry.instrumentation.system_metrics import SystemMetricsInstrumentor
    from opentelemetry.instrumentation.django import DjangoInstrumentor
    from socket import gethostname
    # highlight-end
@@ -50,16 +58,31 @@ Python 3
 
    @postfork
    def init_tracing():
-      provider = TracerProvider(resource=Resource({
-         ResourceAttributes.SERVICE_NAME: os.environ['OTEL_SERVICE_NAME'],
-         ResourceAttributes.HOST_NAME: gethostname() or 'UNSET',
-      }))
+      resource = resources.Resource.create({
+         resources.HOST_NAME: gethostname() or 'UNSET',
+      })
+
       if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
-         processor = SimpleSpanProcessor(ConsoleSpanExporter())
+         trace_processor = SimpleSpanProcessor(ConsoleSpanExporter())
       else:
-         processor = BatchSpanProcessor(OTLPSpanExporter())
-      provider.add_span_processor(processor)
-      trace.set_tracer_provider(provider)
+         trace_processor = BatchSpanProcessor(OTLPSpanExporter())
+      trace_provider = TracerProvider(
+         resource=resource,
+         active_span_processor=trace_processor
+      )
+      trace.set_tracer_provider(trace_provider)
+
+      if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
+         metric_exporter = ConsoleMetricExporter()
+      else:
+         metric_exporter = OTLPMetricExporter()
+      metric_reader = PeriodicExportingMetricReader(exporter=metric_exporter)
+      meter_provider = MeterProvider(
+         resource=resource,
+         metric_readers=[metric_reader]
+      )
+      metrics.set_meter_provider(meter_provider)
+      SystemMetricsInstrumentor().instrument()
 
    # Note: If uWSGI's `lazy-apps = true` option is used for running the
    # app, then `@postfork` above will not work and `init_tracing` needs
@@ -73,9 +96,9 @@ Python 3
 3. Modify the application run command as follows:
 
    ```shell
-   OTEL_METRICS_EXPORTER=none \
    OTEL_LOGS_EXPORTER=none \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    uwsgi --module=mysite.wsgi:application --http=127.0.0.1:8000 --master --need-app
