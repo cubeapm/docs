@@ -28,10 +28,11 @@ slug: /instrumentation/opentelemetry/dotnet
    ```shell
    OTEL_SERVICE_NAME=<app_name> \
    OTEL_TRACES_EXPORTER=otlp \
-   OTEL_METRICS_EXPORTER=none \
+   OTEL_METRICS_EXPORTER=otlp \
    OTEL_LOGS_EXPORTER=none \
    OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://host.docker.internal:3130/api/metrics/v1/save/otlp \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    $HOME/.otel-dotnet-auto/instrument.sh dotnet run
    ```
@@ -44,11 +45,12 @@ A working example is available at https://github.com/cubeapm/sample_app_dotnet_c
 
 The following can be used for debugging:
 
+```shell
+# print traces on console
+OTEL_TRACES_EXPORTER=console
+# print metrics on console
+OTEL_METRICS_EXPORTER=console
 ```
-OTEL_LOG_LEVEL=debug
-```
-
-Also, traces exporter can be changed from `otlp` to `console` to output traces on console.
 
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 

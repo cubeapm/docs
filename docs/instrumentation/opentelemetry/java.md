@@ -76,7 +76,7 @@ or
 OTEL_JAVAAGENT_DEBUG=true
 ```
 
-Also, traces exporter can be changed from `otlp` to `console` to output traces on console.
+Also, traces, metrics and logs exporters can be changed from `otlp` to `console` to output their respective data on console.
 
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 
