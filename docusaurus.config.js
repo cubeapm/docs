@@ -105,7 +105,7 @@ const config = {
       prism: {
         theme: lightTheme,
         darkTheme: darkTheme,
-        additionalLanguages: ["bash", "ini", "java", "json"],
+        additionalLanguages: ["bash", "ini", "java", "json", "ruby"],
       },
       // Add the plugin configuration here
       search: {
