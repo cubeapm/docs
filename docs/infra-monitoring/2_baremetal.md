@@ -20,7 +20,8 @@ There are two variants of OTel Collector available - **core** (names starting wi
 We provide a simplified installation script that automatically detects your OS and architecture, and installs the appropriate OpenTelemetry Collector Contrib version with custom configuration.
 
 ```shell
-sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cubeapm/Otel-contrib-installation/main/otel-contrib-install.sh)"
+sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cubeapm/Otel-contrib-installation/main/otel-contrib-install.sh)" -- --replace-config
+
 ```
 
 ### Method 2: Manual Installation

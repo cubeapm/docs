@@ -10,7 +10,7 @@ Configure elasticsearch output plugin in logstash conf file as below:
 
 ```
 output {
-  logstash {
+  elasticsearch {
     hosts => ["http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/elasticsearch/"]
     parameters => {
       "_msg_field" => "message"
@@ -21,4 +21,4 @@ output {
 }
 ```
 
-Reference: [Logstash documentation](https://www.elastic.co/guide/en/logstash/current/plugins-outputs-logstash.html).
+Reference: [Logstash Elasticsearch documentation](https://www.elastic.co/guide/en/logstash/current/plugins-outputs-elasticsearch.html).

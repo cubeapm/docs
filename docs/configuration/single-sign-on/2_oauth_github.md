@@ -1,6 +1,6 @@
 ---
-sidebar_position: 3
-slug: /configure/sign-in-with-github
+sidebar_position: 2
+slug: /configure/single-sign-on/sign-in-with-github
 ---
 
 # Sign in with GitHub

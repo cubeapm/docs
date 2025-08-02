@@ -24,7 +24,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.ini">
-         ```shell
+         ```ini
          [newrelic]
          app_name = <app_name>
          license_key = ABC4567890ABC4567890ABC4567890ABC4567890
@@ -73,22 +73,28 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
    <Tabs>
       <TabItem value="file" label="newrelic.ini">
-         ```shell
+         ```ini
          [newrelic]
          app_name = <app_name>
          license_key = ABC4567890ABC4567890ABC4567890ABC4567890
-         # Use your load balancer\'s domain name here
-         // highlight-next-line
-         host = <cubeapm-newrelic.yourdomain.com>,
+         # highlight-start
+         ; Use your load balancer's domain name here
+         host = <cubeapm-newrelic.yourdomain.com>
+         ; (optional) to get garbage collection metrics
+         gc_runtime_metrics.enabled = true
+         # highlight-end
          ```
       </TabItem>
       <TabItem value="env" label="Environment Variables">
          ```shell
          NEW_RELIC_APP_NAME=<app_name>
          NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         # Use your load balancer\'s domain name here
-         // highlight-next-line
+         # highlight-start
+         # Use your load balancer's domain name here
          NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
+         # (optional) to get garbage collection metrics
+         NEW_RELIC_GC_RUNTIME_METRICS_ENABLED=true
+         # highlight-end
          ```
       </TabItem>
    </Tabs>
@@ -103,11 +109,11 @@ The following can be used for troubleshooting:
 
 <Tabs>
    <TabItem value="file" label="newrelic.ini">
-      ```shell
+      ```ini
       [newrelic]
-      # Print New Relic agent logs on screen
+      ; Print New Relic agent logs on screen
       log_file = stdout
-      # Set New Relic agent log level to debug if needed to see detailed logs
+      ; Set New Relic agent log level to debug if needed to see detailed logs
       log_level = debug
       ```
    </TabItem>

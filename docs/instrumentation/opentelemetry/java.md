@@ -20,10 +20,13 @@ Ref: https://github.com/open-telemetry/opentelemetry-java/blob/main/VERSIONING.m
 
    ```shell
    java -javaagent:</path/opentelemetry-javaagent.jar> \
-       -Dotel.metrics.exporter=none \
-       -Dotel.logs.exporter=none \
+       -Dotel.metrics.exporter=otlp \
+       -Dotel.logs.exporter=otlp \
        -Dotel.traces.exporter=otlp \
        -Dotel.exporter.otlp.protocol=http/protobuf \
+       -Dotel.exporter.otlp.metrics.endpoint=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
+       -Dotel.exporter.otlp.logs.endpoint=http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/opentelemetry/v1/logs \
+       -Dotel.exporter.otlp.logs.headers=Cube-Stream-Fields=service.name%2Cseverity \
        -Dotel.exporter.otlp.traces.endpoint=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
        -Dotel.exporter.otlp.compression=gzip \
        -Dotel.service.name=<app_name> \
@@ -34,14 +37,19 @@ Ref: https://github.com/open-telemetry/opentelemetry-java/blob/main/VERSIONING.m
 
    ```shell
    JAVA_TOOL_OPTIONS=-javaagent:</path/opentelemetry-javaagent.jar>
-   OTEL_METRICS_EXPORTER=none
-   OTEL_LOGS_EXPORTER=none
+   OTEL_METRICS_EXPORTER=otlp
+   OTEL_LOGS_EXPORTER=otlp
    OTEL_TRACES_EXPORTER=otlp
    OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp
+   OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/opentelemetry/v1/logs
+   OTEL_EXPORTER_OTLP_LOGS_HEADERS=Cube-Stream-Fields=service.name%2Cseverity
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip
    OTEL_SERVICE_NAME=<app_name>
    ```
+
+Logs/Metrics exporter can be set to `none` instead of `otlp` to disable sending logs/metrics.
 
 For Java applications running on Tomcat, we need to set the CATALINA_OPTS environment variable instead of JAVA_TOOL_OPTIONS. Rest of the steps are the same as above.
 
@@ -51,6 +59,8 @@ export CATALINA_OPTS="$CATALINA_OPTS -javaagent:/path/to/opentelemetry-javaagent
 ```
 
 Ref: https://opentelemetry.io/docs/zero-code/java/agent/server-config/
+
+OTel agent does not support having different service name for multiple applications running in the same Tomcat instance. We recommend using New Relic agent in this case, with `enable_auto_app_naming` (ref: https://docs.newrelic.com/docs/apm/agents/java-agent/configuration/automatic-application-naming/).
 
 ## Sample App
 
@@ -66,7 +76,7 @@ or
 OTEL_JAVAAGENT_DEBUG=true
 ```
 
-Also, traces exporter can be changed from `otlp` to `console` to output traces on console.
+Also, traces, metrics and logs exporters can be changed from `otlp` to `console` to output their respective data on console.
 
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 

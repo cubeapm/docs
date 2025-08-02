@@ -200,6 +200,12 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
        - apiGroups: [""]
          resources: ["nodes/proxy"]
          verbs: ["get"]
+
+   tolerations:
+     # If some nodes (like control plane nodes) are tainted, pods won’t get
+     # scheduled unless they have matching tolerations. This toleration
+     # allows the pod to be scheduled on any tainted node.
+     - operator: Exists
    ```
 
    </details>
@@ -296,3 +302,113 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
    helm upgrade otel-collector-daemonset open-telemetry/opentelemetry-collector -f otel-collector-daemonset.yaml
    helm upgrade otel-collector-deployment open-telemetry/opentelemetry-collector -f otel-collector-deployment.yaml
    ```
+
+## Monitoring processes
+
+The configuration above will monitor the k8s cluster at container-level granularity, which is quite sufficient in most of the cases. However, if you are running multiple processes in your containers and need to monitor individual processes as well, it can be enabled as follows:
+
+1. Enable process level monitoring in `hostmetrics` receiver in the OTel Collector Daemonset.
+
+   ```yaml title="otel-collector-daemonset.yaml (hostmetrics)"
+   config:
+     receivers:
+       hostmetrics:
+         scrapers:
+           // highlight-start
+           # Enable process level monitoring
+           process:
+             resource_attributes:
+               # Enable cgroup info for each process so that we can
+               # link processes to respective containers
+               process.cgroup:
+                 enabled: true
+             // highlight-end
+             mute_process_all_errors: true
+   ```
+
+   Enabling process level monitoring generates a lot of metrics. We can reduce the number of metrics by disabling some metrics as follows:
+
+   <details>
+   <summary>otel-collector-daemonset.yaml (hostmetrics)</summary>
+
+   ```yaml
+   config:
+     receivers:
+       // highlight-start
+       hostmetrics:
+         collection_interval: 60s
+         scrapers:
+           cpu:
+           disk:
+             exclude:
+               devices:
+                 - ^loop.*$
+               match_type: regexp
+             metrics:
+               system.disk.io:
+                 enabled: false
+               system.disk.merged:
+                 enabled: false
+               system.disk.operation_time:
+                 enabled: false
+               system.disk.operations:
+                 enabled: false
+               system.disk.pending_operations:
+                 enabled: false
+               system.disk.weighted_io_time:
+                 enabled: false
+           # load:
+           filesystem:
+             exclude_devices:
+               devices:
+                 - ^/dev/loop.*$
+               match_type: regexp
+             metrics:
+               system.filesystem.inodes.usage:
+                 enabled: false
+           memory:
+           network:
+             metrics:
+               system.network.connections:
+                 enabled: false
+               system.network.dropped:
+                 enabled: false
+               system.network.errors:
+                 enabled: false
+               system.network.packets:
+                 enabled: false
+           # paging:
+           # processes:
+           # Enable process level monitoring
+           process:
+             resource_attributes:
+               # Enable cgroup info for each process so that we can
+               # link processes to respective containers
+               process.cgroup:
+                 enabled: true
+             metrics:
+               process.disk.io:
+                 enabled: false
+               process.memory.virtual:
+                 enabled: false
+               process.uptime:
+                 enabled: true
+             mute_process_all_errors: true
+       // highlight-end
+   ```
+
+   </details>
+
+   CubeAPM will now show process level stats in `Infrastructure > Host` page.
+
+1. Enable `container.id` attribute in `kubeletstats` receiver to attach container id to each container. This will enable linking of processes to the respective containers.
+   ```yaml title="otel-collector-daemonset.yaml (kubeletstats)"
+   config:
+     receivers:
+       kubeletstats:
+       // highlight-start
+       extra_metadata_labels:
+         - container.id
+       // highlight-end
+   ```
+   CubeAPM will now show process level stats in `Infrastructure > K8s Pod` page as well.

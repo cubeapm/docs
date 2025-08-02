@@ -5,9 +5,37 @@ slug: /infra-monitoring/aws-cloudwatch
 
 # AWS CloudWatch
 
-The recommended setup for monitoring AWS with CubeAPM is to use AWS CloudWatch Metric Streams for collecting the metrics from AWS and sending them to CubeAPM. CubeAPM then provides visualization and alerting on the collected metrics.
+CubeAPM supports monitoring AWS services through two methods: **CloudWatch Metric Streams** (described in this document) and **direct communication**. The choice depends on the type of AWS service and your cost considerations.
 
-Various AWS services send monitoring data to AWS CloudWatch. AWS CloudWatch can send this data to Amazon Data Firehose, and Amazon Data Firehose can be configured to send this data to CubeAPM.
+### When to Use Each Method
+
+#### Direct Communication (Recommended for Cost Efficiency)
+
+For AWS services that use **underlying technologies supported by OpenTelemetry**, you can connect directly to avoid CloudWatch streaming costs:
+
+- **Container Services**: Amazon EKS (Kubernetes), ECS Fargate (containerized apps)
+- **Database Services**: Amazon RDS (MySQL, PostgreSQL, etc.), DocumentDB (MongoDB), ElastiCache (Redis)
+- **Message Queues**: Amazon MQ (Apache ActiveMQ, RabbitMQ), MSK (Apache Kafka)
+- **Analytics**: EMR (Apache Spark, Hadoop), OpenSearch (Elasticsearch)
+
+_Since these services use popular open-source technologies that OpenTelemetry natively supports, direct metric collection is more cost-effective._
+
+### CloudWatch Metric Streams
+
+For **AWS proprietary services** where CloudWatch is the primary or only option for metric collection:
+
+- **Compute**: AWS Lambda, EC2, Batch
+- **Storage**: S3, EBS, EFS
+- **Networking**: VPC, CloudFront, Route 53, Load Balancers (ALB/NLB)
+- **API & Integration**: API Gateway, SQS, SNS, EventBridge, Step Functions
+- **Security**: WAF, Shield, GuardDuty
+- **Developer Tools**: CodeBuild, CodeDeploy, CodePipeline
+
+_For these AWS-native services, CloudWatch Metric Streams provides comprehensive monitoring capabilities. While this method incurs CloudWatch streaming costs, it's often the most practical approach for these proprietary services._
+
+## CloudWatch Metric Streams Setup
+
+The following installation steps show how to set up CloudWatch Metric Streams for collecting metrics from AWS services and sending them to CubeAPM. Various AWS services send monitoring data to AWS CloudWatch. AWS CloudWatch can send this data to Amazon Data Firehose, and Amazon Data Firehose can be configured to send this data to CubeAPM.
 
 ![CubeAPM with AWS CloudWatch](/img/cloudwatch.svg)
 
@@ -52,3 +80,13 @@ It usually takes ~5 minutes for CloudWatch to start streaming data, and another 
 1. Check the CloudWatch metric stream page in the AWS console. The page shows some graphs about the number of updates published by CloudWatch. Check these graphs to see if data has been generated. It usually takes ~5 minutes for CloudWatch to start streaming data.
 
 1. Check the Amazon Data Firehose stream page in the AWS console. The page shows some graphs about the data received (from CloudWatch) and sent (to CubeAPM). Check these graphs to see if data has been received and sent, and also if there have been any errors. If the graphs show any errors, check out the s3 bucket created by the Data Firehose stream for error logs.
+
+## Alerting on CloudWatch metrics
+
+The alerting process for CloudWatch metrics is the same as that for other metrics. However, CloudWatch metrics typically come with a delay of 2-3 minutes. So, it is highly recommended to set the alerting conditions accordingly. For example, if the normal query is `<query>`, then instead use `last_over_time(<query>[10m])` as the query for alerting. This gets latest available value over the last 10 minutes, thus avoiding alerts misbehaving due to data unavailability.
+
+Also, we recommend creating an alert with the below query to get notificed in case of excessive delays:
+
+```
+lag({__name__=~"amazonaws.com/.*"}[30m]) keep_metric_names >= 5m
+```

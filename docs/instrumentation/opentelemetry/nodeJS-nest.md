@@ -59,9 +59,10 @@ slug: /instrumentation/opentelemetry/nodejs-nest
 1. Modify the application run command as follows:
 
    ```shell
-   OTEL_METRICS_EXPORTER=none \
+   OTEL_METRICS_EXPORTER=otlp \
    OTEL_LOGS_EXPORTER=none \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://host.docker.internal:3130/api/metrics/v1/save/otlp \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \
@@ -81,7 +82,10 @@ A working example with multiple instrumentations is available at https://github.
 The following can be used for debugging:
 
 ```shell
+# print traces on console
 OTEL_LOG_LEVEL=debug
+# print metrics on console
+OTEL_METRICS_EXPORTER=console
 ```
 
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
