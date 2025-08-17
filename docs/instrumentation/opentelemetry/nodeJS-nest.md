@@ -62,7 +62,7 @@ slug: /instrumentation/opentelemetry/nodejs-nest
    OTEL_METRICS_EXPORTER=otlp \
    OTEL_LOGS_EXPORTER=none \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
-   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://host.docker.internal:3130/api/metrics/v1/save/otlp \
+   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \
