@@ -12,7 +12,7 @@ docker run -d --name cubeapm \
 -p 3125:3125 -p 3130:3130 -p 4317:4317 -p 4318:4318 \
 -v cube_data:/root/data \
 -v ./config.properties:/etc/cubeapm/config.properties \
-cubeapm/cubeapm:v1.12.0 \
+cubeapm/cubeapm:v1.13.0 \
 --config-file /etc/cubeapm/config.properties
 ```
 
@@ -26,7 +26,7 @@ The following docker compose config installs a fully working three-node cluster 
 version: "3"
 services:
   cubeapm1:
-    image: cubeapm/cubeapm:v1.12.0
+    image: cubeapm/cubeapm:v1.13.0
     volumes:
       - ./data_volume/cubeapm/cubeapm1:/root/data
       # - ./config.properties:/root/config.properties
@@ -45,7 +45,7 @@ services:
         condition: service_healthy
     restart: always
   cubeapm2:
-    image: cubeapm/cubeapm:v1.12.0
+    image: cubeapm/cubeapm:v1.13.0
     volumes:
       - ./data_volume/cubeapm/cubeapm2:/root/data
       # - ./config.properties:/root/config.properties
@@ -67,7 +67,7 @@ services:
         condition: service_healthy
     restart: always
   cubeapm3:
-    image: cubeapm/cubeapm:v1.12.0
+    image: cubeapm/cubeapm:v1.13.0
     volumes:
       - ./data_volume/cubeapm/cubeapm3:/root/data
       # - ./config.properties:/root/config.properties

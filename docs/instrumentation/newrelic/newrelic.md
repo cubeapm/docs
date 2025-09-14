@@ -38,6 +38,18 @@ newrelic.NewApplication(
 
 :::
 
+### Minimum New Relic Agent version supported by CubeAPM
+
+| Language | Minimum Agent Version |
+| -------- | --------------------- |
+| DotNet   | v8.17.438             |
+| Go       | v3.8.0                |
+| Java     | v6.0.0                |
+| NodeJS   | v6.11.0               |
+| PHP      | v10.0.0               |
+| Python   | v5.16.0               |
+| Ruby     | v6.12.0               |
+
 ### Multi-environment setup
 
 If you are using multi-environment feature of CubeAPM, you can set your application’s environment name by setting the app name as per the below format:
