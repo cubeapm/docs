@@ -39,6 +39,10 @@ The following installation steps show how to set up CloudWatch Metric Streams fo
 
 ![CubeAPM with AWS CloudWatch](/img/cloudwatch.svg)
 
+:::info
+Firehose does not run in client VPC, so it cannot connect with private CubeAPM endpoint. An internet-facing load balancer is needed for Firehose to be able to send data to CubeAPM.
+:::
+
 ## Installation
 
 Various AWS services send monitoring data to AWS CloudWatch. AWS CloudWatch can send this data to Amazon Data Firehose, and Amazon Data Firehose can be configured to send this data to CubeAPM.
