@@ -15,6 +15,8 @@ To enable Sign in with OneLogin, you need to create an OAuth app in your OneLogi
 
 3. Fill below details
 
+   - **Login URIs**: `<cubeapm_address>/login`
+
    - **Redirect URIs**: `<cubeapm_address>/api/auth/self-service/methods/oidc/callback/onelogin`
 
     Save this configuration
