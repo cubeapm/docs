@@ -6,11 +6,14 @@ slug: /instrumentation/datadog/php-slim
 
 ## Installation
 
-1. Download the Datadog PHP tracer.
+1. Install the Datadog PHP tracer.
+   ```shell
+   curl -LO https://github.com/DataDog/dd-trace-php/releases/latest/download/datadog-setup.php
+   php datadog-setup.php --php-bin=all
+   rm datadog-setup.php
+   ```
 
-   curl -LO https://github.com/DataDog/dd-trace-php/releases/latest/download/datadog-setup.php.
-
-1. Configure the agent for CLI (the config file is generally available at `/etc/php/<php_version>/cli/conf.d/98-ddtrace.ini`).
+1. Configure the tracer for CLI (the config file is generally available at `/etc/php/<php_version>/cli/conf.d/98-ddtrace.ini`).
 
    ```ini title="ddtrace.ini"
    datadog.service = <app_name>
@@ -22,7 +25,7 @@ slug: /instrumentation/datadog/php-slim
    datadog.tags = mykey1:myvalue1,mykey2:myvalue2
    ```
 
-1. Configure the agent for FPM (the config file is generally available at `/etc/php/<php_version>/fpm/conf.d/98-ddtrace.ini`).
+1. Configure the tracer for FPM (the config file is generally available at `/etc/php/<php_version>/fpm/conf.d/98-ddtrace.ini`).
 
    ```ini title="ddtrace.ini"
    datadog.service = <app_name>

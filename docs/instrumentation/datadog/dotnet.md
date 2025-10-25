@@ -9,9 +9,9 @@ import TabItem from '@theme/TabItem';
 
 ## Installation
 
-1. Follow this link to install Datadog agent: https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/dotnet-core/.
+1. Follow this link to install Datadog tracer: https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/dotnet-core/.
 
-1. Configure the agent.
+1. Configure the tracer.
 
    <Tabs>
       <TabItem value="env" label="Environment Variables">

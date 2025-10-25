@@ -41,7 +41,7 @@ Node.js >=18
       </TabItem>
    </Tabs>
 
-1. Configure the agent.
+1. Configure the tracer.
 
    <Tabs>
       <TabItem value="env" label="Code">

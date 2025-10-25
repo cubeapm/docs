@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 ## Prerequisites
 
-Go tracer requires Go version 1.18 or higher and a Datadog Agent version 5.21.1 or later.
+Go tracer requires Go version 1.18 or higher and Datadog Agent version 5.21.1 or later.
 
 ## Installation
 
@@ -45,10 +45,10 @@ Go tracer requires Go version 1.18 or higher and a Datadog Agent version 5.21.1 
    }
    ```
    :::info
-   For more information, refer to the [Datadog Go agent](https://docs.datadoghq.com/tracing/trace_collection/library_config/go/).
+   For more information, refer to https://docs.datadoghq.com/tracing/trace_collection/library_config/go/.
    :::
 
-1. Configure the agent.
+1. Configure the tracer.
 
    <Tabs>
       <TabItem value="env" label="Environment Variables">

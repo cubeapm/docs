@@ -14,8 +14,7 @@ import TabItem from '@theme/TabItem';
 1. Install dependencies:
 
    ```shell
-   go get -u \
-    go.elastic.co/apm/v2 \
+   go get go.elastic.co/apm/v2 \
     go.elastic.co/apm/module/apmhttp/v2
    ```
 

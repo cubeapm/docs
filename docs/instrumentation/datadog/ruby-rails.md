@@ -25,7 +25,7 @@ import TabItem from '@theme/TabItem';
    end
    ```
 
-1. Configure the agent.
+1. Configure the tracer.
 
    <Tabs>
       <TabItem value="env" label="Environment Variables">

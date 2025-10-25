@@ -88,6 +88,7 @@ The following can be used for debugging:
 ```shell
 # Print Elastic agent logs on screen
 ELASTIC_APM_LOG_FILE=stdout
-# Set Elastic agent log level to debug if needed to see detailed logs (also see app.py for additional requirements)[https://github.com/cubeapm/sample_app_python_flask_uwsgi/blob/elastic/app.py]
+# Set Elastic agent log level to debug if needed to see detailed logs.
+# Refer to Sample Application for additional requirements.
 ELASTIC_APM_LOG_LEVEL=debug
 ```

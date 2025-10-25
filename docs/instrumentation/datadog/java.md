@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 ## Installation
 
-1. Download the Datadog Java agent jar.
+1. Download the Datadog Java tracer jar.
 
    https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/java/
 
