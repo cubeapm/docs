@@ -9,28 +9,32 @@ import TabItem from '@theme/TabItem';
 
 ## Installation
 
-1. Download the Elastic APM Java agent jar.
+1.  Download the Elastic APM Java agent jar.
 
-   https://www.elastic.co/docs/reference/apm/agents/java/setup-javaagent#setup-javaagent-get-agent
+    https://www.elastic.co/docs/reference/apm/agents/java/setup-javaagent#setup-javaagent-get-agent
 
-1. Configure the agent:
+1.  Configure the agent:
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         JAVA_TOOL_OPTIONS=-javaagent:</path/elastic-apm-agent.jar>
+    <Tabs>
+       <TabItem value="env" label="Environment Variables">
+          ```shell
+          JAVA_TOOL_OPTIONS=-javaagent:</path/elastic-apm-agent.jar>
 
-         ELASTIC_APM_SERVICE_NAME=<app_name>
-         # send traces to CubeAPM
-         ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+          ELASTIC_APM_SERVICE_NAME=<app_name>
+          # send traces to CubeAPM
+          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
 
-         # optional settings
-         ELASTIC_APM_ENVIRONMENT=UNSET
-         ELASTIC_APM_SERVICE_VERSION=1.2.3
-         ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-         ```
-      </TabItem>
-   </Tabs>
+          # capture jvm non-heap buffer pool metrics (optional but recommended)
+          ELASTIC_APM_CAPTURE_JMX_METRICS=object_name[java.nio:type=BufferPool,name=*] attribute[*]
+
+          # optional settings
+          ELASTIC_APM_ENVIRONMENT=UNSET
+          ELASTIC_APM_SERVICE_VERSION=1.2.3
+          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+          ```
+
+       </TabItem>
+    </Tabs>
 
 ## Sample App
 
@@ -46,5 +50,3 @@ ELASTIC_APM_LOG_FILE=stdout
 # Set Elastic agent log level to debug if needed to see detailed logs
 ELASTIC_APM_LOG_LEVEL=debug
 ```
-
-
