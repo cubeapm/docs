@@ -219,6 +219,9 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
      repository: "otel/opentelemetry-collector-contrib"
      # tag: 0.112.0
    presets:
+     kubernetesAttributes:
+       enabled: true
+       # extractAllPodLabels: false
      kubernetesEvents:
        enabled: true
      clusterMetrics:
