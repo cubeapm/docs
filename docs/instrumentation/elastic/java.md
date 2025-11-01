@@ -36,6 +36,10 @@ import TabItem from '@theme/TabItem';
        </TabItem>
     </Tabs>
 
+    :::info
+    Elastic APM Java agent also supports ELASTIC_APM_SERVER_URLS environment variable, which can be used to specify multiple urls. CubeAPM does not support it, so it should not be used with CubeAPM. In fact, Elastic APM's own documentation recommends against using it.
+    :::
+
 ## Sample App
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/elastic
