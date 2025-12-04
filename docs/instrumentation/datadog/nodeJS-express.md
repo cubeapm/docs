@@ -13,13 +13,15 @@ Node.js >=18
 
 ## Installation
 
+Following are the steps to install the Datadog agent and connect it with CubeAPM. If Datadog agent is already installed, you can jump to step 4.
+
 1. Install dependencies:
 
    ```shell
    npm install dd-trace
    ```
 
-2. Initializes the Datadog tracer when your application starts:
+1. Initialize the Datadog tracer when your application starts:
    
    <Tabs>
       <TabItem value="code" label="Code">
@@ -48,8 +50,15 @@ Node.js >=18
          ```javascript
           const tracer = require('dd-trace').init({
             service: "<app_name>",
-            // send traces to CubeAPM
-            url: "http://<ip_address_of_cubeapm_server>:3130",
+            // Send data to Datadog Agent
+            hostname: "datadog-agent",
+            dogstatsd: {hostname: "datadog-agent"},
+
+            // Enable Runtime metrics
+            runtimeMetrics: true,
+            experimental:{
+              runtimeId: true,
+            }
 
             // optional settings
             env: "myenv",
@@ -64,8 +73,12 @@ Node.js >=18
       <TabItem value="file" label="Environment Variables">
          ```shell
          DD_SERVICE=<app_name>
-         # send traces to CubeAPM
-         DD_TRACE_AGENT_URL=http://<ip_address_of_cubeapm_server>:3130
+         # Send data to Datadog Agent
+         DD_AGENT_HOST=datadog-agent
+
+         # Enable runtime metrics 
+         DD_RUNTIME_METRICS_ENABLED=true 
+         DD_RUNTIME_METRICS_RUNTIME_ID_ENABLED=true 
 
          # optional settings
          DD_ENV=myenv
@@ -74,6 +87,21 @@ Node.js >=18
          ```
       </TabItem>
    </Tabs>
+
+1. Configure Datadog Agent to forward metrics and traces to CubeAPM
+
+   ```shell
+   DD_API_KEY=<your_datadog_key>
+   # highlight-start
+   # send runtime metrics to CubeAPM
+   DD_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+   # send traces to CubeAPM
+   DD_APM_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+   # highlight-end
+   # Accept traces and metrics from applications running outside the agent host
+   DD_APM_NON_LOCAL_TRAFFIC=true
+   DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+   ```
 
 ## Sample Application
 

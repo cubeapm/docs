@@ -13,6 +13,8 @@ Go tracer requires Go version 1.18 or higher and Datadog Agent version 5.21.1 or
 
 ## Installation
 
+Following are the steps to install the Datadog agent and connect it with CubeAPM. If Datadog agent is already installed, you can jump to step 4.
+
 1. Install dependencies:
 
    ```shell
@@ -52,8 +54,11 @@ Go tracer requires Go version 1.18 or higher and Datadog Agent version 5.21.1 or
       <TabItem value="env" label="Environment Variables">
          ```shell
           DD_SERVICE=<app_name>
-          # send traces to CubeAPM
-          DD_TRACE_AGENT_URL=http://<ip_address_of_cubeapm_server>:3130
+          # Send data to Datadog Agent
+          DD_AGENT_HOST=<datadog_agent_host_name>
+
+          # Enable runtime metrics 
+          DD_RUNTIME_METRICS_ENABLED=true 
 
           # optional settings
           DD_ENV=myenv
@@ -67,8 +72,12 @@ Go tracer requires Go version 1.18 or higher and Datadog Agent version 5.21.1 or
              # highlight-start
              tracer.Start(
                 tracer.WithService("<app_name>"),
-                // send traces to CubeAPM
-                tracer.WithAgentURL("http://<ip_address_of_cubeapm_server>:3130")
+                // Send data to Datadog Agent
+                tracer.WithAgentAddr("datadog-agent:8126"),
+                tracer.WithDogstatsdAddr("datadog-agent:8125"),
+
+                // Enable Runtime metrics
+                tracer.WithRuntimeMetrics(),
 
                 // optional settings
                 tracer.WithEnv("myenv"),
@@ -76,11 +85,26 @@ Go tracer requires Go version 1.18 or higher and Datadog Agent version 5.21.1 or
                 tracer.WithGlobalTag("mykey1:myvalue1,mykey2:myvalue2")
              )
 	         defer tracer.Stop()
-             # highlight-end
+            # highlight-end
          }
          ```
       </TabItem>
    </Tabs>
+
+1. Configure Datadog Agent to forward metrics and traces to CubeAPM
+
+   ```shell
+   DD_API_KEY=<your_datadog_key>
+   # highlight-start
+   # send runtime metrics to CubeAPM
+   DD_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+   # send traces to CubeAPM
+   DD_APM_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+   # highlight-end
+   # Accept traces and metrics from applications running outside the agent host
+   DD_APM_NON_LOCAL_TRAFFIC=true
+   DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+   ```
 
 ## Sample Application
 
