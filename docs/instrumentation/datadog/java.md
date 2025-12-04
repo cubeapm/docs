@@ -9,12 +9,11 @@ import TabItem from '@theme/TabItem';
 
 ## Installation
 
-Following are the steps to install the Datadog agent and connect it with CubeAPM. If Datadog agent is already installed, you can jump to step 4.
+Following are the steps to install the Datadog agent and connect it with CubeAPM. If Datadog agent is already installed, you can jump to step 3.
 
 1. Download the Datadog Java tracer jar.
 
    https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/java/
-
 
 1. Modify the application run command as follows:
 

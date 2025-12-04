@@ -18,11 +18,11 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
    pip install ddtrace
    ```
 
-1. Initializes the Datadog tracer when your application starts:
+1. Initialize the Datadog tracer when your application starts:
 
-    ```shell
-    ddtrace-run sanic server:app --host=0.0.0.0 --port=8000 --workers=4 --debug --reload
-    ```
+   ```shell
+   ddtrace-run sanic server:app --host=0.0.0.0 --port=8000 --workers=4 --debug --reload
+   ```
 
 1. Modify the application run command as follows:
 
@@ -30,7 +30,7 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
    DD_SERVICE=<app_name> \
    # Send data to Datadog Agent
    DD_AGENT_HOST=<datadog_agent_host_name> \
-   # Enable runtime metrics 
+   # Enable runtime metrics
    DD_RUNTIME_METRICS_ENABLED=true \
    DD_RUNTIME_METRICS_RUNTIME_ID_ENABLED=true \
    # optional settings

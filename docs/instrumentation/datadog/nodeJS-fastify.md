@@ -21,7 +21,7 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
    npm install dd-trace
    ```
 
-1. Initializes the Datadog tracer when your application starts:
+1. Initialize the Datadog tracer when your application starts:
    
    <Tabs>
       <TabItem value="code" label="Code">
