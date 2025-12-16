@@ -20,7 +20,7 @@ There are two variants of OTel Collector available - **core** (names starting wi
 We provide a simplified installation script that automatically detects your OS and architecture, and installs the appropriate OpenTelemetry Collector Contrib version with custom configuration.
 
 ```shell
-sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cubeapm/Otel-contrib-installation/main/otel-contrib-install.sh)" -- --replace-config
+sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cubeapm/Otel-contrib-installation/main/otel-contrib-install.sh)" -- --version 0.141.0 --replace-config
 
 ```
 
@@ -30,12 +30,12 @@ Here we show the manual installation steps for Ubuntu. Steps for other linux var
 
 ```shell
 # change the link to the appropriate link for your os, cpu architecture, collector version, etc.
-wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.116.1/otelcol-contrib_0.116.1_linux_arm64.deb
+wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.141.0/otelcol-contrib_0.141.0_linux_arm64.deb
 
-dpkg -i otelcol-contrib_0.116.1_linux_arm64.deb
+dpkg -i otelcol-contrib_0.141.0_linux_arm64.deb
 
 # the package file can now be removed
-# rm otelcol-contrib_0.116.1_linux_arm64.deb
+# rm otelcol-contrib_0.141.0_linux_arm64.deb
 
 # edit the config as desired (refer the configuration section below)
 vi /etc/otelcol-contrib/config.yaml
