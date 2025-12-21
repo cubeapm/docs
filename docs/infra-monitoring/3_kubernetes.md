@@ -147,6 +147,99 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
            # processes:
            # process:
            #   mute_process_all_errors: true
+       # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/filelogreceiver#file-log-receiver
+       filelog:
+         preserve_leading_whitespaces: true
+         # Note: `include_file_path` must not be set to false, else recombine
+         # operator will mix up logs from different files.
+         # include_file_path: true
+
+         # The maximum size of a log entry to read. A log entry will be truncated if it is
+         # larger than max_log_size. Protects against reading large amounts of data into memory.
+         # max_log_size: 1MiB
+
+         # A map of key: value pairs to add to the entry's attributes.
+         # attributes: {}
+         # A map of key: value pairs to add to the entry's resource.
+         # resource: {}
+
+         # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/README.md
+         operators:
+           # The container operator parses logs in docker, cri-o and containerd formats.
+           # Uncomment if running in container environment.
+           #
+           # container-parser is added by helm chart. But if we define operators,
+           # then the helm chart does not add it, so we need to add it here.
+           - id: container-parser
+             type: container
+             max_log_size: 1000000
+
+           # - id: filter
+           #   type: filter
+           #   # matching logs are DROPPED
+           #   expr: <expression>
+
+           # Format specific handling
+           # Step 1: Detect format and send logs to respective handlers.
+           - id: format_handler_router
+             type: router
+             routes:
+               # Only select keys are available in resource
+               # Ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.142.0/pkg/stanza/docs/operators/container.md#add-metadata-from-file-path
+               # Particularly, k8sattributesprocessor is executed later in the pipeline,
+               # so any attributes added by it are not available here.
+               - expr: resource["k8s.container.name"] == "my_java_app"
+                 output: java_parser
+             # Send logs to end_of_format_handler
+             default: end_of_format_handler
+
+           # Step 2: Process each format (repeat for each format)
+           - id: java_parser
+             type: noop
+           - id: java_multiline
+             type: recombine
+             combine_field: body
+             is_first_entry: body matches "^\\d{4}-\\d{2}-\\d{2}"
+             # force_flush_period: 5s
+             # source_identifier: attributes["log.file.path"]
+           - id: java_extract_fields
+             type: regex_parser
+             regex: (?P<timestamp_field>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}(?:[,.]\d+)?[+-]\d{2}:\d{2})\s+\[(?P<severity_field>[A-Z]+)\]\s+(?P<message>.+)
+             # if: <expression>
+             # parse_from: body
+             # parse_to: attributes
+             # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/types/timestamp.md
+             timestamp:
+               parse_from: attributes.timestamp_field
+               layout_type: strptime
+               layout: "%Y-%m-%d %H:%M:%S.%s%j"
+               # Specify time zone if needed
+               # location: Local
+             # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/types/severity.md
+             severity:
+               parse_from: attributes.severity_field
+               # preset: default
+               # mapping:
+               #   error: 5xx
+               # Replace incoming text with standard shaort name for consistency.
+               overwrite_text: true
+           - id: java_finish
+             type: noop
+             output: end_of_format_handler
+
+           # Step 3: Finish multiline handling
+           - id: end_of_format_handler
+             type: noop
+
+           # - id: remove_timestamp_field
+           #   type: remove
+           #   field: attributes.timestamp_field
+           # - id: remove_severity_field
+           #   type: remove
+           #   field: attributes.severity_field
+
+           # Add more operators if needed
+           # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/README.md
      service:
        pipelines:
          traces:

@@ -274,7 +274,7 @@ exporters:
 
 extensions:
   file_storage:
-    directory: /var/otelcol/file_storage
+    directory: /var/lib/otelcol
 
 service:
   extensions: [file_storage]
