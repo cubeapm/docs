@@ -65,6 +65,7 @@ Python 3
 
       resource = resources.Resource.create({
          resources.HOST_NAME: gethostname() or 'UNSET',
+         resources.PROCESS_PID : os.getpid(),
       })
 
       if os.getenv('OTEL_LOG_LEVEL', '') == 'debug':
