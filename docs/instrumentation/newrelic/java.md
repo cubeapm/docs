@@ -104,29 +104,6 @@ Sample content for configuration is available at https://docs.newrelic.com/docs/
       </TabItem>
    </Tabs>
 
-## Collect Custom Events (Optional)
-
-By default, New Relic agent sends custom events to its own endpoint. To send these events to CubeAPM, we need to set `event_ingest_uri`.
-
-   <Tabs>
-      <TabItem value="file" label="newrelic.yml">
-         ```yaml
-         app_name: <app_name>
-         license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
-         // highlight-next-line
-         event_ingest_uri: 'https://<cubeapm-newrelic.yourdomain.com>agent_listener/invoke_raw_method'
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         NEW_RELIC_APP_NAME=<app_name>
-         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         // highlight-next-line
-         NEW_RELIC_EVENT_INGEST_URI=https://<cubeapm-newrelic.yourdomain.com>/agent_listener/invoke_raw_method
-         ```
-      </TabItem>
-   </Tabs>
-
 ## Sample App
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/newrelic
