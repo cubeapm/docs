@@ -77,6 +77,56 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       </TabItem>
    </Tabs>
 
+## Collect JMX Metrics (Optional)
+
+Create a folder named `extensions` in the same path as `newrelic-agent.jar` and place the configuration in a yml file in that folder. New Relic agent automatically picks the configuration defined in extensions folder.
+
+Sample content for configuration is available at https://docs.newrelic.com/docs/apm/agents/java-agent/custom-instrumentation/custom-jmx-yaml-examples/
+
+   <Tabs>
+      <TabItem value="file" label="newrelic.yml">
+         ```yaml
+         app_name: <app_name>
+         license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
+         // highlight-start
+         jmx:
+           enabled: true
+         // highlight-end
+         ```
+      </TabItem>
+      <TabItem value="env" label="Environment Variables">
+         ```shell
+         NEW_RELIC_APP_NAME=<app_name>
+         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+         // highlight-next-line
+         NEW_RELIC_JMX_ENABLED=true
+         ```
+      </TabItem>
+   </Tabs>
+
+## Collect Custom Events (Optional)
+
+By default, New Relic agent sends custom events to its own endpoint. To send these events to CubeAPM, we need to set `event_ingest_uri`.
+
+   <Tabs>
+      <TabItem value="file" label="newrelic.yml">
+         ```yaml
+         app_name: <app_name>
+         license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
+         // highlight-next-line
+         event_ingest_uri: 'https://<cubeapm-newrelic.yourdomain.com>agent_listener/invoke_raw_method'
+         ```
+      </TabItem>
+      <TabItem value="env" label="Environment Variables">
+         ```shell
+         NEW_RELIC_APP_NAME=<app_name>
+         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+         // highlight-next-line
+         NEW_RELIC_EVENT_INGEST_URI=https://<cubeapm-newrelic.yourdomain.com>/agent_listener/invoke_raw_method
+         ```
+      </TabItem>
+   </Tabs>
+
 ## Sample App
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/newrelic
