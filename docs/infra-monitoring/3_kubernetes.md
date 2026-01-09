@@ -139,7 +139,7 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
          scrapers:
            cpu:
            disk:
-           # load:
+           load:
            filesystem:
            memory:
            network:
@@ -453,7 +453,7 @@ The configuration above will monitor the k8s cluster at container-level granular
                  enabled: false
                system.disk.weighted_io_time:
                  enabled: false
-           # load:
+           load:
            filesystem:
              exclude_devices:
                devices:

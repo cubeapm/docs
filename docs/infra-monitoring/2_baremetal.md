@@ -92,7 +92,7 @@ receivers:
     scrapers:
       cpu:
       disk:
-      # load:
+      load:
       filesystem:
       memory:
       network:
