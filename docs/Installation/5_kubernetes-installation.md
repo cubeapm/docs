@@ -175,7 +175,7 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
             - **Default**: Usually `false` in Helm charts for security.
             - **Impact**: `true` → Kubernetes creates Ingress; `false` → no external access.
 
-
+            
         :::info
             If you are using cloud provider like (AWS, GCP, Azure) you can specify existing `className` & `annotations` to use existing ingress controller. Or else setup new ingress controller like NGINX or Traefik. 
         :::
@@ -184,6 +184,7 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
             - **Purpose**: Specifies which Ingress controller processes this Ingress.
             - **Empty string**: Uses cluster default IngressClass (e.g., NGINX, Traefik).
             - **Examples**:
+
 
             ```text
             className: "nginx"              # NGINX Ingress Controller
@@ -195,6 +196,7 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
             - **Purpose**: Controller-specific configuration.
             - **Empty**: No special routing/behavior.
             - **Common examples (add to map)**:
+
 
             ```text
             annotations:
