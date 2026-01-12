@@ -1,4 +1,4 @@
----
+<!-- ---
 sidebar_position: 4
 slug: /install/kubernetes
 ---
@@ -55,4 +55,4 @@ CubeAPM creates a StatefulSet. StatefulSets do not allow direct modification of 
 1. Update `persistence.size` in CubeAPM Helm Chart values.yaml file and redeploy. This will recreate the StatefulSet and then restart the pods one-by-one. Each pod's PVC wll be resized during retart.
    ```shell
    helm upgrade cubeapm cubeapm/cubeapm -f values.yaml
-   ```
+   ``` -->
