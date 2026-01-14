@@ -6,9 +6,7 @@ slug: /logs/ingestion/fluentd
 
 # Fluentd
 
-## HTTP
-
-Specify `http` output section in `fluentd.conf` as below:
+Fluentd can send logs to CubeAPM using the `http` output plugin. Specify `http` output section in `fluentd.conf` as below:
 
 ```
 <match **>
@@ -19,3 +17,5 @@ Specify `http` output section in `fluentd.conf` as below:
 ```
 
 Reference: [Fluentd HTTP documentation](https://docs.fluentd.org/output/http).
+
+A sample project with working Docker Compose setup is available at https://github.com/cubeapm/sample_logs_pipeline_fluentd.
