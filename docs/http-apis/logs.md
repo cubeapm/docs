@@ -67,3 +67,144 @@ For example
   "trace_id": "c7c1369bb478ff640385d1307b2cb088"
 }
 ```
+
+## Deletion (delete logs from CubeAPM)
+
+CubeAPM provides APIs for deleting logs based on filters. This allows you to remove logs that match specific criteria, such as logs from a particular service, environment, or time range.
+
+## Run Delete Task
+
+**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3140/api/logs/delete/run_task`
+
+Starts a background task to delete logs matching the specified filter. The deletion task runs asynchronously and can be monitored or stopped using other endpoints.
+
+### Request Parameters
+
+| Parameter | Type   | Description                                                                                  |
+| --------- | ------ | -------------------------------------------------------------------------------------------- |
+| filter    | string | The LogsQL filter expression that defines which logs to delete. This uses the same filter syntax as log queries. |
+
+### Filter Syntax
+
+The filter parameter uses LogsQL filter syntax. Common examples include:
+
+- Stream filters: `{env="production",service.name="order"}`
+- Field filters: `severity="ERROR"`
+- Combined filters: `{env="production"} severity="ERROR"`
+- Time-based filters: `_time:>=2025-01-01T00:00:00Z`
+
+For more details on filter syntax, see the [LogsQL documentation](https://docs.victoriametrics.com/victorialogs/logsql/#filters).
+
+### curl
+
+```bash
+curl 'http://<cubeapm_server>:3140/api/logs/delete/run_task' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'filter={env="production",service.name="order"} severity="ERROR"'
+```
+
+### Response Format
+
+The response is a JSON object containing the task ID:
+
+| Field   | Type   | Description                                    |
+| ------- | ------ | ---------------------------------------------- |
+| task_id | string | Unique identifier for the delete task. Use this ID to stop the task or check its status. |
+
+**Example Response:**
+
+```json
+{
+  "task_id": "1738060800000000000"
+}
+```
+
+## Stop Delete Task
+
+**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3140/api/logs/delete/stop_task`
+
+Stops a running delete task. Once stopped, the task will not continue deleting logs.
+
+### Request Parameters
+
+| Parameter | Type   | Description                                                      |
+| --------- | ------ | ---------------------------------------------------------------- |
+| task_id   | string | The task ID returned from the `run_task` endpoint. Required.    |
+
+### curl
+
+```bash
+curl 'http://<cubeapm_server>:3140/api/logs/delete/stop_task' \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'task_id=1738060800000000000'
+```
+
+### Response Format
+
+The response is a JSON object indicating success:
+
+| Field  | Type   | Description                    |
+| ------ | ------ | ------------------------------ |
+| status | string | Status of the operation. Returns "ok" on success. |
+
+**Example Response:**
+
+```json
+{
+  "status": "ok"
+}
+```
+
+## List Active Delete Tasks
+
+**Endpoint:** `GET` `http://<ip_address_of_cubeapm_server>:3140/api/logs/delete/active_tasks`
+
+Returns a list of all currently active (running or pending) delete tasks.
+
+### Request Parameters
+
+This endpoint does not require any parameters.
+
+### curl
+
+```bash
+curl 'http://<cubeapm_server>:3140/api/logs/delete/active_tasks'
+```
+
+### Response Format
+
+The response is a JSON array of delete task objects. Each task object has the following structure:
+
+| Field      | Type     | Description                                                      |
+| ---------- | -------- | ---------------------------------------------------------------- |
+| task_id    | string   | Unique identifier for the delete task.                           |
+| tenant_ids | string[] | Array of tenant IDs associated with the task.                    |
+| filter     | string   | The LogsQL filter expression used for deletion.                  |
+| start_time | string   | Timestamp when the task was created, in ISO 8601 format.         |
+
+**Example Response:**
+
+```json
+[
+  {
+    "task_id": "1738060800000000000",
+    "tenant_ids": ["0"],
+    "filter": "{env=\"production\",service.name=\"order\"} severity=\"ERROR\"",
+    "start_time": "2025-01-28T10:00:00Z"
+  },
+  {
+    "task_id": "1738060900000000000",
+    "tenant_ids": ["0"],
+    "filter": "{env=\"staging\"} _time:<2025-01-01T00:00:00Z",
+    "start_time": "2025-01-28T11:00:00Z"
+  }
+]
+```
+
+## Notes
+
+- Delete tasks run asynchronously in the background. Large deletions may take time to complete.
+- Use the `active_tasks` endpoint to monitor the progress of delete operations.
+- You can stop a running delete task at any time using the `stop_task` endpoint.
+- Deleted logs cannot be recovered. Use caution when specifying filters for deletion.
+- The delete API requires admin privileges and may need to be enabled via the `-delete.enable` command-line flag.
