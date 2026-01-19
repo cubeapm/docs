@@ -36,8 +36,9 @@ _For these GCP-native services, Metric Explorer provides comprehensive monitorin
 ## Metric Explorer Setup
 
 1. Copy the file below and save as `gcp-metrics.yaml` respectively. Edit it to customize the configuration as per your requirements.
+   Adding/Removing projects and metrics that needs to be monitored
     <details>
-   <summary>otel-collector-daemonset.yaml</summary>
+   <summary>gcp-metrics.yaml</summary>
    ```yaml
     projects:
       - id: able-reef-466806-u4
@@ -78,3 +79,30 @@ _For these GCP-native services, Metric Explorer provides comprehensive monitorin
       - redis.googleapis.com/stats/reject_connections_count
    ```
    </details>
+
+2. Below is the list of all configuration parameters supported by CubeAPM, along with documentation and default values.
+
+    ```shell title="config.properties"
+    
+    # Path to YAML configuration file that specifies which GCP projects and metrics to collect. 
+    # Required to enable GCP monitoring.
+    metrics.gcp.config-file=
+
+    # Path to GCP service account credentials JSON file. 
+    # If not provided, CubeAPM will use Application Default Credentials (ADC). 
+    # See [GCP Authentication](https://cloud.google.com/docs/authentication/application-default-credentials) for details.
+    # If permission is not provided through credentials file.
+    # Ensure service account attched to cubeapm instance has Monitoring Viewer permission for project to be monitored
+    metrics.gcp.application-credentials-file=
+    ```
+3. In case we are providing credentials using GCP service account credentials JSON file. `Monitoring Viewer` needs to be attached   to service account. In case multiple projects needs to be monitored, you can attach permission for multiple project to same service account.
+
+   :::info
+    In GKE, pods do not automatically inherit project IAM permissions.
+    Instead, you should use Workload Identity so that:
+    Kubernetes Service Account (KSA) → Google Service Account (GSA) → IAM roles
+   :::
+
+   
+
+   
