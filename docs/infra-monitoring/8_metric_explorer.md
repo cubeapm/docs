@@ -103,6 +103,6 @@ _For these GCP-native services, Metric Explorer provides comprehensive monitorin
     Kubernetes Service Account (KSA) → Google Service Account (GSA) → IAM roles
    :::
 
-   
+   todo :: add service account steps
 
    
