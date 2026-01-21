@@ -98,14 +98,9 @@ _For these GCP-native services, Metric Explorer provides comprehensive monitorin
 3. If you are not using an existing service account, create a Google Service Account first:
 
    ```bash
-   # Set variables
-   export PROJECT_ID="your-gcp-project-id"
-   export GSA_NAME="cubeapm-metrics-sa"
-   export GSA_EMAIL="${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
-   
    # Create the service account
-   gcloud iam service-accounts create ${GSA_NAME} \
-       --project=${PROJECT_ID} \
+   gcloud iam service-accounts create <service-account-name> \
+       --project=<gcp-project-id> \
        --display-name="CubeAPM Metrics Service Account" \
        --description="Service account for CubeAPM to access GCP Monitoring APIs"
    ```
@@ -147,14 +142,8 @@ The Workload Identity flow works as follows:
 Create a Google Service Account that will be used by your pods:
 
 ```bash
-# Set variables
-export PROJECT_ID="your-gcp-project-id"
-export GSA_NAME="cubeapm-metrics-sa"
-export GSA_EMAIL="${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
-
-# Create the service account
-gcloud iam service-accounts create ${GSA_NAME} \
-    --project=${PROJECT_ID} \
+gcloud iam service-accounts create <service-account-name> \
+    --project=<gcp-project-id> \
     --display-name="CubeAPM Metrics Service Account"
 ```
 
@@ -163,19 +152,16 @@ gcloud iam service-accounts create ${GSA_NAME} \
 Attach the `roles/monitoring.viewer` role to the service account:
 
 ```bash
-# Grant Monitoring Viewer role
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${GSA_EMAIL}" \
+gcloud projects add-iam-policy-binding <gcp-project-id> \
+    --member="serviceAccount:<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com" \
     --role="roles/monitoring.viewer"
 ```
 
 If you need to monitor multiple projects, repeat this command for each project:
 
 ```bash
-# For additional projects
-export ADDITIONAL_PROJECT_ID="another-project-id"
-gcloud projects add-iam-policy-binding ${ADDITIONAL_PROJECT_ID} \
-    --member="serviceAccount:${GSA_EMAIL}" \
+gcloud projects add-iam-policy-binding <additional-project-id> \
+    --member="serviceAccount:<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com" \
     --role="roles/monitoring.viewer"
 ```
 
@@ -184,12 +170,7 @@ gcloud projects add-iam-policy-binding ${ADDITIONAL_PROJECT_ID} \
 Create a Kubernetes Service Account in your cluster:
 
 ```bash
-# Set variables
-export K8S_NAMESPACE="default"  # or your namespace
-export KSA_NAME="cubeapm-sa"
-
-# Create the Kubernetes service account
-kubectl create serviceaccount ${KSA_NAME} -n ${K8S_NAMESPACE}
+kubectl create serviceaccount <kubernetes-service-account-name> -n <namespace>
 ```
 
 #### 4. Enable Workload Identity Binding
@@ -197,21 +178,10 @@ kubectl create serviceaccount ${KSA_NAME} -n ${K8S_NAMESPACE}
 Bind the Kubernetes Service Account to the Google Service Account:
 
 ```bash
-# Set variables
-export GKE_CLUSTER="your-cluster-name"
-export GKE_LOCATION="us-central1"  # or your cluster location
-export GKE_PROJECT_ID="your-gcp-project-id"
-
-# Get the full GKE service account email
-export GKE_SA_EMAIL=$(gcloud iam service-accounts list \
-    --filter="displayName:Compute Engine default service account" \
-    --format="value(email)" \
-    --project=${GKE_PROJECT_ID})
-
-# Allow the KSA to impersonate the GSA
-gcloud iam service-accounts add-iam-policy-binding ${GSA_EMAIL} \
+gcloud iam service-accounts add-iam-policy-binding \
+    <service-account-name>@<gcp-project-id>.iam.gserviceaccount.com \
     --role roles/iam.workloadIdentityUser \
-    --member "serviceAccount:${GKE_PROJECT_ID}.svc.id.goog[${K8S_NAMESPACE}/${KSA_NAME}]"
+    --member "serviceAccount:<gcp-project-id>.svc.id.goog[<namespace>/<kubernetes-service-account-name>]"
 ```
 
 #### 5. Annotate the Kubernetes Service Account
@@ -219,9 +189,9 @@ gcloud iam service-accounts add-iam-policy-binding ${GSA_EMAIL} \
 Add the annotation to link the KSA to the GSA:
 
 ```bash
-kubectl annotate serviceaccount ${KSA_NAME} \
-    -n ${K8S_NAMESPACE} \
-    iam.gke.io/gcp-service-account=${GSA_EMAIL}
+kubectl annotate serviceaccount <kubernetes-service-account-name> \
+    -n <namespace> \
+    iam.gke.io/gcp-service-account=<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com
 ```
 
 #### 6. Configure Your Pod to Use the Service Account
@@ -236,7 +206,7 @@ metadata:
 spec:
   template:
     spec:
-      serviceAccountName: cubeapm-sa  # Use the KSA name
+      serviceAccountName: <kubernetes-service-account-name>
       containers:
       - name: cubeapm
         image: cubeapm/cubeapm:latest
@@ -249,10 +219,10 @@ Verify that the pod can access GCP Monitoring:
 
 ```bash
 # Check if the pod is using the correct service account
-kubectl describe pod <pod-name> -n ${K8S_NAMESPACE} | grep "Service Account"
+kubectl describe pod <pod-name> -n <namespace> | grep "Service Account"
 
 # Test access from within the pod
-kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- \
+kubectl exec -it <pod-name> -n <namespace> -- \
     gcloud monitoring time-series list --limit=1
 ```
 
@@ -262,24 +232,25 @@ If pods still cannot access GCP Monitoring APIs:
 
 1. **Verify Workload Identity is enabled** on your GKE cluster:
    ```bash
-   gcloud container clusters describe ${GKE_CLUSTER} \
-       --location=${GKE_LOCATION} \
+   gcloud container clusters describe <cluster-name> \
+       --location=<cluster-location> \
        --format="value(workloadIdentityConfig.workloadPool)"
    ```
 
 2. **Check IAM bindings**:
    ```bash
-   gcloud iam service-accounts get-iam-policy ${GSA_EMAIL}
+   gcloud iam service-accounts get-iam-policy \
+       <service-account-name>@<gcp-project-id>.iam.gserviceaccount.com
    ```
 
 3. **Verify service account annotation**:
    ```bash
-   kubectl get serviceaccount ${KSA_NAME} -n ${K8S_NAMESPACE} -o yaml
+   kubectl get serviceaccount <kubernetes-service-account-name> -n <namespace> -o yaml
    ```
 
 4. **Check pod logs** for authentication errors:
    ```bash
-   kubectl logs <pod-name> -n ${K8S_NAMESPACE}
+   kubectl logs <pod-name> -n <namespace>
    ```
 
 ### Alternative: Using Service Account Key File
@@ -289,14 +260,14 @@ If Workload Identity is not available or you prefer using a service account key 
 1. Create and download a key for the Google Service Account:
    ```bash
    gcloud iam service-accounts keys create cubeapm-key.json \
-       --iam-account=${GSA_EMAIL}
+       --iam-account=<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com
    ```
 
 2. Create a Kubernetes secret:
    ```bash
    kubectl create secret generic gcp-credentials \
        --from-file=key.json=cubeapm-key.json \
-       -n ${K8S_NAMESPACE}
+       -n <namespace>
    ```
 
 3. Mount the secret in your pod and configure CubeAPM to use it:
