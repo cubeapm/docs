@@ -95,7 +95,26 @@ _For these GCP-native services, Metric Explorer provides comprehensive monitorin
     # Ensure service account attched to cubeapm instance has Monitoring Viewer permission for project to be monitored
     metrics.gcp.application-credentials-file=
     ```
-3. In case we are providing credentials using GCP service account credentials JSON file. `Monitoring Viewer` needs to be attached   to service account. In case multiple projects needs to be monitored, you can attach permission for multiple project to same service account.
+3. If you are not using an existing service account, create a Google Service Account first:
+
+   ```bash
+   # Set variables
+   export PROJECT_ID="your-gcp-project-id"
+   export GSA_NAME="cubeapm-metrics-sa"
+   export GSA_EMAIL="${GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+   
+   # Create the service account
+   gcloud iam service-accounts create ${GSA_NAME} \
+       --project=${PROJECT_ID} \
+       --display-name="CubeAPM Metrics Service Account" \
+       --description="Service account for CubeAPM to access GCP Monitoring APIs"
+   ```
+
+   :::tip
+   If you already have a service account that you want to use, you can skip this step and proceed to the next step.
+   :::
+
+4. In case we are providing credentials using GCP service account credentials JSON file. `Monitoring Viewer` needs to be attached   to service account. In case multiple projects needs to be monitored, you can attach permission for multiple project to same service account.
 
    :::info
     In GKE, pods do not automatically inherit project IAM permissions.
@@ -671,6 +690,5 @@ Common issues and solutions:
        --flatten="bindings[].members" \
        --filter="bindings.members:serviceAccount:${GSA_EMAIL}"
    ```
-   todo :: add service account steps
 
    
