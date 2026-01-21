@@ -671,3 +671,6 @@ Common issues and solutions:
        --flatten="bindings[].members" \
        --filter="bindings.members:serviceAccount:${GSA_EMAIL}"
    ```
+   todo :: add service account steps
+
+   
