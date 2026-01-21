@@ -213,6 +213,21 @@ spec:
         # ... other container configuration
 ```
 
+Or In your CubeAPM `values.yaml`, under the service account:
+
+```yaml
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  # -- Set this false if you are using existing service account
+  create: false
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  # Enter the existing kubernetes SA name
+  name: "<kubernetes-service-account-name>"
+```
+
 #### 7. Verify the Setup
 
 Verify that the pod can access GCP Monitoring:
