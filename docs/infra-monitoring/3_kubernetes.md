@@ -152,7 +152,7 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
          preserve_leading_whitespaces: true
          # Note: `include_file_path` must not be set to false, else recombine
          # operator will mix up logs from different files.
-         # include_file_path: true
+         include_file_path: true
 
          # The maximum size of a log entry to read. A log entry will be truncated if it is
          # larger than max_log_size. Protects against reading large amounts of data into memory.

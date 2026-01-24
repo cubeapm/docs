@@ -88,7 +88,9 @@ receivers:
     preserve_leading_whitespaces: true
     # Note: `include_file_path` must not be set to false, else recombine
     # operator will mix up logs from different files.
-    # include_file_path: true
+    include_file_path: true
+    # include_file_name can be det to false as we are including full filepath above.
+    include_file_name: false
 
     # The maximum size of a log entry to read. A log entry will be truncated if it is
     # larger than max_log_size. Protects against reading large amounts of data into memory.
