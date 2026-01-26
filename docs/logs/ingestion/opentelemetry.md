@@ -89,7 +89,7 @@ receivers:
     # Note: `include_file_path` must not be set to false, else recombine
     # operator will mix up logs from different files.
     include_file_path: true
-    # include_file_name can be det to false as we are including full filepath above.
+    # include_file_name can be set to false as we are including full filepath above.
     include_file_name: false
 
     # The maximum size of a log entry to read. A log entry will be truncated if it is
