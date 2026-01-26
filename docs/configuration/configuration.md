@@ -155,6 +155,9 @@ smtp.from=no-reply@cubeapm.com
 # Disable the built-in demo trace generator
 tracegen.disable=false
 
+# Directory containing archived logs
+logs.archive.dir=
+
 # The number of concurrent workers. 0 means equal to number of available CPUs.
 logs.backup.concurrency=0
 
@@ -244,7 +247,7 @@ logs.datadog.stream-fields=service,functionname
 logs.datadog.ignore-fields=
 
 # Comma separated list of New Relic tags to be used as stream fields.
-logs.newrelic.stream-fields=service.name,faas.name
+logs.newrelic.stream-fields=service.name,faas.name,appId,level
 
 # Comma separated list of New Relic tags to ignore.
 logs.newrelic.ignore-fields=
@@ -400,8 +403,15 @@ cluster.allow-insecure-advertise=false
 # Replication factor for the ingested data. Default is size_of_cluster/2 + 1
 cluster.replication-factor=
 
+# Elastic APM server URL to forward requests to when forwarding is enabled.
+# Example: https://apm-server.example.com:8200
+collector.elastic.server-url=
+
 # [Deprecated] Use env-tag instead.
 #collector.env-tag=cube.environment
+
+# Collect data that New Relic stores in Transaction table.
+collector.nr.collect-transaction-data=false
 
 # Comma separated list of allowed headers for CORS requests.
 # Examples: "Content-Type,tracestate,traceparent", "Content-Type,X-My-Custom-Header"
@@ -410,6 +420,9 @@ collector.nr.cors.headers=Content-Type
 # Comma separated list of allowed origins for CORS requests.
 # Examples: "http://*.domain.com", "*"
 collector.nr.cors.origins=*
+
+# Do not deny service to unsupported agent protocols. Provide best-effort service instead.
+collector.nr.skip-protocol-check=false
 
 # Comma separated list of allowed origins for CORS requests.
 # Examples: "http://*.domain.com", "*"
@@ -433,14 +446,6 @@ http-port-admin=3199
 # Token for authentication calls to admin http server. If specified, calls to admin http server will be required to carry the value as bearer token.
 http-token-admin=
 
-# Comma separated list of allowed headers for CORS requests for jsonline endpoint.
-# Examples: "Content-Type,X-My-Custom-Header"
-logs.jsonline.cors.headers=Content-Type
-
-# Comma separated list of allowed origins for CORS requests for jsonline endpoint.
-# Examples: "http://*.domain.com", "*"
-logs.jsonline.cors.origins=*
-
 # Custom field to record logs ingestion volume by. For example, if set to 'service', CubeAPM will look for the field named 'service' in incoming logs, and will maintain ingestion volume service-wise.
 logs.metering.extra-field=
 
@@ -450,9 +455,17 @@ metrics.aws.data-firehose-access-key=
 # Path to config file for extending CubeAPM metrics with custom labels.
 metrics.custom-labels-config-file=
 
+# Compatibility mode for integration using Datadog agent.
+# Possible values are legacy, modern
+metrics.dd.compatibility-mode=modern
+
 # Operation mode for downsampler. Downsampler periodically creates compressed copies of apm metrics. This speeds up apm queries over longer time ranges.
 # Possible values are off, on, backfill-YYYY-MM-DD
 metrics.downsampler.mode=on
+
+# Path to Credentials json for Google Cloud Platform.
+# See https://cloud.google.com/docs/authentication/application-default-credentials
+metrics.gcp.application-credentials-file=
 
 # Whether to enable infrastructure correlation.
 metrics.infra-correlation.enable=false
