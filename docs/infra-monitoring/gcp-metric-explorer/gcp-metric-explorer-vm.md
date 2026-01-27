@@ -3,7 +3,7 @@ slug: /infra-monitoring/gcp-metric-explorer/gcp-metric-explorer-vm
 sidebar_position: 1
 ---
 
-# GCP Metric Explorer - Bare Metal
+# Virtual Machine 
 
 ## Metric Explorer Setup
 
