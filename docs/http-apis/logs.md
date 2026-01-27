@@ -84,6 +84,10 @@ Starts a background task to delete logs matching the specified filter. The delet
 | --------- | ------ | -------------------------------------------------------------------------------------------- |
 | filter    | string | The LogsQL filter expression that defines which logs to delete. This uses the same filter syntax as log queries. |
 
+:::info
+Logs once deleted cannot be recovered back. Ensure we have a time range defined in query for which we want to execute logs deletion 
+:::
+
 ### Filter Syntax
 
 The filter parameter uses LogsQL filter syntax. Common examples include:
