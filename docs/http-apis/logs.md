@@ -10,7 +10,7 @@ CubeAPM can receive logs in various formats. This makes it easy to integrate Cub
 
 ## Querying (fetching logs from CubeAPM)
 
-**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3199/api/logs/select/logsql/query`
+**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3140/api/logs/select/logsql/query`
 
 ### Request Parameters
 
@@ -121,7 +121,7 @@ The response is a JSON object containing the task ID:
 
 ## Stop Delete Task
 
-**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3140/api/logs/delete/stop_task`
+**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3199/api/logs/delete/stop_task`
 
 Stops a running delete task. Once stopped, the task will not continue deleting logs.
 
@@ -134,7 +134,7 @@ Stops a running delete task. Once stopped, the task will not continue deleting l
 ### curl
 
 ```bash
-curl 'http://<cubeapm_server>:3140/api/logs/delete/stop_task' \
+curl 'http://<cubeapm_server>:3199/api/logs/delete/stop_task' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'task_id=1738060800000000000'
 ```
@@ -157,7 +157,7 @@ The response is a JSON object indicating success:
 
 ## List Active Delete Tasks
 
-**Endpoint:** `GET` `http://<ip_address_of_cubeapm_server>:3140/api/logs/delete/active_tasks`
+**Endpoint:** `GET` `http://<ip_address_of_cubeapm_server>:3199/api/logs/delete/active_tasks`
 
 Returns a list of all currently active (running or pending) delete tasks.
 
@@ -168,7 +168,7 @@ This endpoint does not require any parameters.
 ### curl
 
 ```bash
-curl 'http://<cubeapm_server>:3140/api/logs/delete/active_tasks'
+curl 'http://<cubeapm_server>:3199/api/logs/delete/active_tasks'
 ```
 
 ### Response Format
