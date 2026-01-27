@@ -10,7 +10,7 @@ CubeAPM can receive logs in various formats. This makes it easy to integrate Cub
 
 ## Querying (fetching logs from CubeAPM)
 
-**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3140/api/logs/select/logsql/query`
+**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3199/api/logs/select/logsql/query`
 
 ### Request Parameters
 
@@ -74,7 +74,7 @@ CubeAPM provides APIs for deleting logs based on filters. This allows you to rem
 
 ## Run Delete Task
 
-**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3140/api/logs/delete/run_task`
+**Endpoint:** `POST` `http://<ip_address_of_cubeapm_server>:3199/api/logs/delete/run_task`
 
 Starts a background task to delete logs matching the specified filter. The deletion task runs asynchronously and can be monitored or stopped using other endpoints.
 
@@ -98,7 +98,7 @@ For more details on filter syntax, see the [LogsQL documentation](https://docs.v
 ### curl
 
 ```bash
-curl 'http://<cubeapm_server>:3140/api/logs/delete/run_task' \
+curl 'http://<cubeapm_server>:3199/api/logs/delete/run_task' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'filter={env="production",service.name="order"} severity="ERROR"'
 ```
@@ -207,4 +207,3 @@ The response is a JSON array of delete task objects. Each task object has the fo
 - Use the `active_tasks` endpoint to monitor the progress of delete operations.
 - You can stop a running delete task at any time using the `stop_task` endpoint.
 - Deleted logs cannot be recovered. Use caution when specifying filters for deletion.
-- The delete API requires admin privileges and may need to be enabled via the `-delete.enable` command-line flag.
