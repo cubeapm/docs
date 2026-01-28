@@ -207,7 +207,9 @@ The response is a JSON array of delete task objects. Each task object has the fo
 
 ## Notes
 
+- Delete tasks run over a separate admin port for security reasons, admin port is disabled by default. Please contact `cubeapm-support` to help you enable it.
 - Delete tasks run asynchronously in the background. Large deletions may take time to complete.
+- Delete tasks needs to be executed separately for each instance of CubeAPM(if running in cluster mode)
 - Use the `active_tasks` endpoint to monitor the progress of delete operations.
 - You can stop a running delete task at any time using the `stop_task` endpoint.
 - Deleted logs cannot be recovered. Use caution when specifying filters for deletion.
