@@ -5,18 +5,11 @@ sidebar_position: 3
 
 # Archive
 
-CubeAPM supports archiving logs data to S3 by using JuiceFS. See the left sidebar for configuration using different methods depending upon your CubeAPM setup.
+CubeAPM supports archiving logs data to Object stores like AWS S3 (or any object store with S3-compatible APIs), Google Cloud Storage (GCS), and Azure Blob Storage.
 
-<!-- ```shell
-# Elastic
-http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/elasticsearch/_bulk
+Archived logs can be queried seamlessly in real-time. Both CubeAPM UI and APIs fetch logs automatically from local storage and/or archive as required.
 
-# Loki (Protobuf as well as JSON)
-http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/loki/api/v1/push
+Please follow the links below for configuration according to deployment environment.
 
-# OpenTelemetry Logs (Protobuf)
-http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/opentelemetry/v1/logs
-
-# JSON (Newline delimited)
-http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/jsonline
-``` -->
+- [Bare Metal / Virtual Machine](bare-metal.md)
+- [Kubernetes](kubernetes.md)
