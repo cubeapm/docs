@@ -146,6 +146,8 @@ receivers:
         enabled: false
       mysql.table.io.wait.count:
         enabled: false
+#       mysql.table.size:
+#         enabled: true
 
   postgresql:
     endpoint: localhost:5432
