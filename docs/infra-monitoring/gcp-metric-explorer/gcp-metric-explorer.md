@@ -5,13 +5,13 @@ sidebar_position: 8
 
 # GCP Metric Explorer
 
-CubeAPM supports monitoring GCP services through **GCP Metric Explorer** (described in this document) and **direct communication**. The choice depends on the type of AWS service and your cost considerations.
+OpenTelemetry Collector supports monitoring GCP services through **GCP Metric Explorer** (described in this document) and **direct communication**. The choice depends on the type of AWS service and your cost considerations.
 
 ### When to Use Each Method
 
 #### Direct Communication (Recommended for Cost Efficiency)
 
-For GCP services that use **underlying technologies supported by OpenTelemetry**, you can connect directly to avoid CloudWatch streaming costs:
+For GCP services that use **underlying technologies supported by OpenTelemetry**, you can connect directly:
 
 - **Container Services**: Google Kubernetes Engine (GKE) (Kubernetes), Cloud Run (containerized apps)
 - **Database Services**: Cloud SQL (MySQL, PostgreSQL, etc.), Memorystore (Redis)

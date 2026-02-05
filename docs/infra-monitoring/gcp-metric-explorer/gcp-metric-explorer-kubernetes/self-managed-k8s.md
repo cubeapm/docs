@@ -5,7 +5,7 @@ sidebar_position: 5
 
 # Self Managed K8s
 
-When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare metal, or other cloud providers), you'll need to use service account key files to authenticate with GCP Monitoring APIs.
+When running OpenTelemetry Collector in a self-managed Kubernetes cluster (on-premises, bare metal, or other cloud providers), you'll need to use service account key files to authenticate with GCP Monitoring APIs.
 
 ## Granting Permissions to Pods in Self-Managed Kubernetes Cluster
 
@@ -16,6 +16,12 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
 - `kubectl` configured to access your cluster
 - GCP project with Monitoring API enabled
 - Network connectivity from your cluster to GCP APIs
+- Otel-Collector-Contrib to get GCP Metrics (Refer to [Kubernetes OpenTelemetry Collector Deployment](/infra-monitoring/kubernetes))
+
+:::note
+    - If you want to get only GCP Metrics, you can use only `otel-collector-deployment.yaml` file.
+    - For detailed level monitoring use both `otel-collector-daemonset.yaml` and `otel-collector-deployment.yaml` files.
+:::
 
 ### Step-by-Step Setup
 
@@ -84,50 +90,56 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
     rm cubeapm-key.json
     ```
 
-5. **Configure Your Pod Deployment**
+5. **Configure otel-collector-deployment.yaml**
 
-    Mount the secret in your CubeAPM deployment:
+    - Mount the secret in your `otel-collector-deployment.yaml` file
 
-    ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-        name: cubeapm
-        namespace: default
-    spec:
-        replicas: 1
-        selector:
-            matchLabels:
-                app: cubeapm
-        template:
-            metadata:
-                labels:
-                    app: cubeapm
-            spec:
-                containers:
-                - name: cubeapm
-                    image: cubeapm/cubeapm:latest
-                volumeMounts:
-                - name: gcp-credentials
-                    mountPath: /etc/gcp
-                    readOnly: true
-                env:
-                - name: METRICS_GCP_APPLICATION_CREDENTIALS_FILE
-                    value: /etc/gcp/key.json
-                volumes:
-                - name: gcp-credentials
-                    secret:
-                        secretName: gcp-credentials
-    ```
+        ```yaml
+        mode: deployment
 
-6. **Configure CubeAPM**
+        # 1. Mount the secret into the pod
+        extraVolumes:
+            - name: gcp-secret
+              secret:
+                secretName: my-gcp-key-secret # The name of your K8s secret
 
-    Set the configuration property:
+        extraVolumeMounts:
+            - name: gcp-secret
+              mountPath: /var/secrets/google
+              readOnly: true
+        ```
 
-    ```properties
-    metrics.gcp.application-credentials-file=/etc/gcp/key.json
-    ```
+    - Configure `otel-collector-deployment.yaml` to fetch ***gcp-metrics*** from the GCP Monitoring API.
 
+
+        ```yaml
+        config:
+            receivers:
+                googlecloudmonitoring:
+                    project_id: "<gcp-project-id>" # Optional: ADC will auto-detect this from the VM
+                    collection_interval: 60s
+                    metrics_list:
+                        # Reference: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudmonitoringreceiver
+                        # You can add multiple GCP Metrics using (-metric_name)
+                        - metric_name: "compute.googleapis.com/instance/cpu/utilization"
+
+            service:
+                pipelines:
+                    metrics:
+                        receivers:
+                            # add the googlecloudmonitoring receiver here.
+                            - googlecloudmonitoring
+        ```
+
+    - Set the environment variables in your `otel-collector-deployment.yaml` to use the mounted credential file:
+
+        ```yaml
+        # 1. Define the Environment Variable
+        extraEnvs:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/var/secrets/google/key.json"
+        ```
+    
 7. **Verify Network Connectivity**
 
     Ensure your cluster can reach GCP APIs:
@@ -135,7 +147,7 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
     ```bash
     # Test connectivity from a pod
     kubectl run -it --rm debug --image=google/cloud-sdk:slim --restart=Never -- \
-        gcloud auth activate-service-account --key-file=/etc/gcp/key.json && \
+        gcloud auth activate-service-account --key-file=/var/secrets/google/key.json && \
     gcloud monitoring time-series list --limit=1
     ```
 
@@ -148,18 +160,7 @@ For self-managed clusters, ensure:
    - `cloudresourcemanager.googleapis.com`
    - `iam.googleapis.com`
 
-2. **Proxy configuration** (if applicable):
-   ```yaml
-   containers:
-   - name: cubeapm
-     env:
-     - name: HTTPS_PROXY
-       value: "http://proxy.example.com:8080"
-     - name: HTTP_PROXY
-       value: "http://proxy.example.com:8080"
-     - name: NO_PROXY
-       value: "localhost,127.0.0.1"
-   ```
+2. **Proxy configuration** (if applicable)
 
 3. **DNS resolution** works correctly for GCP domains
 
