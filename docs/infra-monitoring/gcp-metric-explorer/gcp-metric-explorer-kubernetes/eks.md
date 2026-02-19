@@ -5,7 +5,7 @@ sidebar_position: 4
 
 # Elastic Kubernetes Service (EKS)
 
-When running OpenTelemetry Collector in Amazon Elastic Kubernetes Service (EKS), pods need to authenticate to GCP Monitoring APIs using service account key files, as EKS doesn't support GCP Workload Identity.
+When running CubeAPM in Amazon Elastic Kubernetes Service (EKS), pods need to authenticate to GCP Monitoring APIs using service account key files, as EKS doesn't support GCP Workload Identity.
 
 ## Granting Permissions to Pods in EKS Cluster
 
@@ -15,12 +15,6 @@ When running OpenTelemetry Collector in Amazon Elastic Kubernetes Service (EKS),
 - `gcloud` CLI installed and configured
 - `kubectl` configured to access your EKS cluster
 - GCP project with Monitoring API enabled
-- Otel-Collector-Contrib to get GCP Metrics (Refer to [Kubernetes OpenTelemetry Collector Deployment](/infra-monitoring/kubernetes))
-
-:::note
-    - If you want to get only GCP Metrics, you can use only `otel-collector-deployment.yaml` file.
-    - For detailed level monitoring use both `otel-collector-daemonset.yaml` and `otel-collector-deployment.yaml` files.
-:::
 
 ### Step-by-Step Setup
 
@@ -90,68 +84,51 @@ When running OpenTelemetry Collector in Amazon Elastic Kubernetes Service (EKS),
     rm cubeapm-key.json
     ```
 
-5. **Configure otel-collector-deployment.yaml**
+5. **Configure Your Pod to Use the Secret**
 
-    - Mount the secret in your `otel-collector-deployment.yaml` file
+    In your CubeAPM deployment YAML, mount the secret:
 
-        ```yaml
-        mode: deployment
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+        name: cubeapm
+    spec:
+        template:
+            spec:
+                containers:
+                - name: cubeapm
+                    image: cubeapm/cubeapm:latest
+                    volumeMounts:
+                    - name: gcp-credentials
+                        mountPath: /etc/gcp
+                        readOnly: true
+                    # ... other container configuration
+                volumes:
+                - name: gcp-credentials
+                    secret:
+                        secretName: gcp-credentials
+    ```
 
-        # 1. Mount the secret into the pod
-        extraVolumes:
-            - name: gcp-secret
-              secret:
-                secretName: my-gcp-key-secret # The name of your K8s secret
+6. **Configure CubeAPM**
 
-        extraVolumeMounts:
-            - name: gcp-secret
-              mountPath: /var/secrets/google
-              readOnly: true
-        ```
+    Set the configuration property to use the mounted credentials file:
 
-    - Configure `otel-collector-deployment.yaml` to fetch ***gcp-metrics*** from the GCP Monitoring API.
+    ```properties
+    metrics.gcp.application-credentials-file=/etc/gcp/key.json
+    ```
 
-
-        ```yaml
-        config:
-            receivers:
-                googlecloudmonitoring:
-                    project_id: "<gcp-project-id>" # Optional: ADC will auto-detect this from the VM
-                    collection_interval: 60s
-                    metrics_list:
-                        # Reference: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudmonitoringreceiver
-                        # You can add multiple GCP Metrics using (-metric_name)
-                        - metric_name: "compute.googleapis.com/instance/cpu/utilization"
-
-            service:
-                pipelines:
-                    metrics:
-                        receivers:
-                            # add the googlecloudmonitoring receiver here.
-                            - googlecloudmonitoring
-        ```
-
-    - Set the environment variables in your `otel-collector-deployment.yaml` to use the mounted credential file:
-
-        ```yaml
-        # 1. Define the Environment Variable
-        extraEnvs:
-            - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: "/var/secrets/google/key.json"
-        ```
-    
-
-6. **Verify the Setup**
+7. **Verify the Setup**
 
     Verify that the pod can access GCP Monitoring:
 
     ```bash
     # Check if the secret is mounted correctly
-    kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- ls -la /var/secrets/google/
+    kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- ls -la /etc/gcp/
 
     # Test access (if gcloud is available in the pod)
     kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- \
-        gcloud auth activate-service-account --key-file=/var/secrets/google/key.json 
+        gcloud auth activate-service-account --key-file=/etc/gcp/key.json
     ```
 
 ### Security Best Practices
@@ -180,7 +157,7 @@ If pods cannot access GCP Monitoring APIs:
 
 2. **Check if the file is mounted correctly**:
    ```bash
-   kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- cat /var/secrets/google/key.json
+   kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- cat /etc/gcp/key.json
    ```
 
 3. **Verify service account permissions**:

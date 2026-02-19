@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Google Kubernetes Engine (GKE)
 
-When running OpenTelemetry Collector in Google Kubernetes Engine (GKE), pods need proper permissions to access GCP Monitoring APIs. Since pods do not automatically inherit project IAM permissions, you must use **Workload Identity** to bind Kubernetes Service Accounts to Google Service Accounts.
+When running CubeAPM in Google Kubernetes Engine (GKE), pods need proper permissions to access GCP Monitoring APIs. Since pods do not automatically inherit project IAM permissions, you must use **Workload Identity** to bind Kubernetes Service Accounts to Google Service Accounts.
 
 The Workload Identity flow works as follows:
 **Kubernetes Service Account (KSA) → Google Service Account (GSA) → IAM roles**
@@ -17,12 +17,6 @@ The Workload Identity flow works as follows:
 - GKE cluster with Workload Identity enabled
 - `gcloud` CLI installed and configured
 - `kubectl` configured to access your GKE cluster
-- Otel-Collector-Contrib to get GCP Metrics (Refer to [Kubernetes OpenTelemetry Collector Deployment](/infra-monitoring/kubernetes))
-
-:::note
-    - If you want to get only GCP Metrics, you can use only `otel-collector-deployment.yaml` file.
-    - For detailed level monitoring use both `otel-collector-daemonset.yaml` and `otel-collector-deployment.yaml` files.
-:::
 
 ### Step-by-Step Setup
 
@@ -83,50 +77,39 @@ The Workload Identity flow works as follows:
         iam.gke.io/gcp-service-account=<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com
     ```
 
-:::note
-    If you are using Google Kubernetes Engine you don't need to pass the service account key or set the ENV variables. The Workload Identity will automatically handle the authentication.
-:::
+6. **Configure Your Pod to Use the Service Account**
 
-6. **Configure otel-collector-deployment.yaml**
+    In your CubeAPM deployment YAML, specify the service account:
 
-    - In your `otel-collector-deployment.yaml`, specify the service account:
+    ```yaml
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+            name: cubeapm
+        spec:
+            template:
+                spec:
+                    serviceAccountName: <kubernetes-service-account-name>
+                    containers:
+                    - name: cubeapm
+                        image: cubeapm/cubeapm:latest
+        # ... other container configuration
+    ```
 
-        ```yaml
-        serviceAccount:
-            # Specifies whether a service account should be created
-            create: false # <--- Set this to false if you are using existing service account
-            # Annotations to add to the service account
-            annotations: {}
-            # The name of the service account to use.
-            # If not set and create is true, a name is generated using the fullname template
-            name: "<kubernetes-service-account-name>" 
-            # Automatically mount a ServiceAccount's API credentials?
-            automountServiceAccountToken: true
-            # ... other container configuration
-        ```
-    
-    - Configure `otel-collector-deployment.yaml` to fetch ***gcp-metrics*** from the GCP Monitoring API.
+    Or In your CubeAPM `values.yaml`, under the service account:
 
-
-        ```yaml
-        config:
-            receivers:
-                googlecloudmonitoring:
-                    project_id: "<gcp-project-id>" # Optional: ADC will auto-detect this from the VM
-                    collection_interval: 60s
-                    metrics_list:
-                        # Reference: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudmonitoringreceiver
-                        # You can add multiple GCP Metrics using (-metric_name)
-                        - metric_name: "compute.googleapis.com/instance/cpu/utilization"
-
-            service:
-                pipelines:
-                    metrics:
-                        receivers:
-                            # add the googlecloudmonitoring receiver here.
-                            - googlecloudmonitoring
-        ```
-
+    ```yaml
+    serviceAccount:
+        # -- Specifies whether a service account should be created
+        # -- Set this false if you are using existing service account
+        create: false
+        # -- Annotations to add to the service account
+        annotations: {}
+        # -- The name of the service account to use.
+        # If not set and create is true, a name is generated using the fullname template
+        # Enter the existing kubernetes SA name
+        name: "<kubernetes-service-account-name>"
+    ```
 
 7. **Verify the Setup**
 
@@ -169,10 +152,6 @@ If pods still cannot access GCP Monitoring APIs:
 
 ### Alternative: Using Service Account Key File
 
-:::warning
-Using service account key files is less secure than Workload Identity. Prefer Workload Identity when possible, as it eliminates the need to manage and rotate key files.
-:::
-
 If Workload Identity is not available or you prefer using a service account key file:
 
 1. **Create and download a key for the Google Service Account:**
@@ -188,53 +167,25 @@ If Workload Identity is not available or you prefer using a service account key 
        -n <namespace>
    ```
 
-3. **Configure otel-collector-deployment.yaml**
+3. **Mount the secret in your pod and configure CubeAPM to use it:**
+   ```yaml
+   containers:
+   - name: cubeapm
+     volumeMounts:
+     - name: gcp-credentials
+       mountPath: /etc/gcp
+       readOnly: true
+   volumes:
+   - name: gcp-credentials
+     secret:
+       secretName: gcp-credentials
+   ```
 
-    - Mount the secret in your `otel-collector-deployment.yaml` file
+4. **Set the configuration property:**
+   ```properties
+   metrics.gcp.application-credentials-file=/etc/gcp/key.json
+   ```
 
-        ```yaml
-        mode: deployment
-
-        # 1. Mount the secret into the pod
-        extraVolumes:
-            - name: gcp-secret
-              secret:
-                secretName: my-gcp-key-secret # The name of your K8s secret
-
-        extraVolumeMounts:
-            - name: gcp-secret
-              mountPath: /var/secrets/google
-              readOnly: true
-        ```
-
-    - Configure `otel-collector-deployment.yaml` to fetch ***gcp-metrics*** from the GCP Monitoring API.
-
-
-        ```yaml
-        config:
-            receivers:
-                googlecloudmonitoring:
-                    project_id: "<gcp-project-id>" # Optional: ADC will auto-detect this from the VM
-                    collection_interval: 60s
-                    metrics_list:
-                        # Reference: https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/googlecloudmonitoringreceiver
-                        # You can add multiple GCP Metrics using (-metric_name)
-                        - metric_name: "compute.googleapis.com/instance/cpu/utilization"
-
-            service:
-                pipelines:
-                    metrics:
-                        receivers:
-                            # add the googlecloudmonitoring receiver here.
-                            - googlecloudmonitoring
-        ```
-
-    - Set the environment variables in your `otel-collector-deployment.yaml` to use the mounted credential file:
-
-        ```yaml
-        # 1. Define the Environment Variable
-        extraEnvs:
-            - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: "/var/secrets/google/key.json"
-        ```
-
+:::warning
+Using service account key files is less secure than Workload Identity. Prefer Workload Identity when possible, as it eliminates the need to manage and rotate key files.
+:::

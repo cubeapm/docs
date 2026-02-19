@@ -5,6 +5,9 @@ sidebar_position: 2
 
 # Kubernetes
 
+## Metric Explorer Setup
+
+
 In GKE, pods do not automatically inherit project IAM permissions.
 Instead, you should use Workload Identity so that:
 Kubernetes Service Account (KSA) → Google Service Account (GSA) → IAM roles
