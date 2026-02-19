@@ -77,7 +77,7 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
 
     # Create the secret
     kubectl create secret generic ${SECRET_NAME} \
-        --from-file=key.json=cubeapm-key.json \
+        --from-file=cubeapm-gcp-key.json=cubeapm-key.json \
         -n ${K8S_NAMESPACE}
 
     # Clean up the local key file
@@ -113,7 +113,7 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
                     readOnly: true
                 env:
                 - name: METRICS_GCP_APPLICATION_CREDENTIALS_FILE
-                    value: /etc/gcp/key.json
+                    value: /etc/gcp/cubeapm-gcp-key.json
                 volumes:
                 - name: gcp-credentials
                     secret:
@@ -125,7 +125,7 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
     Set the configuration property:
 
     ```properties
-    metrics.gcp.application-credentials-file=/etc/gcp/key.json
+    metrics.gcp.application-credentials-file=/etc/gcp/cubeapm-gcp-key.json
     ```
 
 7. **Verify Network Connectivity**
@@ -135,7 +135,7 @@ When running CubeAPM in a self-managed Kubernetes cluster (on-premises, bare met
     ```bash
     # Test connectivity from a pod
     kubectl run -it --rm debug --image=google/cloud-sdk:slim --restart=Never -- \
-        gcloud auth activate-service-account --key-file=/etc/gcp/key.json && \
+        gcloud auth activate-service-account --key-file=/etc/gcp/cubeapm-gcp-key.json && \
     gcloud monitoring time-series list --limit=1
     ```
 
@@ -197,7 +197,7 @@ Common issues and solutions:
    ```bash
    kubectl logs <pod-name> -n ${K8S_NAMESPACE}
    kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- \
-       cat /etc/gcp/key.json | jq .
+       cat /etc/gcp/cubeapm-gcp-key.json | jq .
    ```
 
 4. **Permission errors**: Verify IAM bindings:

@@ -52,22 +52,7 @@ sidebar_position: 1
    ```
    </details>
 
-2. Below is the list of all configuration parameters supported by CubeAPM, along with documentation and default values.
-
-    ```shell title="config.properties"
-    
-    # Path to YAML configuration file that specifies which GCP projects and metrics to collect. 
-    # Required to enable GCP monitoring.
-    metrics.gcp.config-file=
-
-    # Path to GCP service account credentials JSON file. 
-    # If not provided, CubeAPM will use Application Default Credentials (ADC). 
-    # See [GCP Authentication](https://cloud.google.com/docs/authentication/application-default-credentials) for details.
-    # If permission is not provided through credentials file.
-    # Ensure service account attched to cubeapm instance has Monitoring Viewer permission for project to be monitored
-    metrics.gcp.application-credentials-file=
-    ```
-3. If you are not using an existing service account, create a Google Service Account first:
+2. If you do not want to use an existing service account, create a Google Service Account first:
 
    ```bash
    # Create the service account
@@ -81,4 +66,36 @@ sidebar_position: 1
    If you already have a service account that you want to use, you can skip this step and proceed to the next step.
    :::
 
-4. In case we are providing credentials using GCP service account credentials JSON file. `Monitoring Viewer` and `Viewer` permission for the service which you want to pulled the metrics needs to be attached to service account. In case multiple projects needs to be monitored, you can attach permission for multiple project to same service account.
+3. **Grant Monitoring Viewer Permission**
+
+    Attach the `roles/monitoring.viewer` role to the service account:
+
+    ```bash
+        gcloud projects add-iam-policy-binding <gcp-project-id> \
+        --member="serviceAccount:<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com" \
+        --role="roles/monitoring.viewer"
+    ```
+
+    If you need to monitor multiple projects, repeat this command for each project:
+
+    ```bash
+        gcloud projects add-iam-policy-binding <additional-project-id> \
+        --member="serviceAccount:<service-account-name>@<gcp-project-id>.iam.gserviceaccount.com" \
+        --role="roles/monitoring.viewer"
+    ```
+
+4. Below is the list of all configuration parameters supported by CubeAPM, along with documentation and default values.
+
+    ```shell title="config.properties"
+    
+    # Path to YAML configuration file that specifies which GCP projects and metrics to collect. 
+    # Required to enable GCP monitoring.
+    metrics.gcp.config-file=
+
+    # Path to GCP service account credentials JSON file. 
+    # If not provided, CubeAPM will use Application Default Credentials (ADC). 
+    # See [GCP Authentication](https://cloud.google.com/docs/authentication/application-default-credentials) for details.
+    # If permission is not provided through credentials file.
+    # Ensure service account attached to cubeapm instance has Monitoring Viewer permission for project to be monitored
+    metrics.gcp.application-credentials-file=
+    ```

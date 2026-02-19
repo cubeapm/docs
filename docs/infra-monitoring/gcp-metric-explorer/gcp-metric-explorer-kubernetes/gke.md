@@ -163,7 +163,7 @@ If Workload Identity is not available or you prefer using a service account key 
 2. **Create a Kubernetes secret:**
    ```bash
    kubectl create secret generic gcp-credentials \
-       --from-file=key.json=cubeapm-key.json \
+       --from-file=cubeapm-gcp-key.json=cubeapm-key.json \
        -n <namespace>
    ```
 
@@ -183,7 +183,7 @@ If Workload Identity is not available or you prefer using a service account key 
 
 4. **Set the configuration property:**
    ```properties
-   metrics.gcp.application-credentials-file=/etc/gcp/key.json
+   metrics.gcp.application-credentials-file=/etc/gcp/cubeapm-gcp-key.json
    ```
 
 :::warning

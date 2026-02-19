@@ -77,7 +77,7 @@ When running CubeAPM in Amazon Elastic Kubernetes Service (EKS), pods need to au
 
     # Create the secret
     kubectl create secret generic ${SECRET_NAME} \
-        --from-file=key.json=cubeapm-key.json \
+        --from-file=cubeapm-gcp-key.json=cubeapm-key.json \
         -n ${K8S_NAMESPACE}
 
     # Clean up the local key file (for security)
@@ -115,7 +115,7 @@ When running CubeAPM in Amazon Elastic Kubernetes Service (EKS), pods need to au
     Set the configuration property to use the mounted credentials file:
 
     ```properties
-    metrics.gcp.application-credentials-file=/etc/gcp/key.json
+    metrics.gcp.application-credentials-file=/etc/gcp/cubeapm-gcp-key.json
     ```
 
 7. **Verify the Setup**
@@ -128,7 +128,7 @@ When running CubeAPM in Amazon Elastic Kubernetes Service (EKS), pods need to au
 
     # Test access (if gcloud is available in the pod)
     kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- \
-        gcloud auth activate-service-account --key-file=/etc/gcp/key.json
+        gcloud auth activate-service-account --key-file=/etc/gcp/cubeapm-gcp-key.json
     ```
 
 ### Security Best Practices
@@ -157,7 +157,7 @@ If pods cannot access GCP Monitoring APIs:
 
 2. **Check if the file is mounted correctly**:
    ```bash
-   kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- cat /etc/gcp/key.json
+   kubectl exec -it <pod-name> -n ${K8S_NAMESPACE} -- cat /etc/gcp/cubeapm-gcp-key.json
    ```
 
 3. **Verify service account permissions**:
