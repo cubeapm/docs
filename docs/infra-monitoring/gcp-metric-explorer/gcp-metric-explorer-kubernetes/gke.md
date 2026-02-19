@@ -29,6 +29,9 @@ The Workload Identity flow works as follows:
         --project=<gcp-project-id> \
         --display-name="CubeAPM Metrics Service Account"
     ```
+    :::info
+    - Suppose you have multiple projects in your GCP and your CubeAPM is hosted on one of the projects (*example: Project A*) and you want to monitor the services like (**Cloud SQL, Compute Engine etc.**) which are in other projects (*example: Project B*) so you dont need to create a service account in other projects like (*example: Project B*) you have create a google service account in (*example: Project A*) where cubeapm is hosted and grant the permission to that service account to access the services which are in other projects.
+    :::
 
 2. **Grant Monitoring Viewer Permission**
 
@@ -79,30 +82,13 @@ The Workload Identity flow works as follows:
 
 6. **Configure Your Pod to Use the Service Account**
 
-    In your CubeAPM deployment YAML, specify the service account:
-
-    ```yaml
-        apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-            name: cubeapm
-        spec:
-            template:
-                spec:
-                    serviceAccountName: <kubernetes-service-account-name>
-                    containers:
-                    - name: cubeapm
-                        image: cubeapm/cubeapm:latest
-        # ... other container configuration
-    ```
-
-    Or In your CubeAPM `values.yaml`, under the service account:
+    In your CubeAPM `values.yaml`, under the service account:
 
     ```yaml
     serviceAccount:
         # -- Specifies whether a service account should be created
         # -- Set this false if you are using existing service account
-        create: false
+        create: false # <-- Set it to false
         # -- Annotations to add to the service account
         annotations: {}
         # -- The name of the service account to use.
@@ -111,7 +97,24 @@ The Workload Identity flow works as follows:
         name: "<kubernetes-service-account-name>"
     ```
 
-7. **Verify the Setup**
+7. **Add GCP Metrics Configuration**
+
+    Add the GCP metrics configuration to your cubeapm `values.yaml`:
+
+    ```yaml
+    gcp:
+      # -- Google Cloud Platform metrics list
+      configFile: {}
+        collection_interval: 60s
+        projects:
+          - id: my-project-123456
+            env: UNSET
+            metrics:
+                ## paste your GCP Metrics here.
+              - cloudsql.googleapis.com/database/cpu/utilization
+    ```
+
+8. **Verify the Setup**
 
     Verify that the pod can access GCP Monitoring:
 
@@ -167,24 +170,43 @@ If Workload Identity is not available or you prefer using a service account key 
        -n <namespace>
    ```
 
-3. **Mount the secret in your pod and configure CubeAPM to use it:**
-   ```yaml
-   containers:
-   - name: cubeapm
-     volumeMounts:
-     - name: gcp-credentials
-       mountPath: /etc/gcp
-       readOnly: true
-   volumes:
-   - name: gcp-credentials
-     secret:
-       secretName: gcp-credentials
-   ```
+3. **Configure Your Pod to Use the Secret**
 
-4. **Set the configuration property:**
-   ```properties
-   metrics.gcp.application-credentials-file=/etc/gcp/cubeapm-gcp-key.json
-   ```
+    In your CubeAPM `values.yaml`, mount the secret:
+
+    ```yaml
+    extraEnvs:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secrets/gcp/cubeapm-gcp-key.json
+
+    extraVolumes:
+        - name: gcp-sa-volume
+          secret:
+            secretName: gcp-credentials
+            
+
+    extraVolumeMounts:
+        - name: gcp-sa-volume
+          mountPath: /secrets/gcp
+          readOnly: true
+    ```
+
+4. **Add GCP Metrics Configuration**
+
+    Add the GCP metrics configuration to your cubeapm `values.yaml`:
+
+    ```yaml
+    gcp:
+      # -- Google Cloud Platform metrics list
+      configFile: {}
+        collection_interval: 60s
+        projects:
+          - id: my-project-123456
+            env: UNSET
+            metrics:
+                ## paste your GCP Metrics here.
+              - cloudsql.googleapis.com/database/cpu/utilization
+    ```
 
 :::warning
 Using service account key files is less secure than Workload Identity. Prefer Workload Identity when possible, as it eliminates the need to manage and rotate key files.

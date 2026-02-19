@@ -66,6 +66,10 @@ sidebar_position: 1
    If you already have a service account that you want to use, you can skip this step and proceed to the next step.
    :::
 
+   :::info
+    - Suppose you have multiple projects in your GCP and your CubeAPM is hosted on one of the projects (*example: Project A*) and you want to monitor the services like (**Cloud SQL, Compute Engine etc.**) which are in other projects (*example: Project B*) so you dont need to create a service account in other projects like (*example: Project B*) you have create a google service account in (*example: Project A*) where cubeapm is hosted and grant the permission to that service account to access the services which are in other projects.
+    :::
+
 3. **Grant Monitoring Viewer Permission**
 
     Attach the `roles/monitoring.viewer` role to the service account:

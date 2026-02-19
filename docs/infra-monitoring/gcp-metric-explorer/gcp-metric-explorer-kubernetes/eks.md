@@ -33,6 +33,9 @@ When running CubeAPM in Amazon Elastic Kubernetes Service (EKS), pods need to au
         --project=${PROJECT_ID} \
         --display-name="CubeAPM Metrics Service Account"
     ```
+    :::info
+    - Suppose you have multiple projects in your GCP and your CubeAPM is hosted on one of the projects (*example: Project A*) and you want to monitor the services like (**Cloud SQL, Compute Engine etc.**) which are in other projects (*example: Project B*) so you dont need to create a service account in other projects like (*example: Project B*) you have create a google service account in (*example: Project A*) where cubeapm is hosted and grant the permission to that service account to access the services which are in other projects.
+    :::
 
 2. **Grant Monitoring Viewer Permission**
 
@@ -86,36 +89,40 @@ When running CubeAPM in Amazon Elastic Kubernetes Service (EKS), pods need to au
 
 5. **Configure Your Pod to Use the Secret**
 
-    In your CubeAPM deployment YAML, mount the secret:
+    In your CubeAPM `values.yaml`, mount the secret:
 
     ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-        name: cubeapm
-    spec:
-        template:
-            spec:
-                containers:
-                - name: cubeapm
-                    image: cubeapm/cubeapm:latest
-                    volumeMounts:
-                    - name: gcp-credentials
-                        mountPath: /etc/gcp
-                        readOnly: true
-                    # ... other container configuration
-                volumes:
-                - name: gcp-credentials
-                    secret:
-                        secretName: gcp-credentials
+    extraEnvs:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secrets/gcp/cubeapm-gcp-key.json
+
+    extraVolumes:
+        - name: gcp-sa-volume
+          secret:
+            secretName: gcp-credentials
+            
+
+    extraVolumeMounts:
+        - name: gcp-sa-volume
+          mountPath: /secrets/gcp
+          readOnly: true
     ```
 
-6. **Configure CubeAPM**
+6. **Add GCP Metrics Configuration**
 
-    Set the configuration property to use the mounted credentials file:
+    Add the GCP metrics configuration to your cubeapm `values.yaml`:
 
-    ```properties
-    metrics.gcp.application-credentials-file=/etc/gcp/cubeapm-gcp-key.json
+    ```yaml
+    gcp:
+      # -- Google Cloud Platform metrics list
+      configFile: {}
+        collection_interval: 60s
+        projects:
+          - id: my-project-123456
+            env: UNSET
+            metrics:
+                ## paste your GCP Metrics here.
+              - cloudsql.googleapis.com/database/cpu/utilization
     ```
 
 7. **Verify the Setup**
