@@ -359,6 +359,10 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
          metrics:
            k8s.node.condition:
              enabled: true
+         resource_attributes:
+           # adds last_terminated_reason to k8s.container.restarts metric
+           k8s.container.status.last_terminated_reason:
+             enabled: true
      service:
        pipelines:
          metrics:
