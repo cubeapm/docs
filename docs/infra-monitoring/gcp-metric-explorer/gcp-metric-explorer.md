@@ -1,6 +1,6 @@
 ---
 slug: /infra-monitoring/gcp-metric-explorer
-sidebar_position: 4
+sidebar_position: 8
 ---
 
 # GCP Metric Explorer
