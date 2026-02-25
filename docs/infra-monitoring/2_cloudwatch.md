@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 1
 slug: /infra-monitoring/aws-cloudwatch
 ---
 
