@@ -87,12 +87,14 @@ import TabItem from '@theme/TabItem';
     # Skip the following command if not using juicefs.env
     source /etc/juicefs.env
 
+    #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+    #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
     # Format JuiceFS
     juicefs format \
     --storage s3 \
     --bucket <s3-bucket-endpoint-url> \
-    postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta \
-    cubeapm_log_archives
+    <database_string> \
+    logsarchive
     ```
 
 1.  Create mount directory using command `sudo mkdir -p /var/lib/cubeapm/logs_archive`
