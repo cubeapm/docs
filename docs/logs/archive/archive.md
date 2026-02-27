@@ -13,3 +13,5 @@ Please follow the links below for configuration according to deployment environm
 
 - [Bare Metal / Virtual Machine](bare-metal.md)
 - [Kubernetes](kubernetes.md)
+
+<!-- gcp documentation to be added -->

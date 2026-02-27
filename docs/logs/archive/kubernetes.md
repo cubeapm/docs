@@ -7,14 +7,14 @@ import TabItem from '@theme/TabItem';
 
 # Kubernetes
 
-1.  Install JuiceFS.
+1.  Install JuiceFs.
 
     ```shell
-    # Add the JuiceFS repository.
+    # Add the JuiceFs repository.
     helm repo add juicefs https://juicedata.github.io/charts/
     # Update the repository.
     helm repo update
-    # Install JuiceFS CSI Driver.
+    # Install JuiceFs CSI Driver.
     helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system
     ```
 
@@ -23,8 +23,30 @@ import TabItem from '@theme/TabItem';
     ```shell
     kubectl get pods -n kube-system -l app.kubernetes.io/name=juicefs-csi-driver
     ```
+1.  Create Kubernetes PersistentVolumeClaim configuration file as `cubeapm-logs-archive-cache-pvc.yaml`. Replace the values with actual values.
 
-1.  JuiceFS needs a database for storing metadata. Since CubeAPM already uses a database (MySQL or PostgreSQL), the same can be used for JuiceFS as well.
+    ```yaml
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: cubeapm-logs-archive-cache-pvc
+      namespace: kube-system
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 200Gi  # Match this to your desired cache size
+      storageClassName: standard
+    ```
+
+1.  Apply pvc to cluster
+
+    ```shell
+    kubectl apply -f cubeapm-logs-archive-cache-pvc.yaml
+    ```
+
+1.  JuiceFs needs a database for storing metadata. Since CubeAPM already uses a database server (MySQL or PostgreSQL), same database server can be used for JuiceFs as well.
 
     <Tabs>
          <TabItem value="MySQL" label="MySQL">
@@ -66,10 +88,13 @@ import TabItem from '@theme/TabItem';
     metadata:
       name: cubeapm-logs-archive-secret
     stringData:
-      name: myjfs
-      metaurl: redis://:xxx@192.168.8.8/1
+      name: logsarchive
+      #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+      #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+      metaurl: <database_string>
       storage: s3
-      bucket: https://myjfs.xxx.com
+      #S3 url example: https://cubeapm-logs-archive.s3.ap-south-1.amazonaws.com
+      bucket: <BUCKET_URL>
       access-key: <ACCESS_KEY>
       secret-key: <SECRET_KEY>
       # To create the file system in mount pod, add more juicefs format parameters to format-options.
@@ -129,3 +154,53 @@ import TabItem from '@theme/TabItem';
     ```shell
     kubectl apply -f cubeapm-logs-archive-pvc.yaml
     ```
+
+1.  Edit ConfigMap created by JuiceFs to mount PVC created in kube-system namespace above
+
+    ```shell
+    kubectl edit cm juicefs-csi-driver-config -n kube-system
+    ```
+
+1.  Add following snippet to JuiceFs ConfigMap
+
+     ```yaml
+    mountPodPatch:
+      - pvcSelector:
+          matchLabels:
+            cache-on-pvc: "true"
+        cacheDirs:
+          - type: PVC
+            name: cubeapm-logs-archive-cache-pvc
+            path: /var/lib/cubeapm/cache/logs_archive  # Where the PVC is mounted inside the Mount Pod
+        mountOptions:
+          - cache-dir=/var/lib/cubeapm/cache/logs_archive
+          - cache-size=204800 # 200GB in MiB
+    ```
+1. Apply the Label to your CubeAPM PVC mounted for archive. The ConfigMap uses a pvcSelector. For CubeAPM to pick up this specific cache configuration, you must label the PVC that your cubeapm is using:
+    ```shell
+    kubectl label pvc cubeapm-logs-archive-pvc cache-on-pvc=true
+    ```
+1. Update your CubeAPM `values.yaml` file
+
+```yaml
+    archivelogs:
+      # -- Enable data persistence using PVC. If not enabled, data is stored in an emptyDir.
+      enabled: true
+      # -- Name of an existing PVC to use (only when deploying a single pod)
+      existingClaim: "cubeapm-logs-archive-pvc"
+      # -- Persistent Volume Storage Class to use.
+      # If defined, `storageClassName: <storageClass>`.
+      # If set to "-", `storageClassName: ""`, which disables dynamic provisioning
+      # If undefined (the default) or set to `null`, no storageClassName spec is
+      # set, choosing the default provisioner.
+      storageClass: cubeapm-logs-archive-sc
+      # -- Access Modes for persistent volume
+      accessModes:
+        - ReadWriteMany
+      # -- Persistent Volume size
+      size: 10Gi
+  ```
+
+1. Restart CubeAPM pods
+
+1. Check for pods in `kube-system` namespace. JuiceFs CSI driver mount pod should be created.
