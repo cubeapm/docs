@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 2
 slug: /infra-monitoring/bare-metal-virtual-machine
 ---
 
@@ -146,8 +146,8 @@ receivers:
         enabled: false
       mysql.table.io.wait.count:
         enabled: false
-#       mysql.table.size:
-#         enabled: true
+      # mysql.table.size:
+      #   enabled: true
 
   postgresql:
     endpoint: localhost:5432
