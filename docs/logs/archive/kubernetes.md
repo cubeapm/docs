@@ -15,7 +15,7 @@ import TabItem from '@theme/TabItem';
     # Update the repository.
     helm repo update
     # Install JuiceFs CSI Driver.
-    # JuiceFs need certain permission on cluster hence needs to be installed in kubesystem namespace
+    # JuiceFs need certain permission on cluster hence needs to be installed in kube-system namespace
     helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system
     ```
 
@@ -176,6 +176,7 @@ import TabItem from '@theme/TabItem';
         - ReadWriteMany
       resources:
         requests:
+        # -- Notional Persistent Volume size..
           storage: 10Gi
       storageClassName: cubeapm-logs-archive-sc
     ```
