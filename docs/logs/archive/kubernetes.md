@@ -164,29 +164,6 @@ import TabItem from '@theme/TabItem';
     kubectl apply -f cubeapm-logs-archive-sc.yaml
     ```
 
-1.  Create Kubernetes PersistentVolumeClaim configuration file as `cubeapm-logs-archive-pvc.yaml`. Replace the values with actual values.
-
-    ```yaml
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: cubeapm-logs-archive-pvc
-    spec:
-      accessModes:
-        - ReadWriteMany
-      resources:
-        requests:
-        # -- Notional Persistent Volume size..
-          storage: 10Gi
-      storageClassName: cubeapm-logs-archive-sc
-    ```
-
-1.  Apply pvc to cluster
-
-    ```shell
-    kubectl apply -f cubeapm-logs-archive-pvc.yaml
-    ```
-
 1.  Edit ConfigMap created by JuiceFs to mount PVC created in kube-system namespace above
 
     ```shell
