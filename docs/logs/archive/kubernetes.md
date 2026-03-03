@@ -189,7 +189,7 @@ import TabItem from '@theme/TabItem';
     ```shell
     kubectl label pvc cubeapm-logs-archive-pvc cache-on-pvc=true
     ```
-1. Update your CubeAPM `values.yaml` file
+1. Update your CubeAPM `values.yaml` file. If want to use existing PVC populate `existingClaim` else set it to empty string
 
 ```yaml
     archivelogs:

@@ -94,10 +94,12 @@ import TabItem from '@theme/TabItem';
 
         #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
         #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+        #S3 bucket_url example: https://cubeapm-logs-archive.s3.ap-south-1.amazonaws.com
+        #GCP bucket_url example: gs://cubeapm-logs-archive
         # Format JuiceFS
         juicefs format \
         --storage s3 \
-        --bucket <s3-bucket-endpoint-url> \
+        --bucket <bucket_url> \
         <database_string> \
         logsarchive
         ```
@@ -152,6 +154,11 @@ import TabItem from '@theme/TabItem';
         1. Run the below command to format the JuiceFS filesystem. This needs to be done only once per JuiceFS volume. This initializes metadata in the database.
 
         ```shell
+        #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+        #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+        #S3 bucket_url example: https://cubeapm-logs-archive.s3.ap-south-1.amazonaws.com
+        #GCP bucket_url example: gs://cubeapm-logs-archive
+        # Format JuiceFS
         juicefs format \
         --storage gs \
         --bucket <gs-bucket-endpoint-url> \
@@ -173,7 +180,8 @@ import TabItem from '@theme/TabItem';
         Type=simple
         # If using juicefs.env file, point to it here:
         #EnvironmentFile=/etc/juicefs.env
-        #S3 url example: https://cubeapm-logs-archive.s3.us-east-1.amazonaws.com
+        #S3 bucket_url example: https://cubeapm-logs-archive.s3.us-east-1.amazonaws.com
+        #GCP bucket_url example: gs://cubeapm-logs-archive
         #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
         #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
         ExecStart=/usr/local/bin/juicefs mount <database_string> /var/lib/cubeapm/logs_archive \
