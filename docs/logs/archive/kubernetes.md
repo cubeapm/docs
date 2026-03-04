@@ -188,32 +188,10 @@ import TabItem from '@theme/TabItem';
           - cache-size=51200 # 50GB in MiB
     ```
 
-1.  Apply the Label to your CubeAPM PVC mounted for archive. The ConfigMap uses a pvcSelector. For CubeAPM to pick up this specific cache configuration, you must label the PVC that your cubeapm is using:
-
-    ```shell
-    kubectl label pvc cubeapm-logs-archive-pvc cubeapm-logs-archive-cache=true
-    ```
-
-1.  Update your CubeAPM `values.yaml` file. If want to use existing PVC populate `existingClaim` else set it to empty string
-
-    ```yaml
-    archivelogs:
-      # -- Enable data persistence using PVC
-      enabled: true
-      # -- Name of an existing PVC to use
-      existingClaim: "cubeapm-logs-archive-pvc"
-      # -- Persistent Volume Storage Class to use. One that we created above
-      storageClass: cubeapm-logs-archive-sc
-      accessModes:
-        - ReadWriteMany
-      # -- Notional Persistent Volume size..
-      size: 10Gi
-    ```
-
-1.  Restart CubeAPM pods
+1.  Update your CubeAPM `values.yaml` file. Set configVars.logs.archive.enabled as `true` and run `helm upgrade`
 
 1.  Check for JuiceFS CSI driver mount pod in `kube-system` namespace. It follows specific pattern as `juicefs-<node-name>-<pvc-id>`
 
     ```shell
-    kubectl get pods -kube-system
+    kubectl get pods -n kube-system
     ```
