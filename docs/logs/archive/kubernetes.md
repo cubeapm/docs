@@ -26,28 +26,6 @@ import TabItem from '@theme/TabItem';
     kubectl get pods -n kube-system -l app.kubernetes.io/name=juicefs-csi-driver
     ```
 
-1.  Provision storage for caching. Create Kubernetes PersistentVolumeClaim configuration file as `cubeapm-logs-archive-cache-pvc.yaml`. Replace the values with actual values.
-
-    ```yaml
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: cubeapm-logs-archive-cache-pvc
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 50Gi # Match this to your desired cache size
-      storageClassName: standard
-    ```
-
-1.  Apply PVC to cluster.
-
-    ```shell
-    kubectl apply -f cubeapm-logs-archive-cache-pvc.yaml -n kube-system
-    ```
-
 1.  JuiceFS needs a database for storing metadata. Since CubeAPM already uses a database server (MySQL or PostgreSQL), same database server can be used for JuiceFS as well.
 
     <Tabs>
@@ -141,7 +119,7 @@ import TabItem from '@theme/TabItem';
 1.  Apply secret to cluster
 
     ```shell
-    kubectl apply -f cubeapm-logs-archive-secret.yaml
+    kubectl apply -f cubeapm-logs-archive-secret.yaml -n <namespace>
     ```
 
 1.  Create Kubernetes StorageClass configuration file as `cubeapm-logs-archive-sc.yaml`. Replace the values with actual values.
@@ -155,37 +133,15 @@ import TabItem from '@theme/TabItem';
     reclaimPolicy: Retain
     parameters:
       csi.storage.k8s.io/provisioner-secret-name: cubeapm-logs-archive-secret
-      csi.storage.k8s.io/provisioner-secret-namespace: default
+      csi.storage.k8s.io/provisioner-secret-namespace: <namespace>
       csi.storage.k8s.io/node-publish-secret-name: cubeapm-logs-archive-secret
-      csi.storage.k8s.io/node-publish-secret-namespace: default
+      csi.storage.k8s.io/node-publish-secret-namespace: <namespace>
     ```
 
 1.  Apply storage class to cluster
 
     ```shell
-    kubectl apply -f cubeapm-logs-archive-sc.yaml
-    ```
-
-1.  Edit ConfigMap created by JuiceFS to mount PVC created in kube-system namespace above
-
-    ```shell
-    kubectl edit cm juicefs-csi-driver-config -n kube-system
-    ```
-
-1.  Add following snippet to JuiceFS ConfigMap
-
-    ```yaml
-    mountPodPatch:
-      - pvcSelector:
-          matchLabels:
-            cubeapm-logs-archive-cache: "true"
-        cacheDirs:
-          - type: PVC
-            name: cubeapm-logs-archive-cache-pvc
-            path: /var/lib/cubeapm/cache/logs_archive # Where the PVC is mounted inside the Mount Pod
-        mountOptions:
-          - cache-dir=/var/lib/cubeapm/cache/logs_archive
-          - cache-size=51200 # 50GB in MiB
+    kubectl apply -f cubeapm-logs-archive-sc.yaml -n <namespace>
     ```
 
 1.  Update your CubeAPM `values.yaml` file. Set configVars.logs.archive.enabled as `true` and run `helm upgrade`
