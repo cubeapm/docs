@@ -7,15 +7,16 @@ import TabItem from '@theme/TabItem';
 
 # Kubernetes
 
-1.  Install JuiceFs.
+1.  Install JuiceFS (ref: https://juicefs.com/docs/csi/getting_started).
 
     ```shell
-    # Add the JuiceFs repository.
+    # Add the JuiceFS repository.
     helm repo add juicefs https://juicedata.github.io/charts/
     # Update the repository.
     helm repo update
-    # Install JuiceFs CSI Driver.
-    # JuiceFs need certain permission on cluster hence needs to be installed in kube-system namespace
+    # Install JuiceFS CSI Driver.
+    # JuiceFS needs certain permission on cluster, and hence needs
+    # to be installed in kube-system namespace.
     helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system
     ```
 
@@ -24,69 +25,69 @@ import TabItem from '@theme/TabItem';
     ```shell
     kubectl get pods -n kube-system -l app.kubernetes.io/name=juicefs-csi-driver
     ```
-1.  Create Kubernetes PersistentVolumeClaim configuration file as `cubeapm-logs-archive-cache-pvc.yaml`. Replace the values with actual values.
+
+1.  Provision storage for caching. Create Kubernetes PersistentVolumeClaim configuration file as `cubeapm-logs-archive-cache-pvc.yaml`. Replace the values with actual values.
 
     ```yaml
     apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
       name: cubeapm-logs-archive-cache-pvc
-      namespace: kube-system
     spec:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 50Gi  # Match this to your desired cache size
+          storage: 50Gi # Match this to your desired cache size
       storageClassName: standard
     ```
 
-1.  Apply pvc to cluster
+1.  Apply PVC to cluster.
 
     ```shell
-    kubectl apply -f cubeapm-logs-archive-cache-pvc.yaml
+    kubectl apply -f cubeapm-logs-archive-cache-pvc.yaml -n kube-system
     ```
 
-1.  JuiceFs needs a database for storing metadata. Since CubeAPM already uses a database server (MySQL or PostgreSQL), same database server can be used for JuiceFs as well.
+1.  JuiceFS needs a database for storing metadata. Since CubeAPM already uses a database server (MySQL or PostgreSQL), same database server can be used for JuiceFS as well.
 
     <Tabs>
-         <TabItem value="MySQL" label="MySQL">
-           ```sql
-           CREATE DATABASE cubeapm_logs_archive_meta CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    <TabItem value="mysql" label="MySQL">
+        ```sql
+        CREATE DATABASE cubeapm_logs_archive_meta CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-           CREATE USER 'cubeapm_logs_archive_user'@'%' IDENTIFIED BY 'cubeapm_logs_archive_pass';
+        CREATE USER 'cubeapm_logs_archive_user'@'%' IDENTIFIED BY 'cubeapm_logs_archive_pass';
 
-           GRANT ALL PRIVILEGES ON cubeapm_logs_archive_meta.* TO 'cubeapm_logs_archive_user'@'%';
+        GRANT ALL PRIVILEGES ON cubeapm_logs_archive_meta.* TO 'cubeapm_logs_archive_user'@'%';
 
-           FLUSH PRIVILEGES;
-           ```
-        </TabItem>
-        <TabItem value="postgres" label="PostgreSQL">
-           ```sql
-           CREATE DATABASE cubeapm_logs_archive_meta;
+        FLUSH PRIVILEGES;
+        ```
 
-           CREATE USER cubeapm_logs_archive_user WITH PASSWORD 'cubeapm_logs_archive_pass';
+    </TabItem>
+    <TabItem value="postgres" label="PostgreSQL">
+        ```sql
+        CREATE DATABASE cubeapm_logs_archive_meta;
 
-           GRANT ALL PRIVILEGES ON DATABASE cubeapm_logs_archive_meta TO cubeapm_logs_archive_user;
+        CREATE USER cubeapm_logs_archive_user WITH PASSWORD 'cubeapm_logs_archive_pass';
 
-           GRANT ALL ON SCHEMA public TO cubeapm_logs_archive_user;
+        GRANT ALL PRIVILEGES ON DATABASE cubeapm_logs_archive_meta TO cubeapm_logs_archive_user;
 
-           \c cubeapm_logs_archive_meta
+        GRANT ALL ON SCHEMA public TO cubeapm_logs_archive_user;
 
-           GRANT ALL ON SCHEMA public TO cubeapm_logs_archive_user;
-           ```
-        </TabItem>
+        \c cubeapm_logs_archive_meta
 
+        GRANT ALL ON SCHEMA public TO cubeapm_logs_archive_user;
+        ```
+
+    </TabItem>
     </Tabs>
 
 1.  Create object storage bucket for storing archive logs data. Name the bucket as `cubeapm-logs-archive`
 
-1. (**Applicable to GCP only**) Create a service account and give the (ObjectAdmin and Storage Admin) permission to access the gcp bucket from pods running inside kubernetes cluster.
-      
-1. (**Applicable to GCP only**) Generate a (JSON) key of the service account and using that service account key create a kubernetes secret in **kube-system** and namespace where cubeapm is running.
+1.  (**Applicable to GCP only**) Create a service account and give the (ObjectAdmin and Storage Admin) permission to access the gcp bucket from pods running inside kubernetes cluster.
+1.  (**Applicable to GCP only**) Generate a (JSON) key of the service account and using that service account key create a kubernetes secret in **kube-system** and namespace where cubeapm is running.
 
     ```shell
-        kubectl create secret generic gc-secret \
+    kubectl create secret generic gc-secret \
       --from-file=application_default_credentials.json=./application_default_credentials.json \
       -n <namespace>  # Match your namespace
     ```
@@ -94,7 +95,7 @@ import TabItem from '@theme/TabItem';
 1.  Create Kubernetes Secret configuration file as `cubeapm-logs-archive-secret.yaml`. Replace the values with actual values.
 
     <Tabs>
-        <TabItem value="AWS" label="AWS">
+    <TabItem value="aws" label="AWS">
         ```yaml
         apiVersion: v1
         kind: Secret
@@ -102,38 +103,39 @@ import TabItem from '@theme/TabItem';
           name: cubeapm-logs-archive-secret
         stringData:
           name: logsarchive
-          #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
-          #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+          # database_string
+          # MySQL: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+          # PostgreSQL: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
           metaurl: <database_string>
           storage: s3
-          #S3 url example: https://cubeapm-logs-archive.s3.ap-south-1.amazonaws.com
-          bucket: <BUCKET_URL>
+          # bucket_url: https://cubeapm-logs-archive.s3.ap-south-1.amazonaws.com
+          bucket: <bucket_url>
           access-key: <ACCESS_KEY>
           secret-key: <SECRET_KEY>
           # To create the file system in mount pod, add more juicefs format parameters to format-options.
           # format-options: trash-days=1,block-size=4096
         ```
-        </TabItem>
-        <TabItem value="GCP" label="GCP">
-          ```yaml
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: cubeapm-logs-archive-secret
-          stringData:
-            name: logsarchives
-            #MySQL database_string: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
-            #PostgresSQL database_string: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
-            metaurl: <database_string>
-            storage: gs
-            #GCP url example: gs://cubeapm-logs-archive
-            bucket: <BUCKET_URL>
-            # GCS auth: Use service account JSON keyfile
-            configs: "{gc-secret: /root/.config/gcloud}"
-            envs: "{GOOGLE_APPLICATION_CREDENTIALS: /root/.config/gcloud/application_default_credentials.json}"
+    </TabItem>
+    <TabItem value="gcp" label="GCP">
+        ```yaml
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: cubeapm-logs-archive-secret
+        stringData:
+          name: logsarchive
+          # database_string
+          # MySQL: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+          # PostgreSQL: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+          metaurl: <database_string>
+          storage: gs
+          # bucket_url: gs://cubeapm-logs-archive
+          bucket: <bucket_url>
+          # GCS auth: Use service account JSON keyfile
+          configs: "{gc-secret: /root/.config/gcloud}"
+          envs: "{GOOGLE_APPLICATION_CREDENTIALS: /root/.config/gcloud/application_default_credentials.json}"
         ```
-        </TabItem>
-
+    </TabItem>
     </Tabs>
 
 1.  Apply secret to cluster
@@ -164,34 +166,37 @@ import TabItem from '@theme/TabItem';
     kubectl apply -f cubeapm-logs-archive-sc.yaml
     ```
 
-1.  Edit ConfigMap created by JuiceFs to mount PVC created in kube-system namespace above
+1.  Edit ConfigMap created by JuiceFS to mount PVC created in kube-system namespace above
 
     ```shell
     kubectl edit cm juicefs-csi-driver-config -n kube-system
     ```
 
-1.  Add following snippet to JuiceFs ConfigMap
+1.  Add following snippet to JuiceFS ConfigMap
 
-     ```yaml
+    ```yaml
     mountPodPatch:
       - pvcSelector:
           matchLabels:
-            cache-on-pvc: "true"
+            cubeapm-logs-archive-cache: "true"
         cacheDirs:
           - type: PVC
             name: cubeapm-logs-archive-cache-pvc
-            path: /var/lib/cubeapm/cache/logs_archive  # Where the PVC is mounted inside the Mount Pod
+            path: /var/lib/cubeapm/cache/logs_archive # Where the PVC is mounted inside the Mount Pod
         mountOptions:
           - cache-dir=/var/lib/cubeapm/cache/logs_archive
           - cache-size=51200 # 50GB in MiB
     ```
-1. Apply the Label to your CubeAPM PVC mounted for archive. The ConfigMap uses a pvcSelector. For CubeAPM to pick up this specific cache configuration, you must label the PVC that your cubeapm is using:
-    ```shell
-    kubectl label pvc cubeapm-logs-archive-pvc cache-on-pvc=true
-    ```
-1. Update your CubeAPM `values.yaml` file. If want to use existing PVC populate `existingClaim` else set it to empty string
 
-```yaml
+1.  Apply the Label to your CubeAPM PVC mounted for archive. The ConfigMap uses a pvcSelector. For CubeAPM to pick up this specific cache configuration, you must label the PVC that your cubeapm is using:
+
+    ```shell
+    kubectl label pvc cubeapm-logs-archive-pvc cubeapm-logs-archive-cache=true
+    ```
+
+1.  Update your CubeAPM `values.yaml` file. If want to use existing PVC populate `existingClaim` else set it to empty string
+
+    ```yaml
     archivelogs:
       # -- Enable data persistence using PVC
       enabled: true
@@ -203,14 +208,12 @@ import TabItem from '@theme/TabItem';
         - ReadWriteMany
       # -- Notional Persistent Volume size..
       size: 10Gi
-  ```
+    ```
 
-1. Restart CubeAPM pods
+1.  Restart CubeAPM pods
 
-1. Check for JuiceFs CSI driver mount pod in `kube-system` namespace. It follows specific pattern as `juicefs-<node-name>-<pvc-id>`
+1.  Check for JuiceFS CSI driver mount pod in `kube-system` namespace. It follows specific pattern as `juicefs-<node-name>-<pvc-id>`
 
- ```shell
+    ```shell
     kubectl get pods -kube-system
-  ```
-
-
+    ```
