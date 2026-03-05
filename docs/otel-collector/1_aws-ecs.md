@@ -15,7 +15,7 @@ import TabItem from '@theme/TabItem';
 
 OTel Collector needs to be deployed as a **daemon service**.
 
-1.  Create an IAM role with the following policy and name it `<ECSOTELDaemonRole>`.
+1.  Create an IAM role with the following policy and name it `ECSOTELDaemonRole`.
 
     ```json
     {
@@ -49,11 +49,6 @@ OTel Collector needs to be deployed as a **daemon service**.
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
-
-      filelog:
-        include:
-          - /hostfs/var/log/ecs/*.log
-        include_file_path: true
 
       hostmetrics:
         collection_interval: 60s
@@ -120,7 +115,6 @@ OTel Collector needs to be deployed as a **daemon service**.
             - resourcedetection
           receivers:
             - otlp
-            - filelog
     EOF
 
     # Set permissions for OTel user
@@ -182,7 +176,7 @@ OTel Collector needs to be deployed as a **daemon service**.
           "systemControls": []
         }
       ],
-      "taskRoleArn": "<ECSOTELDaemonRole>",
+      "taskRoleArn": "ECSOTELDaemonRole",
       "executionRoleArn": "<ecsTaskExecutionRole>",
       "networkMode": "host",
       "volumes": [
@@ -299,10 +293,6 @@ OTel Collector needs to be deployed as a **sidecar**.
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
-      filelog:
-        include:
-          - /hostfs/var/log/ecs/*.log
-        include_file_path: true
       hostmetrics:
         collection_interval: 60s
         scrapers:
@@ -364,7 +354,6 @@ OTel Collector needs to be deployed as a **sidecar**.
             - resourcedetection
           receivers:
             - otlp
-            - filelog
     ```
     </details>
 
@@ -380,7 +369,7 @@ OTel Collector needs to be deployed as a **sidecar**.
     ]
     ```
 
-1.  Update your application's configuration to send logs, metrics and traces to the OTel Collector sidecar. Application can connect to OTel Collector on the localhost IP `172.17.0.1`.
+1.  Update your application's configuration to send logs, metrics and traces to the OTel Collector sidecar. Application can connect to OTel Collector on the localhost IP `127.0.0.1`.
 
 1.  Redeploy the application service with the latest task definition revision for the changes to take effect.
 
