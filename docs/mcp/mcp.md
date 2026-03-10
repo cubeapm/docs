@@ -1,6 +1,6 @@
 ---
 slug: /mcp-server
-sidebar_position: 6
+sidebar_position: 9
 ---
 
 # MCP Server

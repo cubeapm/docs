@@ -95,7 +95,7 @@ The filter parameter uses logs query syntax, e.g. `{env="production"} severity="
 
 #### curl {#delete-run-task-curl}
 
-```bash
+```shell
 curl 'http://<cubeapm_server>:3199/api/logs/delete/run_task' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'filter={env="production",service.name="order"} severity="ERROR" _time:[2025-01-01T00:00:00.000Z, 2025-01-02T00:00:00.000Z)'
@@ -131,7 +131,7 @@ Stops a running delete task. Once stopped, the task will not continue deleting l
 
 #### curl {#delete-stop-task-curl}
 
-```bash
+```shell
 curl 'http://<cubeapm_server>:3199/api/logs/delete/stop_task' \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'task_id=1738060800000000000'
@@ -165,7 +165,7 @@ This endpoint does not require any parameters.
 
 #### curl {#delete-active-tasks-curl}
 
-```bash
+```shell
 curl 'http://<cubeapm_server>:3199/api/logs/delete/active_tasks'
 ```
 
