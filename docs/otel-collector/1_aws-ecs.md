@@ -15,7 +15,7 @@ import TabItem from '@theme/TabItem';
 
 OTel Collector needs to be deployed as a **daemon service**.
 
-1.  Create an IAM role with the following policy and name it `<ECSOTELDaemonRole>`.
+1.  Create an IAM role with the following policy and name it `ECSOTELDaemonRole`.
 
     ```json
     {
@@ -31,17 +31,25 @@ OTel Collector needs to be deployed as a **daemon service**.
     }
     ```
 
-1.  Add the following configuration to your EC2 launch template.
+1. Attach IAM Permission to ECS Task to allow OTel Collector to fetch the configuration from SSM Parameter Store.
+
+    ```json
+    [
+      {
+        "Effect": "Allow",
+        "Action": ["ssm:GetParameter", "ssm:GetParameters"],
+        "Resource": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/otel-collector-config"
+      }
+    ]
+    ```
+
+
+1.  Create SSM Parameter Store for OTel Collector Config. Create a parameter in **AWS Systems Manager (SSM)** Parameter Store and name it `otel-collector-config`. Choose type `String` and data type `text`, and then copy the below configuration in the value field.
 
     <details>
-    <summary>launch-template</summary>
+    <summary>otel-collector-config.yaml</summary>
 
     ```shell
-    # Create OTel config directory
-    mkdir -p /etc/ecs/otel-config
-
-    # Write config.yaml
-    cat > /etc/ecs/otel-config/config.yaml << 'EOF'
     receivers:
       otlp:
         protocols:
@@ -121,10 +129,6 @@ OTel Collector needs to be deployed as a **daemon service**.
           receivers:
             - otlp
             - filelog
-    EOF
-
-    # Set permissions for OTel user
-    chown -R 65532:65532 /etc/ecs/otel-config
     ```
 
     </details>
@@ -133,82 +137,77 @@ OTel Collector needs to be deployed as a **daemon service**.
 
     <details>
     <summary>otel-collector-daemonset.json</summary>
-    ```json
-    {
-      "family": "otel-collector-daemon",
-      "containerDefinitions": [
-        {
-          "name": "otel-collector",
-          "image": "otel/opentelemetry-collector-contrib:0.145.0",
-          "cpu": 0,
-          "portMappings": [
+      ```json
+      {
+        "family": "otel-collector-daemon",
+        "containerDefinitions": [
             {
-              "containerPort": 4317,
-              "hostPort": 4317,
-              "protocol": "tcp"
-            },
-            {
-              "containerPort": 4318,
-              "hostPort": 4318,
-              "protocol": "tcp"
+                "name": "otel-collector",
+                "image": "otel/opentelemetry-collector-contrib:0.145.0",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 4317,
+                        "hostPort": 4317,
+                        "protocol": "tcp"
+                    },
+                    {
+                        "containerPort": 4318,
+                        "hostPort": 4318,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "command": [
+                    "--config=env:OTEL_CONFIG"
+                ],
+                "environment": [],
+                "mountPoints": [
+                    {
+                        "sourceVolume": "host-root",
+                        "containerPath": "/hostfs",
+                        "readOnly": true
+                    }
+                ],
+                "volumesFrom": [],
+                "secrets": [
+                    {
+                        "name": "OTEL_CONFIG",
+                        "valueFrom": "otel-collector-config"
+                    }
+                ],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "/ecs/otel-daemon",
+                        "awslogs-region": "<ap-south-1>",
+                        "awslogs-stream-prefix": "daemon"
+                    }
+                },
+                "systemControls": []
             }
-          ],
-          "essential": true,
-          "command": [
-            "--config=/etc/otelcol-contrib/config.yaml"
-          ],
-          "environment": [],
-          "mountPoints": [
+        ],
+        "taskRoleArn": "arn:aws:iam::<aws-account-id>:role/ECSOTELDaemonRole",
+        "executionRoleArn": "arn:aws:iam::<aws-account-id>:role/<ecsTaskExecutionRole>",
+        "networkMode": "host",
+        "volumes": [
             {
-              "sourceVolume": "otel-config",
-              "containerPath": "/etc/otelcol-contrib/",
-              "readOnly": true
-            },
-            {
-              "sourceVolume": "host-root",
-              "containerPath": "/hostfs",
-              "readOnly": true
+                "name": "host-root",
+                "host": {
+                    "sourcePath": "/"
+                }
             }
-          ],
-          "volumesFrom": [],
-          "logConfiguration": {
-            "logDriver": "awslogs",
-            "options": {
-              "awslogs-group": "/ecs/otel-daemon",
-              "awslogs-region": "<aws-region>",
-              "awslogs-stream-prefix": "daemon"
-            }
-          },
-          "systemControls": []
+        ],
+        "placementConstraints": [],
+        "requiresCompatibilities": [
+            "EC2"
+        ],
+        "cpu": "512",
+        "memory": "1024",
+        "runtimePlatform": {
+            "cpuArchitecture": "<X86_64>",
+            "operatingSystemFamily": "LINUX"
         }
-      ],
-      "taskRoleArn": "<ECSOTELDaemonRole>",
-      "executionRoleArn": "<ecsTaskExecutionRole>",
-      "networkMode": "host",
-      "volumes": [
-        {
-          "name": "otel-config",
-          "host": {
-            "sourcePath": "/etc/ecs/otel-config"
-          }
-        },
-        {
-          "name": "host-root",
-          "host": {
-            "sourcePath": "/"
-          }
-        }
-      ],
-      "placementConstraints": [],
-      "requiresCompatibilities": [
-        "EC2"
-      ],
-      "cpu": "512",
-      "memory": "1024",
-      "runtimePlatform": {
-        "cpuArchitecture": "<X86_64 or ARM64>",
-        "operatingSystemFamily": "LINUX"
-      }
     }
     ```
     </details>
