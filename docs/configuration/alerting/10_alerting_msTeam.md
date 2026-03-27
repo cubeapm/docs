@@ -1,6 +1,6 @@
 ---
 sidebar_position: 10
-slug: /configure/alerting/connect-with-msTeam
+slug: /configure/alerting/connect-with-microsoft-teams
 ---
 
 # Connect with Microsoft Teams
