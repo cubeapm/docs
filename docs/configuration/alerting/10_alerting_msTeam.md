@@ -1,14 +1,14 @@
 ---
-sidebar_position: 10
+sidebar_position: 7
 slug: /configure/alerting/connect-with-microsoft-teams
 ---
 
 # Connect with Microsoft Teams
 
-To enable sending alert notifications from CubeAPM to Microsoft Team, you need to create an Integration within your Microsoft Team. The following steps guide you through the process:
+To enable sending alert notifications from CubeAPM to Microsoft Teams, you need to create an Integration within your Microsoft Teams. The following steps guide you through the process:
 
 
-1. Create a channel for CubeAPM alert in your **Microsoft Team** org.
+1. Create a channel for CubeAPM alert in your **Microsoft Teams** org.
 
 1. Right Click on CubeAPM alert channel & select **Workflows**.
 
