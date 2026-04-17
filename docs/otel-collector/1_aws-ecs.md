@@ -31,7 +31,7 @@ OTel Collector needs to be deployed as a **daemon service**.
     }
     ```
 
-1. Attach IAM Permission to ECS Task to allow OTel Collector to fetch the configuration from SSM Parameter Store.
+1.  Attach IAM Permission to ECS Task to allow OTel Collector to fetch the configuration from SSM Parameter Store.
 
     ```json
     [
@@ -42,7 +42,6 @@ OTel Collector needs to be deployed as a **daemon service**.
       }
     ]
     ```
-
 
 1.  Create SSM Parameter Store for OTel Collector Config. Create a parameter in **AWS Systems Manager (SSM)** Parameter Store and name it `otel-collector-config`. Choose type `String` and data type `text`, and then copy the below configuration in the value field.
 
@@ -72,11 +71,20 @@ OTel Collector needs to be deployed as a **daemon service**.
           filesystem:
           memory:
           network:
+        root_path: /hostfs
+
+      awsecscontainermetrics:
+        collection_interval: 60s
 
     processors:
       batch: {}
+
       resourcedetection:
-        detectors: [ecs]
+        detectors:
+          - ecs
+          - system
+        system:
+          hostname_sources: ["os"]
         timeout: 2s
 
     exporters:
@@ -89,6 +97,7 @@ OTel Collector needs to be deployed as a **daemon service**.
         metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
         retry_on_failure:
           enabled: false
+
       otlphttp/logs:
         logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
         headers:
@@ -109,6 +118,7 @@ OTel Collector needs to be deployed as a **daemon service**.
             - resourcedetection
           receivers:
             - otlp
+
         metrics:
           exporters:
             # - debug
@@ -119,6 +129,8 @@ OTel Collector needs to be deployed as a **daemon service**.
           receivers:
             - otlp
             - hostmetrics
+            # - awsecscontainermetrics
+
         logs:
           exporters:
             # - debug
@@ -218,7 +230,7 @@ OTel Collector needs to be deployed as a **daemon service**.
 
 ## Troubleshooting
 
-1. Verify that OTel Collector is running on the EC2 instances, and Otel Collector config.yaml file is placed at `/etc/ecs/otel-config/config.yaml` on the EC2 instances.
+1. Verify that OTel Collector is running.
 
 1. Check OTel Collector logs.
 
@@ -298,10 +310,15 @@ OTel Collector needs to be deployed as a **sidecar**.
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+            
       filelog:
         include:
           - /hostfs/var/log/ecs/*.log
         include_file_path: true
+
+      awsecscontainermetrics:
+        collection_interval: 60s
+        
       hostmetrics:
         collection_interval: 60s
         scrapers:
@@ -311,28 +328,34 @@ OTel Collector needs to be deployed as a **sidecar**.
           filesystem:
           memory:
           network:
+
     processors:
       batch: {}
       resourcedetection:
         detectors: [ecs]
         timeout: 2s
+
     exporters:
       debug:
         verbosity: detailed
         sampling_initial: 5
         sampling_thereafter: 1
+      
       otlphttp/metrics:
         metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
         retry_on_failure:
           enabled: false
+      
       otlphttp/logs:
         logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
         headers:
           Cube-Stream-Fields: severity, host.name
+      
       otlp/traces:
         endpoint: <cubeapm_endpoint>:4317
         tls:
           insecure: true
+
     service:
       pipelines:
         traces:
@@ -344,6 +367,7 @@ OTel Collector needs to be deployed as a **sidecar**.
             - resourcedetection
           receivers:
             - otlp
+        
         metrics:
           exporters:
             # - debug
@@ -354,6 +378,8 @@ OTel Collector needs to be deployed as a **sidecar**.
           receivers:
             - otlp
             - hostmetrics
+            # - awsecscontainermetrics
+        
         logs:
           exporters:
             # - debug
