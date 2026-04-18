@@ -25,6 +25,7 @@ _Since these services use popular open-source technologies that OpenTelemetry na
 For **AWS proprietary services** where CloudWatch is the primary or only option for metric collection:
 
 - **Compute**: AWS Lambda, EC2, Batch
+- **Container**: ECS on EC2 (containerized apps)
 - **Storage**: S3, EBS, EFS
 - **Networking**: VPC, CloudFront, Route 53, Load Balancers (ALB/NLB)
 - **API & Integration**: API Gateway, SQS, SNS, EventBridge, Step Functions
@@ -32,6 +33,10 @@ For **AWS proprietary services** where CloudWatch is the primary or only option 
 - **Developer Tools**: CodeBuild, CodeDeploy, CodePipeline
 
 _For these AWS-native services, CloudWatch Metric Streams provides comprehensive monitoring capabilities. While this method incurs CloudWatch streaming costs, it's often the most practical approach for these proprietary services._
+
+:::info
+For container-level monitoring of ECS on EC2 with CloudWatch Metric Streams, enable _**Container Insights with enhanced observability**_ on your ECS cluster.
+:::
 
 ## CloudWatch Metric Streams Setup
 
