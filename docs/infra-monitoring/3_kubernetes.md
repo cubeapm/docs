@@ -403,6 +403,30 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
    helm upgrade otel-collector-deployment open-telemetry/opentelemetry-collector -f otel-collector-deployment.yaml
    ```
 
+## Monitoring container status
+
+The configuration above will monitor the k8s cluster at container-level granularity, which is quite sufficient in most of the cases. However, if you want to monitoring current container status **i.e ContainerCreating, CrashLoopBackOff, CreateContainerConfigError, ErrImagePull, ImagePullBackOff, OOMKilled, Completed, Error, ContainerCannotRun**, it can be enabled as follows:
+
+:::warning
+Enabling container current status monitoring generates a lot of metrics. This will increase your data ingestion.
+:::
+
+1. Enable conatiner status metric in `k8s_cluster` receiver in the OTel Collector Deployment.
+
+    ```yaml title="otel-collector-deployment.yaml (k8s_cluster)"
+    config:
+      receivers:
+        k8s_cluster:
+          collection_interval: 60s
+          allocatable_types_to_report:
+            - cpu
+            - memory
+          metrics:
+          # add this inside the k8s_cluster metrics section.
+            k8s.container.status.reason:
+              enabled: true
+    ```
+
 ## Monitoring processes
 
 The configuration above will monitor the k8s cluster at container-level granularity, which is quite sufficient in most of the cases. However, if you are running multiple processes in your containers and need to monitor individual processes as well, it can be enabled as follows:
