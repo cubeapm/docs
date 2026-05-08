@@ -359,9 +359,13 @@ OTel Collector needs to be deployed as a **sidecar**.
     service:
       pipelines:
         traces:
-          exporters: # - debug - otlp/traces
-          processors: - batch - resourcedetection
-          receivers: - otlp
+          exporters: 
+            - otlp/traces
+          processors: 
+            # - batch 
+            - resourcedetection
+          receivers: 
+            - otlp
 
         metrics:
           exporters:
