@@ -317,51 +317,51 @@ OTel Collector needs to be deployed as a **sidecar**.
         include_file_path: true
 
     awsecscontainermetrics:
-    collection_interval: 60s
+      collection_interval: 60s
 
     hostmetrics:
-    collection_interval: 60s
-    scrapers:
-    cpu:
-    disk:
-    load:
-    filesystem:
-    memory:
-    network:
+      collection_interval: 60s
+      scrapers:
+        cpu:
+        disk:
+        load:
+        filesystem:
+        memory:
+        network:
 
     processors:
-    batch: {}
-    resourcedetection:
-    detectors: [ecs]
-    timeout: 2s
+      batch: {}
+      resourcedetection:
+        detectors: [ecs]
+        timeout: 2s
 
     exporters:
-    debug:
-    verbosity: detailed
-    sampling_initial: 5
-    sampling_thereafter: 1
+      debug:
+        verbosity: detailed
+        sampling_initial: 5
+        sampling_thereafter: 1
 
     otlphttp/metrics:
-    metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
-    retry_on_failure:
-    enabled: false
+      metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
+      retry_on_failure:
+        enabled: false
 
     otlphttp/logs:
-    logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
-    headers:
-    Cube-Stream-Fields: severity, host.name
+      logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
+      headers:
+        Cube-Stream-Fields: severity, host.name
 
     otlp/traces:
-    endpoint: <cubeapm_endpoint>:4317
-    tls:
-    insecure: true
+      endpoint: <cubeapm_endpoint>:4317
+      tls:
+        insecure: true
 
     service:
-    pipelines:
-    traces:
-    exporters: # - debug - otlp/traces
-    processors: - batch - resourcedetection
-    receivers: - otlp
+      pipelines:
+        traces:
+          exporters: # - debug - otlp/traces
+          processors: - batch - resourcedetection
+          receivers: - otlp
 
         metrics:
           exporters:
@@ -388,8 +388,6 @@ OTel Collector needs to be deployed as a **sidecar**.
 
     ```
     </details>
-
-    ```
 
 1.  Attach IAM Permission to ECS Task to allow OTel Collector to fetch the configuration from SSM Parameter Store.
 
