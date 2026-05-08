@@ -362,7 +362,7 @@ OTel Collector needs to be deployed as a **sidecar**.
           exporters: 
             - otlp/traces
           processors: 
-            # - batch 
+            - batch 
             - resourcedetection
           receivers: 
             - otlp
