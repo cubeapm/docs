@@ -31,17 +31,24 @@ OTel Collector needs to be deployed as a **daemon service**.
     }
     ```
 
-1.  Add the following configuration to your EC2 launch template.
+1.  Attach IAM Permission to ECS Task to allow OTel Collector to fetch the configuration from SSM Parameter Store.
+
+    ```json
+    [
+      {
+        "Effect": "Allow",
+        "Action": ["ssm:GetParameter", "ssm:GetParameters"],
+        "Resource": "arn:aws:ssm:<aws-region>:<aws-account-id>:parameter/otel-collector-config"
+      }
+    ]
+    ```
+
+1.  Create SSM Parameter Store for OTel Collector Config. Create a parameter in **AWS Systems Manager (SSM)** Parameter Store and name it `otel-collector-config`. Choose type `String` and data type `text`, and then copy the below configuration in the value field.
 
     <details>
-    <summary>launch-template</summary>
+    <summary>otel-collector-config.yaml</summary>
 
     ```shell
-    # Create OTel config directory
-    mkdir -p /etc/ecs/otel-config
-
-    # Write config.yaml
-    cat > /etc/ecs/otel-config/config.yaml << 'EOF'
     receivers:
       otlp:
         protocols:
@@ -59,11 +66,20 @@ OTel Collector needs to be deployed as a **daemon service**.
           filesystem:
           memory:
           network:
+        root_path: /hostfs
+
+      awsecscontainermetrics:
+        collection_interval: 60s
 
     processors:
       batch: {}
+
       resourcedetection:
-        detectors: [ecs]
+        detectors:
+          - ecs
+          - system
+        system:
+          hostname_sources: ["os"]
         timeout: 2s
 
     exporters:
@@ -76,12 +92,13 @@ OTel Collector needs to be deployed as a **daemon service**.
         metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
         retry_on_failure:
           enabled: false
+
       otlphttp/logs:
         logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
         headers:
           Cube-Stream-Fields: severity, host.name
       otlp/traces:
-        endpoint: <cubeapm_endpoint>:4317
+        endpoint: <cubeapm_endpoint>:4317/v1/traces
         tls:
           insecure: true
 
@@ -96,6 +113,7 @@ OTel Collector needs to be deployed as a **daemon service**.
             - resourcedetection
           receivers:
             - otlp
+
         metrics:
           exporters:
             # - debug
@@ -106,6 +124,8 @@ OTel Collector needs to be deployed as a **daemon service**.
           receivers:
             - otlp
             - hostmetrics
+            # - awsecscontainermetrics
+
         logs:
           exporters:
             # - debug
@@ -115,10 +135,6 @@ OTel Collector needs to be deployed as a **daemon service**.
             - resourcedetection
           receivers:
             - otlp
-    EOF
-
-    # Set permissions for OTel user
-    chown -R 65532:65532 /etc/ecs/otel-config
     ```
 
     </details>
@@ -127,82 +143,77 @@ OTel Collector needs to be deployed as a **daemon service**.
 
     <details>
     <summary>otel-collector-daemonset.json</summary>
-    ```json
-    {
-      "family": "otel-collector-daemon",
-      "containerDefinitions": [
-        {
-          "name": "otel-collector",
-          "image": "otel/opentelemetry-collector-contrib:0.145.0",
-          "cpu": 0,
-          "portMappings": [
+      ```json
+      {
+        "family": "otel-collector-daemon",
+        "containerDefinitions": [
             {
-              "containerPort": 4317,
-              "hostPort": 4317,
-              "protocol": "tcp"
-            },
-            {
-              "containerPort": 4318,
-              "hostPort": 4318,
-              "protocol": "tcp"
+                "name": "otel-collector",
+                "image": "otel/opentelemetry-collector-contrib:0.145.0",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 4317,
+                        "hostPort": 4317,
+                        "protocol": "tcp"
+                    },
+                    {
+                        "containerPort": 4318,
+                        "hostPort": 4318,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "command": [
+                    "--config=env:OTEL_CONFIG"
+                ],
+                "environment": [],
+                "mountPoints": [
+                    {
+                        "sourceVolume": "host-root",
+                        "containerPath": "/hostfs",
+                        "readOnly": true
+                    }
+                ],
+                "volumesFrom": [],
+                "secrets": [
+                    {
+                        "name": "OTEL_CONFIG",
+                        "valueFrom": "otel-collector-config"
+                    }
+                ],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "<logs-group>",
+                        "awslogs-region": "<aws-region>",
+                        "awslogs-stream-prefix": "daemon"
+                    }
+                },
+                "systemControls": []
             }
-          ],
-          "essential": true,
-          "command": [
-            "--config=/etc/otelcol-contrib/config.yaml"
-          ],
-          "environment": [],
-          "mountPoints": [
+        ],
+        "taskRoleArn": "ECSOTELDaemonRole",
+        "executionRoleArn": "<ecsTaskExecutionRole>",
+        "networkMode": "host",
+        "volumes": [
             {
-              "sourceVolume": "otel-config",
-              "containerPath": "/etc/otelcol-contrib/",
-              "readOnly": true
-            },
-            {
-              "sourceVolume": "host-root",
-              "containerPath": "/hostfs",
-              "readOnly": true
+                "name": "host-root",
+                "host": {
+                    "sourcePath": "/"
+                }
             }
-          ],
-          "volumesFrom": [],
-          "logConfiguration": {
-            "logDriver": "awslogs",
-            "options": {
-              "awslogs-group": "/ecs/otel-daemon",
-              "awslogs-region": "<aws-region>",
-              "awslogs-stream-prefix": "daemon"
-            }
-          },
-          "systemControls": []
+        ],
+        "placementConstraints": [],
+        "requiresCompatibilities": [
+            "EC2"
+        ],
+        "cpu": "512",
+        "memory": "1024",
+        "runtimePlatform": {
+            "cpuArchitecture": "<X86_64 or ARM64>",
+            "operatingSystemFamily": "LINUX"
         }
-      ],
-      "taskRoleArn": "ECSOTELDaemonRole",
-      "executionRoleArn": "<ecsTaskExecutionRole>",
-      "networkMode": "host",
-      "volumes": [
-        {
-          "name": "otel-config",
-          "host": {
-            "sourcePath": "/etc/ecs/otel-config"
-          }
-        },
-        {
-          "name": "host-root",
-          "host": {
-            "sourcePath": "/"
-          }
-        }
-      ],
-      "placementConstraints": [],
-      "requiresCompatibilities": [
-        "EC2"
-      ],
-      "cpu": "512",
-      "memory": "1024",
-      "runtimePlatform": {
-        "cpuArchitecture": "<X86_64 or ARM64>",
-        "operatingSystemFamily": "LINUX"
-      }
     }
     ```
     </details>
@@ -213,7 +224,7 @@ OTel Collector needs to be deployed as a **daemon service**.
 
 ## Troubleshooting
 
-1. Verify that OTel Collector is running on the EC2 instances, and Otel Collector config.yaml file is placed at `/etc/ecs/otel-config/config.yaml` on the EC2 instances.
+1. Verify that OTel Collector is running.
 
 1. Check OTel Collector logs.
 
@@ -285,7 +296,7 @@ OTel Collector needs to be deployed as a **sidecar**.
 
     <details>
     <summary>otel-collector-config.yaml</summary>
-    ```yaml
+    ```shell
     receivers:
       otlp:
         protocols:
@@ -293,6 +304,15 @@ OTel Collector needs to be deployed as a **sidecar**.
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+            
+      filelog:
+        include:
+          - /hostfs/var/log/ecs/*.log
+        include_file_path: true
+
+      awsecscontainermetrics:
+        collection_interval: 60s
+
       hostmetrics:
         collection_interval: 60s
         scrapers:
@@ -302,39 +322,45 @@ OTel Collector needs to be deployed as a **sidecar**.
           filesystem:
           memory:
           network:
+
     processors:
       batch: {}
       resourcedetection:
         detectors: [ecs]
         timeout: 2s
+
     exporters:
       debug:
         verbosity: detailed
         sampling_initial: 5
         sampling_thereafter: 1
+
       otlphttp/metrics:
         metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
         retry_on_failure:
           enabled: false
+
       otlphttp/logs:
         logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
         headers:
           Cube-Stream-Fields: severity, host.name
+
       otlp/traces:
-        endpoint: <cubeapm_endpoint>:4317
+        endpoint: <cubeapm_endpoint>:4318/v1/traces
         tls:
           insecure: true
+
     service:
       pipelines:
         traces:
-          exporters:
-            # - debug
+          exporters: 
             - otlp/traces
-          processors:
-            - batch
+          processors: 
+            - batch 
             - resourcedetection
-          receivers:
+          receivers: 
             - otlp
+
         metrics:
           exporters:
             # - debug
@@ -345,6 +371,8 @@ OTel Collector needs to be deployed as a **sidecar**.
           receivers:
             - otlp
             - hostmetrics
+            # - awsecscontainermetrics
+
         logs:
           exporters:
             # - debug
@@ -354,6 +382,8 @@ OTel Collector needs to be deployed as a **sidecar**.
             - resourcedetection
           receivers:
             - otlp
+            #- filelog
+
     ```
     </details>
 
