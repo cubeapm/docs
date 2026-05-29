@@ -57,11 +57,6 @@ OTel Collector needs to be deployed as a **daemon service**.
           http:
             endpoint: 0.0.0.0:4318
 
-      filelog:
-        include:
-          - /hostfs/var/log/ecs/*.log
-        include_file_path: true
-
       hostmetrics:
         collection_interval: 60s
         scrapers:
@@ -405,7 +400,7 @@ OTel Collector needs to be deployed as a **sidecar**.
     ]
     ```
 
-1.  Update your application's configuration to send logs, metrics and traces to the OTel Collector sidecar. Application can connect to OTel Collector on the localhost IP `172.17.0.1`.
+1.  Update your application's configuration to send logs, metrics and traces to the OTel Collector sidecar. Application can connect to OTel Collector on the localhost IP `127.0.0.1`.
 
 1.  Redeploy the application service with the latest task definition revision for the changes to take effect.
 
