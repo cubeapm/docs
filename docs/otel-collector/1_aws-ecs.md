@@ -135,7 +135,6 @@ OTel Collector needs to be deployed as a **daemon service**.
             - resourcedetection
           receivers:
             - otlp
-            #- filelog
     ```
 
     </details>
@@ -347,7 +346,7 @@ OTel Collector needs to be deployed as a **sidecar**.
           Cube-Stream-Fields: severity, host.name
 
       otlp/traces:
-        endpoint: <cubeapm_endpoint>:4317
+        endpoint: <cubeapm_endpoint>:4318/v1/traces
         tls:
           insecure: true
 
