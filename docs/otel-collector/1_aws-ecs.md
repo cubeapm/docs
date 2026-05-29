@@ -98,7 +98,7 @@ OTel Collector needs to be deployed as a **daemon service**.
         headers:
           Cube-Stream-Fields: severity, host.name
       otlp/traces:
-        endpoint: <cubeapm_endpoint>:4317
+        endpoint: <cubeapm_endpoint>:4317/v1/traces
         tls:
           insecure: true
 
@@ -135,7 +135,7 @@ OTel Collector needs to be deployed as a **daemon service**.
             - resourcedetection
           receivers:
             - otlp
-            - filelog
+            #- filelog
     ```
 
     </details>
@@ -297,7 +297,7 @@ OTel Collector needs to be deployed as a **sidecar**.
 
     <details>
     <summary>otel-collector-config.yaml</summary>
-    ```yaml
+    ```shell
     receivers:
       otlp:
         protocols:
@@ -311,18 +311,18 @@ OTel Collector needs to be deployed as a **sidecar**.
           - /hostfs/var/log/ecs/*.log
         include_file_path: true
 
-    awsecscontainermetrics:
-      collection_interval: 60s
+      awsecscontainermetrics:
+        collection_interval: 60s
 
-    hostmetrics:
-      collection_interval: 60s
-      scrapers:
-        cpu:
-        disk:
-        load:
-        filesystem:
-        memory:
-        network:
+      hostmetrics:
+        collection_interval: 60s
+        scrapers:
+          cpu:
+          disk:
+          load:
+          filesystem:
+          memory:
+          network:
 
     processors:
       batch: {}
@@ -336,20 +336,20 @@ OTel Collector needs to be deployed as a **sidecar**.
         sampling_initial: 5
         sampling_thereafter: 1
 
-    otlphttp/metrics:
-      metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
-      retry_on_failure:
-        enabled: false
+      otlphttp/metrics:
+        metrics_endpoint: http://<cubeapm_endpoint>:3130/api/metrics/v1/save/otlp
+        retry_on_failure:
+          enabled: false
 
-    otlphttp/logs:
-      logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
-      headers:
-        Cube-Stream-Fields: severity, host.name
+      otlphttp/logs:
+        logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
+        headers:
+          Cube-Stream-Fields: severity, host.name
 
-    otlp/traces:
-      endpoint: <cubeapm_endpoint>:4317
-      tls:
-        insecure: true
+      otlp/traces:
+        endpoint: <cubeapm_endpoint>:4317
+        tls:
+          insecure: true
 
     service:
       pipelines:
@@ -383,7 +383,7 @@ OTel Collector needs to be deployed as a **sidecar**.
             - resourcedetection
           receivers:
             - otlp
-            - filelog
+            #- filelog
 
     ```
     </details>
