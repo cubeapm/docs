@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 slug: /configure/single-sign-on/sign-in-with-microsoft
 ---
 
