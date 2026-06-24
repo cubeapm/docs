@@ -23,7 +23,7 @@ Instrument your .NET Core application with Datadog auto-instrumentation.
 
 Following are the steps to install the Datadog tracer and connect it with CubeAPM. If Datadog tracer is already installed, you can jump to step 2.
 
-1. Follow this link to install Datadog tracer: https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/dotnet-core/.
+1. Follow this link to install Datadog tracer: [Datadog .NET Tracer Installation Documentation](https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/dotnet-core/).
 
 2. To enable the .NET Tracer for your service, set the required environment variables and restart the application.
 
@@ -39,7 +39,7 @@ Following are the steps to install the Datadog tracer and connect it with CubeAP
    </Tabs>
 
 :::info
-For Windows server refer this: https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/dotnet-core/?tab=windows#enable-the-sdk-for-your-service
+For Windows server refer this: [Datadog .NET Windows Installation Documentation](https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/dotnet-core/?tab=windows#enable-the-sdk-for-your-service)
 :::
 
 3. Configure the tracer to send traces to CubeAPM. Configure these settings in the environment variables of the application.
@@ -110,7 +110,7 @@ Following are the steps to configure datadog SDK with your application:
    ```
 
 :::info
-For more reference: https://docs.datadoghq.com/tracing/trace_collection/custom_instrumentation/server-side/?api_type=dd_api&prog_lang=dot_net
+   For more detailed information on Custom Instrumentation in .NET, refer to the [Datadog .NET Custom Instrumentation Documentation](https://docs.datadoghq.com/tracing/trace_collection/custom_instrumentation/server-side/?api_type=dd_api&prog_lang=dot_net).
 :::
 
 3. Configure the tracer to send traces to CubeAPM directly. Add the following in your application environments:
@@ -217,18 +217,17 @@ A working example is available at https://github.com/cubeapm/sample_app_dotnet-c
 To send data to CubeAPM and Datadog both, Add the following configuration in your datadog agent.
 
 <Tabs>
-   <TabItem value="env" lable="Environment Variables">
-
+   <TabItem value="env" label="Environment Variables">
       ```shell
-         # Required
-         # Original datadog api key.
-         DD_API_KEY=<datadog api key> 
+      # Required
+      # Original datadog api key.
+      DD_API_KEY=<datadog api key> 
 
-         # Your datadog URL.
-         DD_SITE=<datadog site url>
+      # Your datadog URL.
+      DD_SITE=<datadog site url>
 
-         # Send data to Cubeapm and Datadog both.
-         DD_APM_ADDITIONAL_ENDPOINTS={"<cubeapm_endpoint>:3130" :["<datadog api key>"]}
+      # Send data to Cubeapm and Datadog both.
+      DD_APM_ADDITIONAL_ENDPOINTS={"<cubeapm_endpoint>:3130" :["<datadog api key>"]}
       ```
    </TabItem>
 </Tabs>
