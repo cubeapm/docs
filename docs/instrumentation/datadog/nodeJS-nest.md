@@ -109,7 +109,7 @@ Setup the ddtrace/tracer dependencies in your application. For reference follow 
 
    :::info
    For more detailed information on Custom Instrumentation in Node.js, refer to the [Datadog Node.js Custom Instrumentation Documentation](https://docs.datadoghq.com/tracing/trace_collection/custom_instrumentation/server-side/?api_type=dd_api&prog_lang=node_js#trace-annotation).
-:::
+   :::
 
 ### Sample Application
 
