@@ -44,10 +44,14 @@ Alert rules define the actual condition (query) under which an alert fires.
 | `expr` | `string` | The PromQL, LogQL, or Trace query used to evaluate the alert condition. |
 | `for` | `integer` | The duration (in seconds) that the condition must be met before firing the alert. |
 | `repeat_interval` | `integer` | Once an alert is firing, how often to resend the notification (in seconds). |
+| `grouping_disable` | `boolean` | Defaults to `false`. Set to `true` to disable notification grouping (which normally batches multiple instances of the same alert). |
+| `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Add custom tags (e.g., `"severity": "critical"`) to filter or route notifications to specific receivers.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
+| `annotations` | `object` | Key-value pairs for descriptive metadata (e.g., `{"description": "CPU is high", "runbook_url": "..."}`). |
 | `config.receiver_group_ids` | `array` | Array of IDs linking this alert to predefined Receiver Groups. |
 | `config.mute_group_ids` | `array` | Array of IDs linking this alert to predefined Mute Groups. |
-| `receiver` / `mute` | `object` | Empty objects `{}` required to satisfy legacy backend database schema constraints. |
-| `permissions` | `array` | Access controls. An empty array `[]` applies default permissions. |
+| `receiver` | `object` | Defines an inline custom receiver (e.g., `{"slack_configs": [...]}`). Functions identically to a Receiver Group but exclusively for this rule. |
+| `mute` | `object` | Defines an inline custom mute configuration (e.g., `{"time_intervals": [...]}`). Functions identically to a Mute Group but exclusively for this rule. |
+| `permissions` | `array` | Determines access. Pass an empty array `[]` for default "Role Based" access (based on global CubeAPM roles). Pass an array of objects to grant "Custom" roles (`viewer`, `editor`, `admin`) to specific users or teams. |
 
 #### Curl Example {#create-alert-curl}
 
@@ -62,10 +66,19 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules" \
            "datasource": "prometheus",
            "kind": "static",
            "status": "ACTIVE",
+           "grouping_disable": false,
            "interval": 60,
            "expr": "sum(rate(node_cpu_seconds_total{mode!=\"idle\"}[5m])) > 80",
            "for": 300,
            "repeat_interval": 3600,
+           "labels": {
+             "severity": "critical",
+             "team": "database-reliability",
+             "group": "Default Group"
+           },
+           "annotations": {
+             "summary": "CPU usage exceeded 80%"
+           },
            "config": {
              "receiver_group_ids": [],
              "mute_group_ids": []
@@ -143,7 +156,7 @@ The response format is a JSON object. The JSON object has the following structur
 | `expr2` | `string` | Secondary expression (if applicable). |
 | `kind` | `string` | Rule type (`static`). |
 | `for` | `integer` | Duration condition must be met before firing. |
-| `labels` | `object` | Additional labels attached to the alert. |
+| `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Add custom tags (e.g., `"severity": "critical"`) to filter or route notifications to specific receivers.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
 | `annotations` | `object` | Additional annotations attached to the alert. |
 | `status` | `string` | Current status (`ACTIVE`, `PAUSED`, etc.). |
 | `grouping_disable` | `boolean` | Whether alert grouping is disabled. |
@@ -151,7 +164,7 @@ The response format is a JSON object. The JSON object has the following structur
 | `receiver` | `object` | Additional receiver settings. |
 | `mute` | `object` | Additional mute settings. |
 | `repeat_interval` | `integer` | Notification repeat interval in seconds. |
-| `permissions` | `array` | Applied access controls. |
+| `permissions` | `array` | Determines access. Pass an empty array `[]` for default "Role Based" access (based on global CubeAPM roles). Pass an array of objects to grant "Custom" roles (`viewer`, `editor`, `admin`) to specific users or teams. |
 
 > **Note:** If you provide IDs in `config.receiver_group_ids` or `config.mute_group_ids`, those groups **must** exist in your account. Passing an invalid or non-existent ID will result in a `500` error (`all receiver groups must exist`). If you have not created any Receiver Groups yet, pass an empty array `[]` as shown in the examples.
 
@@ -167,8 +180,13 @@ The response format is a JSON object. The JSON object has the following structur
   "expr2": "",
   "kind": "static",
   "for": 300,
-  "labels": null,
-  "annotations": null,
+  "labels": {
+    "severity": "critical",
+    "team": "database-reliability"
+  },
+  "annotations": {
+    "summary": "CPU usage exceeded 80%"
+  },
   "status": "ACTIVE",
   "grouping_disable": false,
   "config": {
@@ -214,7 +232,7 @@ The response format is a JSON array of alert rule objects. The JSON object has t
 | `id` | `integer` | Unique identifier for the alert rule. |
 | `interval` | `integer` | Evaluation interval in seconds. |
 | `kind` | `string` | Rule type (`static`). |
-| `labels` | `object` | Evaluated labels attached to the alert. |
+| `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Evaluated tags (e.g., `"severity": "critical"`) used for filtering and routing.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
 | `lastEvaluation` | `string` | Timestamp of the last time the rule was evaluated. |
 | `mute` | `object` | Mute settings applied to the rule. |
 | `name` | `string` | The name of the alert rule. |
@@ -324,5 +342,76 @@ Use the `PUT /api/v1/rules` endpoint and change the `"status"` field of your rul
     "receiver_group_ids": [3],
     "mute_group_ids": []
   }
+}
+```
+
+### How to Configure Inline Receivers and Mutes
+
+While you can assign alerts to shared global **Receiver Groups** and **Mute Groups** using `config.receiver_group_ids` and `config.mute_group_ids`, you can also configure **Inline Receivers** and **Inline Mutes** directly on a specific Alert Rule. This is useful when you want the alert to have a very specific routing or snoozing schedule that isn't shared by any other rules.
+
+To define a receiver or mute inline, you define the exact same configuration schema you would use for a Receiver Group or Mute Group, but place it inside the `"receiver"` or `"mute"` objects of the Alert Rule payload itself.
+
+**Example (Inline Slack Receiver and Inline Weekend Mute):**
+
+```json
+{
+  "name": "High CPU Usage",
+  "status": "ACTIVE",
+  // ... other fields like expr, interval, for, etc.
+  "config": {
+    "receiver_group_ids": [],
+    "mute_group_ids": []
+  },
+  "receiver": {
+    "slack_configs": [
+      { "channel": "high-cpu-specific-alerts" }
+    ]
+  },
+  "mute": {
+    "time_intervals": [
+      {
+        "times": [{ "start_time": "00:00", "duration_minutes": 1440 }],
+        "weekdays": ["saturday", "sunday"],
+        "location": "UTC"
+      }
+    ]
+  }
+}
+```
+
+### How to Configure Role Based and Custom Permissions
+
+The `permissions` array in the JSON payload dictates who can view and edit your alert rule. 
+
+#### 1. Role Based (Default)
+When "Role Based" is used, the rule relies entirely on the user's global workspace role (Global Viewers can view it, Global Editors can edit it). 
+
+To enforce this via the API, simply pass an empty array:
+```json
+{
+  "name": "High CPU Usage",
+  "permissions": [] 
+}
+```
+
+#### 2. Custom
+When "Custom" is used, you explicitly grant specific roles (`viewer` or `editor`) to specific users (by email) or teams (by ID) for this rule exclusively. 
+
+To configure this via the API, populate the `permissions` array with one or more objects specifying the `entity_type`, `entity_id`, and `permission`:
+```json
+{
+  "name": "High CPU Usage",
+  "permissions": [
+    {
+      "entity_type": "user",
+      "entity_id": "john.doe@company.com",
+      "permission": "editor"
+    },
+    {
+      "entity_type": "team",
+      "entity_id": "4", 
+      "permission": "viewer"
+    }
+  ]
 }
 ```

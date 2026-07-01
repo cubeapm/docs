@@ -53,7 +53,7 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
            "name": "Slack Alerts",
            "receiver": {
              "slack_configs": [
-               { "channel": "#production-alerts" }
+               { "channel": "production-alerts" }
              ]
            }
          }'
