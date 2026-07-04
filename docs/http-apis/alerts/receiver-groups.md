@@ -74,7 +74,10 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
            "name": "Email Alerts",
            "receiver": {
              "email_configs": [
-               { "to": "devops@yourcompany.com" }
+               { 
+                 "to": "devops@yourcompany.com",
+                 "send_resolved":true
+               }
              ]
            }
          }'
@@ -92,7 +95,8 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
              "pagerduty_configs": [
                {
                  "service_name": "Database Team",
-                 "routing_key": "YOUR_PD_ROUTING_KEY"
+                 "routing_key": "YOUR_PD_ROUTING_KEY",
+                 "send_resolved":true
                }
              ]
            }
@@ -109,7 +113,10 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
            "name": "OpsGenie Alerts",
            "receiver": {
              "opsgenie_configs": [
-               { "api_key": "YOUR_OPSGENIE_API_KEY" }
+                { 
+                  "api_key": "YOUR_OPSGENIE_API_KEY",
+                  "send_resolved":true
+                }
              ]
            }
          }'
@@ -127,7 +134,8 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
              "jira_configs": [
                {
                  "project": "PROJ",
-                 "issue_type": "Bug"
+                 "issue_type": "Bug",
+                 "send_resolved":true
                }
              ]
            }
@@ -144,7 +152,11 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
            "name": "Teams Alerts",
            "receiver": {
              "msteamsv2_configs": [
-               { "webhook_url": "ms-teams webhook url" }
+                { 
+                  "webhook_url": "ms-teams webhook url",
+                  "send_resolved":true,
+                  "cube_show_query":false
+                }
              ]
            }
          }'
@@ -165,7 +177,8 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
                  "headers": {
                    "Content-Type": "application/json"
                  },
-                 "body": "{ \"alert_status\": \"triggered\", \"details\": \"Custom payload\" }"
+                 "body": "{ \"alert_status\": \"triggered\", \"details\": \"Custom payload\" }",
+                 "send_resolved":true
                }
              ]
            }
@@ -182,7 +195,12 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
            "name": "Google Chat Alerts",
            "receiver": {
              "googlechat_configs": [
-               { "url": "google webhook url" }
+                { 
+                  "url": "google webhook url",
+                  "send_resolved":true,
+                  "cube_show_query":false,
+                  "cube_show_sample_log":false
+                }
              ]
            }
          }'
