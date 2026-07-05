@@ -25,6 +25,8 @@ When `http-token-admin` is enabled in cubeapm’s `config.properties`, requests 
 
 ### Create Receiver Group
 
+When creating receiver group, one or multiple receivers for same or different type can we mapped to a single receiver groups
+
 **Endpoint:** `POST` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups`
 
 #### Request Parameters {#create-receiver-request-parameters}
@@ -235,7 +237,7 @@ The response format is a JSON object. The JSON object has the following structur
 }
 ```
 
-### Get Receiver Groups
+### Fetch All Receiver Groups
 
 **Endpoint:** `GET` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups`
 
@@ -244,11 +246,6 @@ The response format is a JSON object. The JSON object has the following structur
 Fetch all receiver groups:
 ```bash
 curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
-```
-
-Fetch a specific receiver group by ID:
-```bash
-curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups?id=1"
 ```
 
 #### Response Format {#get-receiver-response-format}
@@ -271,6 +268,38 @@ The response format is a JSON array of receiver group objects. See [Create Recei
     }
   }
 ]
+```
+
+### Fetch Specific Receiver Group
+
+**Endpoint:** `GET` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups`
+
+#### Curl Example {#get-receiver-curl}
+
+Fetch a specific receiver group by ID:
+```bash
+curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups?id=1"
+```
+
+#### Response Format {#get-receiver-response-format}
+
+The response format is a receiver group object. See [Create Receiver Group Response Format](#create-receiver-response-format) for the schema structure.
+
+**For example:**
+
+```json
+{
+  "id": 3,
+  "name": "Slack Alerts",
+  "receiver": {
+    "slack_configs": [
+      {
+        "channel": "#production-alerts"
+      }
+    ]
+  }
+}
+
 ```
 
 ### Update / Delete Receiver Groups

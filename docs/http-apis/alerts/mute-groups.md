@@ -165,25 +165,24 @@ The response format is a JSON object. The JSON object has the following structur
 }
 ```
 
-### Get Mute Groups
+### Fetch All Mute Groups
 
 **Endpoint:** `GET` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups`
 
 #### Curl Example {#get-mute-curl}
-
-Fetch all mute groups:
 ```bash
 curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups"
 ```
 
-Fetch a specific mute group by ID:
-```bash
-curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups?id=1"
-```
-
 #### Response Format {#get-mute-response-format}
 
-The response format is a JSON array of mute group objects. See [Create Mute Group Response Format](#create-mute-response-format) for the schema structure.
+The response format is a JSON array of JSON objects. The JSON object has the following structure.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `integer` | Unique identifier for the mute group. |
+| `name` | `string` | The descriptive name of the snooze/mute schedule. |
+| `mute` | `object` | The saved configuration for the time intervals. |
 
 **For example:**
 
@@ -213,11 +212,70 @@ The response format is a JSON array of mute group objects. See [Create Mute Grou
 ]
 ```
 
+### Get Specific Mute Group
+
+**Endpoint:** `GET` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups`
+
+#### Curl Example {#get-mute-curl}
+```bash
+curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups?id=1"
+```
+
+#### Response Format {#get-mute-response-format}
+
+The response format is a JSON object. The JSON object has the following structure.
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `integer` | Unique identifier for the mute group. |
+| `name` | `string` | The descriptive name of the snooze/mute schedule. |
+| `mute` | `object` | The saved configuration for the time intervals. |
+
+**For example:**
+
+```json
+{
+  "id": 1,
+  "name": "Weekend Silence",
+  "mute": {
+    "time_intervals": [
+      {
+        "times": [
+          {
+            "start_time": "00:00",
+            "duration_minutes": 1440
+          }
+        ],
+        "weekdays": [
+          "saturday",
+          "sunday"
+        ],
+        "location": "America/New_York"
+      }
+    ]
+  }
+}
+
+```
+
 ### Update / Delete Mute Groups
 
 #### Update a Mute Group (PUT) {#update-mute-curl}
 
 **Endpoint:** `PUT` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups`
+
+#### Request Parameters {#create-mute-request-parameters}
+
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | `integer` | Unique identifier for the mute group. |
+| `name` | `string` | A descriptive name for the snooze/mute schedule. |
+| `mute.time_intervals` | `array` | A list of time intervals during which alerts should be suppressed. |
+| `times` | `array` | Specifies the `start_time` (e.g., `"00:00"`) and `duration_minutes` for the mute. |
+| `weekdays` | `array` | Optional. Days of the week this mute applies (e.g., `["saturday", "sunday"]`). |
+| `location` | `string` | The timezone for evaluating the time (e.g., `"America/New_York"`, `"UTC"`). |
+
+**For example:**
 
 ```bash
 curl -X PUT "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups" \
@@ -254,6 +312,10 @@ Once you have created a Mute Group, you can use it to snooze an alert for the sp
 
 1. Grab the `id` of the created Mute Group.
 2. Use the `PUT /api/v1/rules` endpoint from the **Alert Rules API** to update your specific Alert Rule, adding the new Mute Group's `id` into the `config.mute_group_ids` array.
+
+:::warning
+The `PUT` request replaces the **entire** rule configuration. You must include all existing configurations (such as `labels`, inline `receiver`, inline `mute`, and `permissions`) in your payload; otherwise, they will be overwritten and removed!
+:::
 
 ```json
 {
