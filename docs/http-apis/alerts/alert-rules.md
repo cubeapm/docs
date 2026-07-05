@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 The CubeAPM Alert APIs allow you to programmatically manage Alert Rules, Receiver Groups (Notifications), and Mute Groups (Snoozing).
 
-### Authentication
+## Authentication
 
 These APIs can be accessed programmatically using the Admin Port `3199`.
 
@@ -47,7 +47,7 @@ Alert rules define the actual condition (query) under which an alert fires.
 | `repeat_interval` | `integer` | Once an alert is firing, how often to resend the notification (in seconds). |
 | `grouping_disable` | `boolean` | Defaults to `false`. Set to `true` to disable notification grouping (which normally batches multiple instances of the same alert). |
 | `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Add custom tags (e.g., `"severity": "critical"`) to filter or route notifications to specific receivers.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
-| `annotations` | `object` | Key-value pairs for descriptive metadata (e.g., `{"summary": \"CPU is high\"}`). |
+| `annotations` | `object` | Key-value pairs for descriptive metadata (e.g., `{"summary": "CPU is high"}`). |
 | `config.receiver_group_ids` | `array` | Array of IDs linking this alert to predefined [Receiver Groups](/http-apis/alerts/receiver-groups#create-receiver-group). |
 | `config.mute_group_ids` | `array` | Array of IDs linking this alert to predefined [Mute Groups](/http-apis/alerts/mute-groups#create-mute-group). |
 | `config.model` | `object` | (Optional) JSON used to save the visual state of the rule in the CubeAPM UI's Query Builder. If omitted, the API will still create the alert successfully, but it will be displayed in the UI as a raw query. |
@@ -235,7 +235,7 @@ The response format is a JSON array of alert rule objects. The JSON object has t
 | `annotations` | `object` | Current annotations evaluated for the alert rule. |
 | `config` | `object` | Rule configuration, including receiver and mute group mappings. |
 | `datasource` | `string` | The source platform queried (`prometheus`, `vlogs`, `traces`). |
-| `duration` | `integer` | The duration condition the rule must meet before firing. **Note:** The GET API returns this as `\"duration\"`, but it corresponds exactly to the `\"for\"` parameter used when creating the alert. |
+| `duration` | `integer` | The duration condition the rule must meet before firing. **Note:** The GET API returns this as `"duration"`, but it corresponds exactly to the `"for"` parameter used when creating the alert. |
 | `groupingDisable` | `boolean` | Whether alert grouping is disabled. |
 | `health` | `string` | The health status of the rule evaluation (e.g., `ok`). |
 | `id` | `integer` | Unique identifier for the alert rule. |
@@ -632,9 +632,10 @@ curl -X PUT "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules" \
              "time_intervals": []
            },
            "permissions": []
-           // ... include all other existing configurations here as well
          }'
 ```
+
+Include every other field from your rule's current configuration (such as `expr2`, `grouping_disable`, `annotations`, and any inline `receiver`/`mute`/`permissions` you had set) — the example above is abridged for brevity.
 
 ### How to Configure Inline Receivers
 

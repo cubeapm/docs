@@ -25,7 +25,7 @@ When `http-token-admin` is enabled in cubeapm’s `config.properties`, requests 
 
 ### Create Receiver Group
 
-When creating receiver group, one or multiple receivers for same or different type can we mapped to a single receiver groups
+When creating a receiver group, one or multiple receivers of the same or different types can be mapped to a single receiver group.
 
 **Endpoint:** `POST` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups`
 
@@ -59,7 +59,7 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
                  "channel": "production-alerts", 
                  "send_resolved":true,
                  "cube_show_query":false,
-                 "cube_show_sample_log":false, 
+                 "cube_show_sample_log":false
                }
              ]
            }
@@ -274,14 +274,14 @@ The response format is a JSON array of receiver group objects. See [Create Recei
 
 **Endpoint:** `GET` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups`
 
-#### Curl Example {#get-receiver-curl}
+#### Curl Example {#get-receiver-specific-curl}
 
 Fetch a specific receiver group by ID:
 ```bash
 curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups?id=1"
 ```
 
-#### Response Format {#get-receiver-response-format}
+#### Response Format {#get-receiver-specific-response-format}
 
 The response format is a receiver group object. See [Create Receiver Group Response Format](#create-receiver-response-format) for the schema structure.
 
@@ -299,7 +299,6 @@ The response format is a receiver group object. See [Create Receiver Group Respo
     ]
   }
 }
-
 ```
 
 ### Update / Delete Receiver Groups

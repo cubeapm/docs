@@ -212,16 +212,16 @@ The response format is a JSON array of JSON objects. The JSON object has the fol
 ]
 ```
 
-### Get Specific Mute Group
+### Fetch Specific Mute Group
 
 **Endpoint:** `GET` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups`
 
-#### Curl Example {#get-mute-curl}
+#### Curl Example {#get-mute-specific-curl}
 ```bash
 curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups?id=1"
 ```
 
-#### Response Format {#get-mute-response-format}
+#### Response Format {#get-mute-specific-response-format}
 
 The response format is a JSON object. The JSON object has the following structure.
 
@@ -255,7 +255,6 @@ The response format is a JSON object. The JSON object has the following structur
     ]
   }
 }
-
 ```
 
 ### Update / Delete Mute Groups
@@ -264,7 +263,7 @@ The response format is a JSON object. The JSON object has the following structur
 
 **Endpoint:** `PUT` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups`
 
-#### Request Parameters {#create-mute-request-parameters}
+#### Request Parameters {#update-mute-request-parameters}
 
 | Parameter | Type | Description |
 |---|---|---|
@@ -317,14 +316,16 @@ Once you have created a Mute Group, you can use it to snooze an alert for the sp
 The `PUT` request replaces the **entire** rule configuration. You must include all existing configurations (such as `labels`, inline `receiver`, inline `mute`, and `permissions`) in your payload; otherwise, they will be overwritten and removed!
 :::
 
+Add your Mute Group's `id` into `config.mute_group_ids`, keeping every other existing field of the rule intact:
+
 ```json
 {
-  "id": 11,
+  "id": 1,
   "name": "High CPU Usage",
   "status": "ACTIVE",
   "config": {
     "receiver_group_ids": [3],
-    "mute_group_ids": [1] // <-- Add your Mute Group ID here to snooze it
+    "mute_group_ids": [1]
   }
 }
 ```
