@@ -11,40 +11,38 @@ To enable Sign in with JumpCloud, you need to create an OAuth app in your JumpCl
 
 2. Navigate to Access > SSO Application > Click on Add New Application > Search for "OpenID Connect" and select it > Click Next.
 
-    ![OpenID Connect](/img/configure/oauth/single-sign-on/JumpCloud/jumpcloud-1.png)
+   ![OpenID Connect](/img/configure/oauth/jumpcloud/jumpcloud-1.png)
 
 3. Configure the required fields (_Display Names_ etc) and click Next.
 
-    ![Configure Application](/img/configure/oauth/single-sign-on/JumpCloud/jumpcloud-2.png)
+   ![Configure Application](/img/configure/oauth/jumpcloud/jumpcloud-2.png)
 
 4. Click on Configure Application.
 
-    ![Configure's Page](/img/configure/oauth/single-sign-on/JumpCloud/jumpcloud-3.png)
+   ![Configure's Page](/img/configure/oauth/jumpcloud/jumpcloud-3.png)
 
 5. Fill the below details under SSO:
+   - **Login URIs**: `<cubeapm_address>/login`
 
-    - **Login URIs**: `<cubeapm_address>/login`
+   - Select **Client Authentication Type** as `Client Secret Basic`
 
-    - Select **Client Authentication Type** as `Client Secret Basic`
+   - **Redirect URIs**: `<cubeapm_address>/api/auth/self-service/methods/oidc/callback/jumpcloud`
 
-    - **Redirect URIs**: `<cubeapm_address>/api/auth/self-service/methods/oidc/callback/jumpcloud`
+   - Check the **Email** and **Profile** in Standard Scopes inside **Attribute Mapping**
 
-    - Check the **Email** and **Profile** in Standard Scopes inside **Attribute Mapping**
+   - Click Activate.
 
-    - Click Activate.
+   - Copy the **Client ID** and **Client Secret** from Pop-up page.
 
-    - Copy the **Client ID** and **Client Secret** from Pop-up page.
-
-    ![Configure's Page](/img/configure/oauth/single-sign-on/JumpCloud/jumpcloud-4.png)
-    
+   ![Configure's Page](/img/configure/oauth/jumpcloud/jumpcloud-4.png)
 
 6. Click on User Groups tab and enable the checkbox for User Group to enable SSO and click on Save.
 
-    ![Configure's Page](/img/configure/oauth/single-sign-on/JumpCloud/jumpcloud-5.png)
+   ![Configure's Page](/img/configure/oauth/jumpcloud/jumpcloud-5.png)
 
 7. Click on the User Group -> Select Users tab and make sure checkbox is enabled for the user you want to grant SSO access to in the group and Click on Save Group.
 
-    ![Configure's Page](/img/configure/oauth/single-sign-on/JumpCloud/jumpcloud-6.png)
+   ![Configure's Page](/img/configure/oauth/jumpcloud/jumpcloud-6.png)
 
 8. The above Client ID, Client Secret and Issuer URL can be provided to CubeAPM to enable Sign in with JumpCloud (set `auth.oidc.jumpcloud.client-id`, `auth.oidc.jumpcloud.client-secret` and `auth.oidc.jumpcloud.issuer-url` properties in `/etc/cubeapm/config.properties`, or `configVars.auth.oidc.jumpcloud.clientId`, `configVars.auth.oidc.jumpcloud.clientSecret` and `configVars.auth.oidc.jumpcloud.issuerUrl` in helm chart values file).
 
