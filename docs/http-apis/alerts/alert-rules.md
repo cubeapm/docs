@@ -227,7 +227,7 @@ The response format is a JSON object. The JSON object has the following structur
 
 #### Curl Examples & Response Format {#get-alert-curl-and-response}
 
-The response format is a JSON array of alert rule objects. The JSON object has the following structure.
+The alert rule oject JSON has the following structure.
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -266,6 +266,8 @@ curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules?id=1"
 ```
 
 **Response:**
+
+The response format is a JSON array of alert rule objects.
 ```json
 {
   "alerts": null,
@@ -348,6 +350,8 @@ curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules"
 ```
 
 **Response:**
+
+The response format is a alert rule object JSON.
 ```json
 [
   {
