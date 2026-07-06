@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 # Alert Rules
 
 
-The CubeAPM Alert APIs allow you to programmatically manage Alert Rules, Receiver Groups (Notifications), and Mute Groups (Snoozing).
+The CubeAPM Alert APIs allow you to programmatically manage Alert Rules, Receiver Groups (Notifications), and Mute Groups.
 
 ## Authentication
 
@@ -20,13 +20,13 @@ These APIs can be accessed programmatically using the Admin Port `3199`.
 - `Content-Type: application/json`
 
 :::info
-When `http-token-admin` is enabled in cubeapm’s `config.properties`, requests must include the same token in the `Authorization` header.
+When `http-token-admin` is enabled in CubeAPM's `config.properties`, requests must include the corresponding token in the `Authorization` header when using `curl` to `CREATE`, `UPDATE`, or `DELETE` alert rules.
 :::
 
 
 
 
-Alert rules define the actual condition (query) under which an alert fires.
+Alert rules define the condition (query) under which an alert fires.
 
 ### Create Alert Rule
 
@@ -37,7 +37,7 @@ Alert rules define the actual condition (query) under which an alert fires.
 | Parameter | Type | Description |
 |---|---|---|
 | `name` | `string` | A descriptive string identifier for your alert rule. |
-| `datasource` | `string` | The source platform to query against. Options are `"prometheus"`, `"vlogs"`, or `"traces"`. |
+| `datasource` | `string` | The source platform to query against. Options are:<br/>`"prometheus"` for metrics<br/>`"vlogs"` for logs<br/>`"traces"` for traces |
 | `kind` | `string` | `"static"` for a standard threshold alert. |
 | `status` | `string` | `"ACTIVE"` to enable the alert, or `"PAUSED"` to temporarily disable it. |
 | `interval` | `integer` | How often (in seconds) the backend evaluates the query (e.g., `60`). |
@@ -46,7 +46,7 @@ Alert rules define the actual condition (query) under which an alert fires.
 | `for` | `integer` | The duration (in seconds) that the condition must be met before firing the alert. |
 | `repeat_interval` | `integer` | Once an alert is firing, how often to resend the notification (in seconds). |
 | `grouping_disable` | `boolean` | Defaults to `false`. Set to `true` to disable notification grouping (which normally batches multiple instances of the same alert). |
-| `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Add custom tags (e.g., `"severity": "critical"`) to filter or route notifications to specific receivers.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
+| `labels` | `object` | Key-value pairs:<br/>**Notification Context:** Custom tags (e.g., `"severity": "critical"`) are included in notification payloads (Slack, Email) for extra context.<br/><br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which group the alert appears under on the CubeAPM UI.|
 | `annotations` | `object` | Key-value pairs for descriptive metadata (e.g., `{"summary": "CPU is high"}`). |
 | `config.receiver_group_ids` | `array` | Array of IDs linking this alert to predefined [Receiver Groups](/http-apis/alerts/receiver-groups#create-receiver-group). |
 | `config.mute_group_ids` | `array` | Array of IDs linking this alert to predefined [Mute Groups](/http-apis/alerts/mute-groups#create-mute-group). |
@@ -132,7 +132,7 @@ Use the exact same payload as above, but update the `datasource` and `expr` fiel
 
 #### Response Parameter {#create-alert-response-format}
 
-The response format is a JSON object. The JSON object has the following structure.
+The response is a JSON object with the following structure:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -144,7 +144,7 @@ The response format is a JSON object. The JSON object has the following structur
 | `expr2` | `string` | An optional secondary query or expression, typically used for baseline evaluations, comparisons, or anomaly detection. |
 | `kind` | `string` | Rule type (`static`). |
 | `for` | `integer` | Duration condition must be met before firing. |
-| `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Add custom tags (e.g., `"severity": "critical"`) to filter or route notifications to specific receivers.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
+| `labels` | `object` | Key-value pairs:<br/> **Notification Context:** Custom tags (e.g., `"severity": "critical"`) are included in notification payloads (Slack, Email) for extra context.<br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which folder the alert appears under on the CubeAPM UI. |
 | `status` | `string` | Current status (`ACTIVE`, `PAUSED`, etc.). |
 | `grouping_disable` | `boolean` | Whether alert grouping is disabled. |
 | `config` | `object` | Contains `receiver_group_ids` and `mute_group_ids`. |
@@ -227,7 +227,7 @@ The response format is a JSON object. The JSON object has the following structur
 
 #### Curl Examples & Response Format {#get-alert-curl-and-response}
 
-The alert rule oject JSON has the following structure.
+The alert rule JSON object has the following structure:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -241,7 +241,7 @@ The alert rule oject JSON has the following structure.
 | `id` | `integer` | Unique identifier for the alert rule. |
 | `interval` | `integer` | Evaluation interval in seconds. |
 | `kind` | `string` | Rule type (`static`). |
-| `labels` | `object` | Key-value pairs with two main purposes:<br/>**1. Tagging & Routing:** Evaluated tags (e.g., `"severity": "critical"`) used for filtering and routing.<br/>**2. Alert Grouping:** A special, reserved `"group"` key (e.g., `"group": "Database Alerts"`) that dictates exactly which folder the alert visually appears under on the CubeAPM UI. |
+| `labels` | `object` | Key-value pairs:<br/>**Notification Context:** Evaluated tags (e.g., `"severity": "critical"`) are included in notification payloads for extra context.<br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which folder the alert appears under on the CubeAPM UI.|
 | `lastEvaluation` | `string` | Timestamp of the last time the rule was evaluated. |
 | `mute` | `object` | Contains inline custom mute definitions configured exclusively for this rule. |
 | `name` | `string` | The name of the alert rule. |
@@ -351,7 +351,7 @@ curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules"
 
 **Response:**
 
-The response format is a alert rule object JSON.
+The response is a JSON array containing alert rule objects.
 ```json
 [
   {
@@ -641,11 +641,32 @@ curl -X PUT "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules" \
 
 Include every other field from your rule's current configuration (such as `expr2`, `grouping_disable`, `annotations`, and any inline `receiver`/`mute`/`permissions` you had set) — the example above is abridged for brevity.
 
+#### Delete an Alert Rule (DELETE) {#delete-alert-curl}
+
+**Endpoint:** `DELETE` `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules?id={id}`
+
+Deletes an alert rule permanently.
+
+**For example:**
+
+```bash
+curl -X DELETE "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/rules?id=1"
+```
+
 ### How to Configure Inline Receivers
 
 While you can assign alerts to shared global [**Receiver Groups**](/http-apis/alerts/receiver-groups) using `config.receiver_group_ids`, you can also configure **Inline Receivers** directly on a specific Alert Rule. This is useful when you want the alert to have a specific routing that isn't shared by any other rules.
 
 To define a receiver inline, you define the exact same configuration schema you would use for a Receiver Group, but place it inside the `"receiver"` object of the Alert Rule payload.
+
+
+**Integration Parameters:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `send_resolved` | `boolean` | Whether or not to notify when the alert is resolved (e.g. returns to a healthy state). Default is `true`. |
+| `cube_show_query` | `boolean` | If `true`, includes the raw PromQL/Metrics query that triggered the alert inside the notification payload. Default is `false`. |
+| `cube_show_sample_log` | `boolean` | If `true`, includes a sample log line from the evaluation (if applicable for Log-based alerts). Default is `false`. |
 
 <Tabs>
   <TabItem value="slack" label="Slack" default>
@@ -799,7 +820,7 @@ To define a receiver inline, you define the exact same configuration schema you 
 
 ### How to Configure Inline Mutes
 
-While you can mute alerts to shared global [**Mute Groups**](/http-apis/alerts/mute-groups) using `config.mute_group_ids`, you can also configure **Inline Mutes** directly on a specific Alert Rule. Place the exact same configuration schema you would use for a Mute Group inside the `"mute"` object of the Alert Rule payload.
+While you can link alerts to shared global [**Mute Groups**](/http-apis/alerts/mute-groups) using `config.mute_group_ids`, you can also configure **Inline Mutes** directly on a specific Alert Rule. Place the exact same configuration schema you would use for a Mute Group inside the `"mute"` object of the Alert Rule payload.
 
 <Tabs>
   <TabItem value="weekend" label="Weekend Mute" default>

@@ -6,7 +6,7 @@ sidebar_position: 3
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Mute Groups (Snoozing)
+# Mute Groups
 
 
 Mute groups allow you to suppress notifications for specific time intervals.
@@ -20,7 +20,7 @@ These APIs can be accessed programmatically using the Admin Port `3199`.
 - `Content-Type: application/json`
 
 :::info
-When `http-token-admin` is enabled in cubeapm’s `config.properties`, requests must include the same token in the `Authorization` header.
+When `http-token-admin` is enabled in CubeAPM's `config.properties`, requests must include the corresponding token in the `Authorization` header when using `curl` to `CREATE`, `UPDATE`, or `DELETE` mute groups.
 :::
 
 ### Create Mute Group
@@ -131,7 +131,7 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups" \
 
 #### Response Format {#create-mute-response-format}
 
-The response format is a JSON object. The JSON object has the following structure.
+The response is a JSON object with the following structure:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -176,7 +176,7 @@ curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups"
 
 #### Response Format {#get-mute-response-format}
 
-The response format is a JSON array of JSON objects. The JSON object has the following structure.
+The response is a JSON array containing mute group objects. Each object has the following structure:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -223,7 +223,7 @@ curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups?id=1"
 
 #### Response Format {#get-mute-specific-response-format}
 
-The response format is a JSON object. The JSON object has the following structure.
+The response is a JSON object representing the specific mute group, with the following structure:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -258,6 +258,10 @@ The response format is a JSON object. The JSON object has the following structur
 ```
 
 ### Update / Delete Mute Groups
+
+:::warning
+The `PUT` request replaces the **entire** Mute Group configuration. You must include all existing configurations (such as the `mute` settings) in your payload; otherwise, they will be overwritten and removed!
+:::
 
 #### Update a Mute Group (PUT) {#update-mute-curl}
 
@@ -305,9 +309,9 @@ curl -X DELETE "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/mutegroups?id
 ```
 
 
-### How to Snooze an Alert Rule
+### How to Mute an Existing Alert Rule
 
-Once you have created a Mute Group, you can use it to snooze an alert for the specific schedule you defined. To apply the snooze:
+Once you have created a Mute Group, you can use it to mute an alert for the specific schedule you defined. To apply the mute:
 
 1. Grab the `id` of the created Mute Group.
 2. Use the `PUT /api/v1/rules` endpoint from the **Alert Rules API** to update your specific Alert Rule, adding the new Mute Group's `id` into the `config.mute_group_ids` array.

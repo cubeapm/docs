@@ -20,7 +20,7 @@ These APIs can be accessed programmatically using the Admin Port `3199`.
 - `Content-Type: application/json`
 
 :::info
-When `http-token-admin` is enabled in cubeapm’s `config.properties`, requests must include the same token in the `Authorization` header.
+When `http-token-admin` is enabled in CubeAPM's `config.properties`, requests must include the corresponding token in the `Authorization` header when using `curl` to `CREATE`, `UPDATE`, or `DELETE` receiver groups.
 :::
 
 ### Create Receiver Group
@@ -42,6 +42,20 @@ When creating a receiver group, one or multiple receivers of the same or differe
 | `receiver.jira_configs` | `array` | Requires `project` and `issue_type` to automatically create Jira tickets. |
 | `receiver.opsgenie_configs` | `array` | Requires `api_key` for OpsGenie routing. |
 | `receiver.googlechat_configs` | `array` | Requires `url` for Google Chat webhooks. |
+
+:::info
+Since CubeAPM uses the standard Alertmanager schema, you can refer to the official [Prometheus Alertmanager Documentation](https://prometheus.io/docs/alerting/latest/configuration/#receiver-integration-settings) for detailed descriptions and additional integration fields (like `send_resolved`, `text`, `title`, etc.) for MS Teams, Jira, Slack, PagerDuty, and more!
+:::
+
+#### Common Integration Parameters
+
+In addition to standard Alertmanager fields, CubeAPM supports specific parameters inside your receiver configurations (e.g., inside a `slack_configs` object):
+
+| Parameter | Type | Description |
+|---|---|---|
+| `send_resolved` | `boolean` | Whether or not to notify when the alert is resolved (e.g. returns to a healthy state). Default is `false`. |
+| `cube_show_query` | `boolean` | If `true`, includes the raw PromQL/Metrics query that triggered the alert inside the notification payload. |
+| `cube_show_sample_log` | `boolean` | If `true`, includes a sample log line from the evaluation (if applicable for Log-based alerts). |
 
 #### Curl Example {#create-receiver-curl}
 
@@ -213,7 +227,7 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups"
 
 #### Response Format {#create-receiver-response-format}
 
-The response format is a JSON object. The JSON object has the following structure.
+The response is a JSON object with the following structure:
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
@@ -230,7 +244,7 @@ The response format is a JSON object. The JSON object has the following structur
   "receiver": {
     "slack_configs": [
       {
-        "channel": "#production-alerts"
+        "channel": "production-alerts"
       }
     ]
   }
@@ -262,7 +276,7 @@ The response format is a JSON array of receiver group objects. See [Create Recei
     "receiver": {
       "slack_configs": [
         {
-          "channel": "#production-alerts"
+          "channel": "production-alerts"
         }
       ]
     }
@@ -283,7 +297,7 @@ curl -X GET "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups?i
 
 #### Response Format {#get-receiver-specific-response-format}
 
-The response format is a receiver group object. See [Create Receiver Group Response Format](#create-receiver-response-format) for the schema structure.
+The response is a JSON object representing the specific receiver group. See [Create Receiver Group Response Format](#create-receiver-response-format) for the schema structure.
 
 **For example:**
 
@@ -294,7 +308,7 @@ The response format is a receiver group object. See [Create Receiver Group Respo
   "receiver": {
     "slack_configs": [
       {
-        "channel": "#production-alerts"
+        "channel": "production-alerts"
       }
     ]
   }
@@ -302,6 +316,10 @@ The response format is a receiver group object. See [Create Receiver Group Respo
 ```
 
 ### Update / Delete Receiver Groups
+
+:::warning
+The `PUT` request replaces the **entire** Receiver Group configuration. You must include all existing configurations (such as the `receiver` integrations) in your payload; otherwise, they will be overwritten and removed!
+:::
 
 #### Update a Receiver Group (PUT) {#update-receiver-curl}
 
@@ -315,7 +333,7 @@ curl -X PUT "http://<cubeapm-admin-host>:3199/api/alerts/api/v1/receivergroups" 
            "name": "Updated Name",
            "receiver": {
              "slack_configs": [
-               { "channel": "#production-alerts-v2" }
+               { "channel": "production-alerts-v2" }
              ]
            }
          }'
