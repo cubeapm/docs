@@ -7,9 +7,9 @@ sidebar_position: 1
 
 CubeAPM supports Alerts via HTTP API's.
 
-## Accessing Alert APIs
+## Accessing Alert API
 
-The Alert Manager APIs are available on the **Admin Port (default: `3199`)**.
+The Alert APIs are available on the **Admin Port (default: `3199`)**.
 
 **Example Endpoints:**
 - `http://<cubeapm-admin-host>:3199/api/alerts/api/v1/alerts`
