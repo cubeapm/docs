@@ -17,3 +17,4 @@ Please follow the links below for relevant API details.
 - [Metrics](metrics.md)
 - [Traces](traces.md)
 - [Alerts](alerts/alert-rules.md)
+- [Dashboards](dashboards.md)
