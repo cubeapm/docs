@@ -617,35 +617,79 @@ Returns `204 No Content` on success.
 
 ## Dashboard Variables {#dashboard-variables}
 
-Variables let dashboards accept dynamic filters (e.g., environment, service name). Each variable object supports:
+Variables let dashboards accept dynamic filters (e.g., environment, service name). Reference them in panel queries using `{{variable_name}}` syntax — CubeAPM substitutes the user's selected value at query time.
 
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `name` | `string` | Variable name used in panel queries as `$name`. |
-| `options` | `array` | List of selectable values. |
-| `label` | `string` | (Optional) Display label in the UI. |
-| `match` | `string` | (Optional) Regex for auto-discovering options. |
-| `datasource` | `string` | (Optional) `prometheus`, `vlogs`, or `traces`. |
+| `name` | `string` | Variable identifier. Referenced in queries as `{{name}}`. |
+| `options` | `array` | List of selectable values (for static variables). |
+| `label` | `string` | (Optional) Metric/log/trace label to auto-discover options from. |
+| `match` | `string` | (Optional) Regex filter when discovering options from a label. |
+| `datasource` | `string` | (Optional) `prometheus`, `vlogs`, or `traces`. Required when `label` is set. |
 | `selection` | `string` | `single` or `multiple`. |
-| `initialValue` | `string` | (Optional) Default selected value. |
+| `initialValue` | `object` | (Optional) Default selection: `{ "items": ["value"] }`. For multiple selection, include multiple items. |
 
-**Example:**
+:::info
+- Use `{{env}}` in queries to refer to the built-in environment picker (`cube:env` variable).
+- Use `{[label]}` in queries to refer to a chart label value (e.g., `{[service]}`).
+- For **single** selection on metrics queries, `{{service}}` becomes `="order"`.
+- For **multiple** selection, it becomes `=~"order|payment"` (or `in(...)` for logs/traces).
+:::
 
-```json
-{
-  "title": "Env Dashboard",
-  "variables": [
-    {
-      "name": "env",
-      "label": "Environment",
-      "options": ["production", "staging"],
-      "selection": "single",
-      "initialValue": "production"
-    }
-  ],
-  "panels": [],
-  "permissions": []
-}
+### Example: Dashboard with Variables
+
+The example below creates a dashboard with `env` and `service` variables, and a line chart panel that filters by both:
+
+```bash
+curl -X POST "http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/dashboards" \
+     -H "Authorization: Bearer <ADMIN_TOKEN>" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "title": "Service Dashboard",
+           "variables": [
+             {
+               "name": "env",
+               "label": "Environment",
+               "options": ["production", "staging"],
+               "selection": "single",
+               "initialValue": { "items": ["production"] }
+             },
+             {
+               "name": "service",
+               "label": "Service",
+               "options": ["order", "payment"],
+               "selection": "single",
+               "initialValue": { "items": ["order"] }
+             }
+           ],
+           "panels": [
+             {
+               "type": "linechart",
+               "title": "Request Rate",
+               "layout": { "x": 0, "y": 0, "w": 6, "h": 4 },
+               "config": {
+                 "query": "",
+                 "unit": "number",
+                 "queries": [
+                   {
+                     "title": "Requests",
+                     "query": "sum(rate(cube_apm_calls_total{env{{env}},service{{service}}}[5m]))",
+                     "unit": "number",
+                     "formula": "last"
+                   }
+                 ],
+                 "legend": { "label": "", "formula": "last", "pos": "bottom" }
+               }
+             }
+           ],
+           "permissions": []
+         }'
+```
+
+When `env` is `production` and `service` is `order`, the query above resolves to:
+
+```
+sum(rate(cube_apm_calls_total{env="production",service="order"}[5m]))
 ```
 
 ---
