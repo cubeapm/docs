@@ -144,7 +144,7 @@ The response is a JSON object with the following structure:
 | `expr2` | `string` | An optional secondary query or expression, typically used for baseline evaluations, comparisons, or anomaly detection. |
 | `kind` | `string` | Rule type (`static`). |
 | `for` | `integer` | Duration condition must be met before firing. |
-| `labels` | `object` | Key-value pairs:<br/> **Notification Context:** Custom tags (e.g., `"severity": "critical"`) are included in notification payloads (Slack, Email) for extra context.<br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which folder the alert appears under on the CubeAPM UI. |
+| `labels` | `object` | Key-value pairs:<br/> **Notification Context:** Custom tags (e.g., `"severity": "critical"`) are included in notification payloads (Slack, Email) for extra context.<br/><br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which folder the alert appears under on the CubeAPM UI. |
 | `status` | `string` | Current status (`ACTIVE`, `PAUSED`, etc.). |
 | `grouping_disable` | `boolean` | Whether alert grouping is disabled. |
 | `config` | `object` | Contains `receiver_group_ids` and `mute_group_ids`. |
@@ -241,7 +241,7 @@ The alert rule JSON object has the following structure:
 | `id` | `integer` | Unique identifier for the alert rule. |
 | `interval` | `integer` | Evaluation interval in seconds. |
 | `kind` | `string` | Rule type (`static`). |
-| `labels` | `object` | Key-value pairs:<br/>**Notification Context:** Evaluated tags (e.g., `"severity": "critical"`) are included in notification payloads for extra context.<br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which folder the alert appears under on the CubeAPM UI.|
+| `labels` | `object` | Key-value pairs:<br/>**Notification Context:** Evaluated tags (e.g., `"severity": "critical"`) are included in notification payloads for extra context.<br/><br/>**Alert Grouping:** Setting the `"group"` key (e.g., `"group": "Database Alerts"`) dictates which folder the alert appears under on the CubeAPM UI.|
 | `lastEvaluation` | `string` | Timestamp of the last time the rule was evaluated. |
 | `mute` | `object` | Contains inline custom mute definitions configured exclusively for this rule. |
 | `name` | `string` | The name of the alert rule. |

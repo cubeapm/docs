@@ -53,9 +53,9 @@ In addition to standard Alertmanager fields, CubeAPM supports specific parameter
 
 | Parameter | Type | Description |
 |---|---|---|
-| `send_resolved` | `boolean` | Whether or not to notify when the alert is resolved (e.g. returns to a healthy state). Default is `false`. |
-| `cube_show_query` | `boolean` | If `true`, includes the raw PromQL/Metrics query that triggered the alert inside the notification payload. |
-| `cube_show_sample_log` | `boolean` | If `true`, includes a sample log line from the evaluation (if applicable for Log-based alerts). |
+| `send_resolved` | `boolean` | Whether or not to notify when the alert is resolved (e.g. returns to a healthy state). Default is `true`. |
+| `cube_show_query` | `boolean` | If `true`, includes the raw PromQL/Metrics query that triggered the alert inside the notification payload. Default is `false`. |
+| `cube_show_sample_log` | `boolean` | If `true`, includes a sample log line from the evaluation (if applicable for Log-based alerts). Default is `false`. |
 
 #### Curl Example {#create-receiver-curl}
 
