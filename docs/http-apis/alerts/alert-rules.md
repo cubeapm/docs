@@ -885,9 +885,11 @@ While you can link alerts to shared global [**Mute Groups**](/http-apis/alerts/m
 </Tabs>
 
 
-### How to Configure Role Based and Custom Permissions
+### How to Configure Role Based and Custom Permissions {#how-to-configure-role-based-and-custom-permissions}
 
-The `permissions` array in the JSON payload dictates who can view and edit your alert rule. 
+The `permissions` array in the JSON payload dictates who can view and edit your alert rule.
+
+For global roles, teams, and how permissions work in the UI, see [Roles and Permissions](/configure/roles-and-permissions) and [Teams](/configure/teams).
 
 #### 1. Role Based (Default)
 When "Role Based" is used, the rule relies entirely on the user's global workspace role (Global Viewers can view it, Global Editors can edit it). 
@@ -927,3 +929,11 @@ To configure this via the API, populate the `permissions` array with one or more
   ]
 }
 ```
+
+:::info
+Custom permissions form an allowlist. Only listed users and teams can access the rule. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
+:::
+
+:::warning
+If an alert rule uses Custom permissions, only listed users and teams can access it — including via the API.
+:::

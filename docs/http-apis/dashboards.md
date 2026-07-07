@@ -698,6 +698,8 @@ sum(rate(cube_apm_calls_total{env="production",service="order"}[5m]))
 
 The `permissions` array in the JSON payload controls who can view and edit a dashboard.
 
+For global roles, teams, and how permissions work in the UI, see [Roles and Permissions](/configure/roles-and-permissions) and [Teams](/configure/teams).
+
 #### 1. Role Based (Default)
 
 When role-based access is used, the dashboard inherits the user's global workspace role (viewers can view, editors can edit).
@@ -734,5 +736,9 @@ Grant specific roles (`viewer` or `editor`) to individual users (by email) or te
 ```
 
 :::info
-Custom permissions cap access at the user's global role. A global `viewer` cannot edit a dashboard even if granted `editor` on that resource. A global `admin` using the admin port API has full access unless restrictive custom permissions are set that do not include the admin caller.
+Custom permissions form an allowlist. Only listed users and teams can access the resource. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
+:::
+
+:::warning
+If a dashboard uses Custom permissions, only listed users and teams can access it — including via the API.
 :::

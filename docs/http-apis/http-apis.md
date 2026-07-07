@@ -18,3 +18,5 @@ Please follow the links below for relevant API details.
 - [Traces](traces.md)
 - [Alerts](alerts/alert-rules.md)
 - [Dashboards](dashboards.md)
+
+For how roles and per-resource permissions work in the UI, see [Roles and Permissions](/configure/roles-and-permissions). For teams, see [Teams](/configure/teams).

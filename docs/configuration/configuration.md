@@ -24,6 +24,11 @@ If a parameter if specified through multiple means, the following order of prefe
 3. Configuration file
 4. Default values set in code
 
+## Access control
+
+- [Teams](./teams.md) — create and manage teams
+- [Roles and Permissions](./roles-and-permissions.md) — global roles and per-alert/dashboard access
+
 ## Essential Configuration
 
 CubeAPM provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for CubeAPM to start up. Following is a list of such parameters:
