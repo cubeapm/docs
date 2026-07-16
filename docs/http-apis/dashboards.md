@@ -736,9 +736,9 @@ Grant specific roles (`viewer` or `editor`) to individual users (by email) or te
 ```
 
 :::info
-Custom permissions form an allowlist. Only listed users and teams can access the resource. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
+Custom permissions form an allowlist in the CubeAPM UI. Only listed users and teams can access the resource there. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
 :::
 
-:::warning
-If a dashboard uses Custom permissions, only listed users and teams can access it — including via the API.
+:::info
+Admin Port APIs (port `3199`) bypass per-resource ACL. They can list, get, update, and delete all dashboards regardless of Custom permissions.
 :::
