@@ -54,7 +54,6 @@ Users with global **Viewer** can browse data and view alerts and dashboards they
 | :--- | :--- |
 | `auth.default-role` | Role assigned to new users on signup. Default: `viewer`. Allowed values: `none`, `viewer`, `editor`, `admin`. |
 | `auth.sys-admins` | Comma-separated email list with access to the auth admin UI (user management), regardless of global role. |
-| `cube-admins` | Comma-separated email list. These users receive global `admin` on login. |
 
 Global roles are managed by workspace administrators.
 

@@ -233,6 +233,14 @@ Returns a JSON array of dashboard objects. The list endpoint does not include pa
 
 Updates dashboard metadata (title, variables) and panel layouts. To add, update, or remove panel content, use the [Panels API](#panels).
 
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `id` | `integer` | **Required.** Dashboard ID to update. |
+| `title` | `string` | **Required.** Display name. |
+| `variables` | `array` | Replaces the dashboard's variables. |
+| `panels` | `array` | Existing panels by `id`; **only `layout` is applied**. |
+| `permissions` | `array` | Replaces custom access control. Pass `[]` for role-based. |
+
 :::warning
 The `PUT` request updates the dashboard's `title`, `variables`, and `permissions`. For panels included in the payload, only the `layout` field is updated on existing panels — panel `type`, `title`, and `config` are not changed via this endpoint.
 :::
@@ -263,7 +271,7 @@ Returns `204 No Content` on success.
 
 **Endpoint:** `DELETE` `http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/dashboards?id={id}`
 
-Soft-deletes a dashboard and its associated resource permissions.
+Deletes a dashboard and its associated resource permissions.
 
 ```bash
 curl -X DELETE "http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/dashboards?id=1" \
@@ -356,7 +364,7 @@ Each panel has a `config` object. Most query-based panels use a `queries` array 
   "layout": { "x": 0, "y": 0, "w": 3, "h": 2 },
   "config": {
     "query": "",
-    "unit": "number",
+    "unit": "time",
     "queries": [
       {
         "title": "Latency",
@@ -651,23 +659,35 @@ Variables let dashboards accept dynamic filters (e.g., environment, service name
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `name` | `string` | Variable identifier. Referenced in queries as `{{name}}`. |
-| `options` | `array` | List of selectable values (for static variables). |
-| `label` | `string` | (Optional) Metric/log/trace label to auto-discover options from. |
-| `match` | `string` | (Optional) Regex filter when discovering options from a label. |
-| `datasource` | `string` | (Optional) `prometheus`, `vlogs`, or `traces`. Required when `label` is set. |
-| `selection` | `string` | `single` or `multiple`. |
-| `initialValue` | `object` | (Optional) Default selection: `{ "items": ["value"] }`. For multiple selection, include multiple items. |
+| `options` | `array` | Selectable values for **static** variables. Leave empty (`[]`) for **dynamic** variables. |
+| `label` | `string` | (Optional) Metric label or log/trace field whose values are auto-discovered for the dropdown. Used only for dynamic variables. Example: `service`, `env`, `service.name`. |
+| `match` | `string` | (Optional) Series selector used **only to discover dropdown values** for `label` — not what panels query. For metrics: a PromQL selector (e.g. `cube_apm_calls_total` or `cube_apm_calls_total{env="production"}`). For logs/traces: a query filter (empty defaults to `*`). |
+| `datasource` | `string` | (Optional) Where to discover values: `prometheus` (metric labels), `vlogs` (log fields), or `traces` (span fields). **Required** when `label` is set. Maps to the UI “Source of options” choices other than “Static list”. |
+| `selection` | `string` | `single` or `multiple`. Use **`multiple`** for PromQL label matchers like `env{{env}}` (inserts `="value"` / `=~"..."`). Use `single` only when you want the raw value (e.g. `env="{{env}}"`). |
+| `initialValue` | `object` | (Optional) Default selection. Shape: `{ "items": ["value"] }`. For `multiple`, you may also set `"all": true` (match all label values) or `"exclude": true` (negate the selection). |
+
+### Static vs dynamic variables
+
+| Mode | Configure with | Dropdown options come from |
+| :--- | :--- | :--- |
+| **Static** | `options` only (do **not** set `label`) | The fixed list you provide |
+| **Dynamic** | `label` + `datasource` (+ optional `match`) | Live discovery from metrics, logs, or traces |
+
+When both `label` and `match` are set:
+
+1. CubeAPM uses `match` to narrow which series/logs/traces to look at.
+2. From that subset, it collects distinct values of the field/label named in `label`.
+
+Example: `label: "service"` with `match: "cube_apm_calls_total"` lists services that appear on that metric. Omit `match` to list every distinct `service` value across all metrics in the time range.
 
 :::info
 - Use `{{env}}` in queries to refer to the built-in environment picker (`cube:env` variable).
 - Use `{[label]}` in queries to refer to a chart label value (e.g., `{[service]}`).
-- For **single** selection on metrics queries, `{{service}}` becomes `="order"`.
-- For **multiple** selection, it becomes `=~"order|payment"` (or `in(...)` for logs/traces).
+- **PromQL label matchers** (`env{{env}}`) require `selection: "multiple"`. Substitution then inserts the operator and quotes: one value → `="order"`, several → `=~"order|payment"` (or `in(...)` for logs/traces).
+- **`selection: "single"`** inserts the raw value only (no `=` / quotes). Use that for non-matcher contexts (e.g. `env="{{env}}"` or URL path segments), not with the `env{{env}}` pattern.
 :::
 
-### Example: Dashboard with Variables
-
-The example below creates a dashboard with `env` and `service` variables, and a line chart panel that filters by both:
+### Example: Static variables
 
 ```bash
 curl -X POST "http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/dashboards" \
@@ -678,16 +698,14 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/dashboards"
            "variables": [
              {
                "name": "env",
-               "label": "Environment",
                "options": ["production", "staging"],
-               "selection": "single",
+               "selection": "multiple",
                "initialValue": { "items": ["production"] }
              },
              {
                "name": "service",
-               "label": "Service",
                "options": ["order", "payment"],
-               "selection": "single",
+               "selection": "multiple",
                "initialValue": { "items": ["order"] }
              }
            ],
@@ -721,6 +739,28 @@ When `env` is `production` and `service` is `order`, the query above resolves to
 sum(rate(cube_apm_calls_total{env="production",service="order"}[5m]))
 ```
 
+:::warning
+Do not use `selection: "single"` with the `env{{env}}` matcher pattern. With no value selected, `{{env}}` becomes empty and the query turns into invalid PromQL like `cube_apm_calls_total{env,service}` (VictoriaMetrics then errors with `cannot find WITH template for "env"`).
+:::
+
+### Example: Dynamic variables (`label` + `match`)
+
+```json
+{
+  "variables": [
+    {
+      "name": "service",
+      "options": [],
+      "label": "service",
+      "match": "cube_apm_calls_total",
+      "datasource": "prometheus",
+      "selection": "multiple",
+      "initialValue": { "items": ["order"] }
+    }
+  ]
+}
+```
+
 ---
 
 ## How to Configure Role Based and Custom Permissions {#how-to-configure-role-based-and-custom-permissions}
@@ -744,7 +784,7 @@ Pass an empty array:
 
 #### 2. Custom
 
-Grant specific roles (`viewer` or `editor`) to individual users (by email) or teams (by ID):
+Grant specific roles (`viewer`, `editor`, or `admin`) to individual users (by email) or teams (by ID):
 
 ```json
 {
