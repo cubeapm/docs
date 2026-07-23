@@ -931,9 +931,9 @@ To configure this via the API, populate the `permissions` array with one or more
 ```
 
 :::info
-Custom permissions form an allowlist. Only listed users and teams can access the rule. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
+Custom permissions form an allowlist in the CubeAPM UI. Only listed users and teams can access the rule there. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
 :::
 
-:::warning
-If an alert rule uses Custom permissions, only listed users and teams can access it — including via the API.
+:::info
+Admin Port APIs (port `3199`) bypass per-resource ACL. They can list, get, update, and delete all alert rules regardless of Custom permissions.
 :::

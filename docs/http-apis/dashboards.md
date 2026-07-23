@@ -25,6 +25,8 @@ The Dashboard APIs are available on the **Admin Port (default: `3199`)**.
 | `/api/dashboards/api/v1/dashboards` | `GET`, `POST`, `PUT`, `DELETE` | Manage dashboards. |
 | `/api/dashboards/api/v1/panels?dashboard_id={id}` | `POST`, `PUT`, `DELETE` | Manage panels on an existing dashboard. |
 
+There is no separate `GET` endpoint for panels. To read panels, use [Get Dashboards](#get-dashboards) with `?id={dashboard_id}` — the response includes the full `panels` array.
+
 ## Authentication
 
 These APIs can be accessed programmatically using the Admin Port `3199`.
@@ -34,7 +36,7 @@ These APIs can be accessed programmatically using the Admin Port `3199`.
 - `Content-Type: application/json`
 
 :::info
-When `http-token-admin` is enabled in CubeAPM's `config.properties`, requests must include the corresponding token in the `Authorization` header when using `curl` to `CREATE`, `UPDATE`, or `DELETE` dashboards or panels.
+When `http-token-admin` is set in CubeAPM's `config.properties`, all Dashboard API requests (including `GET`) must include the corresponding token in the `Authorization` header. If `http-token-admin` is empty, the header can be omitted.
 :::
 
 ---
@@ -274,7 +276,7 @@ Returns `204 No Content` on success.
 
 ## Panels
 
-Panels can be managed individually after a dashboard is created.
+Panels can be managed individually after a dashboard is created. To read existing panels, use [Get Dashboards](#get-dashboards) with a dashboard `id` — there is no separate panels `GET` endpoint.
 
 ### Panel Object
 
@@ -567,6 +569,33 @@ curl -X POST "http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/panels?dash
          }'
 ```
 
+#### Response Format
+
+Returns the created panel object:
+
+```json
+{
+  "id": 2,
+  "type": "scorecard",
+  "title": "Error Rate",
+  "layout": { "x": 6, "y": 0, "w": 3, "h": 2 },
+  "config": {
+    "query": "",
+    "unit": "number",
+    "queries": [
+      {
+        "title": "Errors",
+        "query": "sum(rate(cube_apm_errors_total[5m]))",
+        "unit": "number",
+        "formula": "last"
+      }
+    ],
+    "legend": { "label": "", "formula": "last", "pos": "none" }
+  },
+  "dashboardId": 1
+}
+```
+
 ### Update Panel
 
 **Endpoint:** `PUT` `http://<cubeapm-admin-host>:3199/api/dashboards/api/v1/panels?dashboard_id={id}`
@@ -736,9 +765,19 @@ Grant specific roles (`viewer` or `editor`) to individual users (by email) or te
 ```
 
 :::info
-Custom permissions form an allowlist. Only listed users and teams can access the resource. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
+Custom permissions form an allowlist in the CubeAPM UI. Only listed users and teams can access the resource there. Effective permission is capped at the user's global role — a global `viewer` cannot edit even if granted `editor` on the resource.
 :::
 
-:::warning
-If a dashboard uses Custom permissions, only listed users and teams can access it — including via the API.
+:::info
+Admin Port APIs (port `3199`) bypass per-resource ACL. They can list, get, update, and delete all dashboards regardless of Custom permissions.
 :::
+
+## Error Responses
+
+Common failure cases:
+
+| Status | When |
+| :--- | :--- |
+| `401 Unauthorized` | `http-token-admin` is set and the `Authorization` header is missing or invalid. |
+| `400 Bad Request` | Required fields are missing or the request body is invalid (for example, unknown panel `type`). |
+| `404 Not Found` | The dashboard or panel ID does not exist. |
