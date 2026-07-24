@@ -15,3 +15,4 @@ Please follow the links below for installation steps according to deployment env
 - [Bare Metal / Virtual Machine](2_baremetal.md)
 - [Docker](3_docker.md)
 - [Kubernetes](4_kubernetes.md) (via Helm)
+- [Terraform](5_terraform.md)
