@@ -9,20 +9,21 @@ CubeAPM can be deployed on Kubernetes as a ***statefulset*** using the official 
 
 ## Prerequisites
 
-1. You have to setup database for CubeAPM. Database should be accessible from your kubernetes cluster.
+1. (Optional) You have to set up a database for CubeAPM. Database should be accessible from your kubernetes cluster.
 
     :::info
     CubeAPM supports the following databases:
     - PostgreSQL
     - MySQL
     - MariaDB
+    - RDS (any)
 
     You have to create two databases for CubeAPM.
     - One for storing CubeAPM metadata. You can name it ***cubeapm***.
     - One for storing CubeAPM authentication part. You can name it ***cubeapm_auth***.
     :::
 
-2. If you are creating database for CubeAPM inside your kubernetes cluster make sure it should be in same ***namespace*** as CubeAPM.
+2. (Optional) If you are creating a database for CubeAPM inside your kubernetes cluster make sure it should be in same ***namespace*** as CubeAPM.
 
 ## Installation
 
@@ -44,14 +45,18 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
 
 3. Edit the `values.yaml` file to customize the configuration as per your requirements.
 
-    - Update `configVars.baseUrl` with your CubeAPM URL. With this URL CubeAPM will be accessible.
+    1. Update `configVars.baseUrl` to access the CubeAPM UI.
 
         ```yaml
         configVars:
             baseUrl: https://cubeapm.yourdomain.com
         ```
 
-    - Update `configVars.database.url` with your ***cubeapm*** database URL. With this URL CubeAPM will be able to connect to your database. This database for storing config data (settings, dashboards, etc.)
+    1. (Optional) Update `configVars.database.url` with your ***cubeapm*** database URL. This database is used for storing config data (settings, dashboards, etc.)
+
+        :::warning
+            A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
+        :::
 
         ```yaml
         configVars:
@@ -66,7 +71,7 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
         ```
 
 
-    - Update `configVars.timeZone` with your timezone. With this timezone CubeAPM will be able to show time based on your timezone.
+    1. Update `configVars.timeZone` with your timezone.
 
         ```yaml
         configVars:
@@ -78,14 +83,14 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
             You can get ***token*** & ***session*** key from CubeAPM team.
         :::
 
-    - Update `configVars.token` account token obtained from CubeAPM. This token is used for authentication with CubeAPM.
+    1. Update `configVars.token` account token obtained from CubeAPM. This token is used for authentication with CubeAPM.
 
         ```yaml
         configVars:
             token: <token>
         ```
 
-    - Update `configVars.auth.key.session` with your session key. It is an encryption key for session data. Must be 32 characters long.
+    1. Update `configVars.auth.key.session` with your session key. It is an encryption key for session data. Must be 32 characters long.
 
         ```yaml
         configVars:
@@ -97,7 +102,11 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
                     session: <session>
         ```
 
-    - Update `configVars.auth.database.url` with your ***cubeapm_auth*** database URL. This database is for storing user accounts data
+    1. Update `configVars.auth.database.url` with your ***cubeapm_auth*** database URL. This database is for storing user accounts data
+
+        :::warning
+            A-Za-z0-9.-_ characters are safe for use in password. Other characters can cause problems.
+        :::
 
         ```yaml
         configVars:
@@ -112,7 +121,7 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
                     url: postgres://cubeapm:cubeapm@cubeapm-db:5432/cubeapm_auth?sslmode=disable
         ```
 
-    - Update `configVars.auth.sysAdmins` with your email addresses. These are the email addresses of users who will have sysAdmin role. SysAdmins have full access to CubeAPM. Also you can set default role to be assigned to a new user on signup.
+    1. Update `configVars.auth.sysAdmins` with your email addresses. These are the email addresses of users who will have sysAdmin role. SysAdmins have full access to CubeAPM. Also you can set default role to be assigned to a new user on signup.
 
         ```yaml
         configVars:
@@ -125,7 +134,7 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
         ```
 
 
-    - Update `persistence.storageClass` to defines storage "templates" that automatically provision PersistentVolumes (PVs) when pods request storage via PersistentVolumeClaims (PVCs).
+    1. Update `persistence.storageClass` to define storage templates that automatically provision PersistentVolumes (PVs) when pods request storage via PersistentVolumeClaims (PVCs).
 
         (Optional) Also update `persistence.size` to define the size of the storage.
 
@@ -148,12 +157,11 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
             size: 100Gi
         ```
 
-    - ### Expose CubeAPM to Internet
-        Kubernetes Ingress configuration exposes the CubeAPM observability platform externally via HTTP/HTTPS routing.
+    1. Update `ingress` configuration to expose the CubeAPM observability platform externally or internally via HTTP/HTTPS routing.
 
         **Ingress Overview**
 
-        The `ingress` block in a Helm `values.yaml` (likely CubeAPM's chart) creates a Kubernetes Ingress resource to route external traffic to CubeAPM's service. It enables access to APM dashboards, traces, metrics, and logs through a domain name.
+        The `ingress` block in a Helm `values.yaml` creates a Kubernetes Ingress resource to route external traffic to CubeAPM's service.
 
         **Field-by-Field Breakdown**
 
@@ -207,7 +215,51 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
 
 ## Optional Configuration
 
-    - (Optional) Update `smtp.from` & `smtp.url` with your email address. With this email address CubeAPM will be able to send emails.
+    1. (Optional) Update `configVars.tracegen.disable` to `true` to disable dummy services data visible on CubeAPM.
+
+        ```yaml
+        configVars:
+            tracegen:
+                # -- Disable trace generator
+                disable: true
+        ```
+
+    1. (Optional) Update `configVars.logs.retention` with your logs retention period. It is the number of days for which logs will be stored.
+
+        :::info
+            For rentention you can do same for ***metrics*** and ***traces*** as well.
+            - For ***Metrics*** retention update `configVars.metrics.retention`.
+            - For ***Traces*** retention update `configVars.traces.retention`.
+        :::
+
+        ```yaml
+        configVars:
+            logs:
+                # -- Logs retention period. Must be at least 24h.
+                # -- Supported value hours (e.g., 24h).
+                retention: 24h
+        ```
+
+    1. (Optional) Enable `ingressQuery` for fetching data via CubeAPM APIs from outside of k8s cluster over HTTP. Clients can either use `<cubeapm_service_name>.<namespace>.svc.cluster.local:3140` as the endpoint (in which case this ingress is not needed) or they can use the host:port configured in this ingress.
+
+        ```yaml
+        ingressQuery:
+            enabled: false
+            # -- Ingress Class Name to be used to identify ingress controllers
+            className: ""
+            # -- Annotations to the ingress
+            annotations: {}
+            # -- Ingress Host names with their path details
+            hosts:
+                - host: cubeapm-query.yourdomain.com
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+            # -- Ingress TLS
+            tls: []
+        ```
+
+    1. (Optional) Update `smtp.from` & `smtp.url` with your email address. With this email address CubeAPM will be able to send emails.
 
         ```yaml
         configVars:
@@ -223,20 +275,40 @@ To install CubeAPM on your kubernetes cluster follow the steps below.
                 url: smtp://cubeapm:cubeapm@smtp.yourdomain.com:587
         ```
 
-        :::info
-            For rentention you can do same for ***metrics*** and ***traces*** as well.
-            - For ***Metrics*** retention update `configVars.metrics.retention`.
-            - For ***Traces*** retention update `configVars.traces.retention`.
+    1. (Optional) Update `configVars.cluster.podCount` to increase number of pods that will be spawned for cubeapm services.
+
+        :::note
+            - If you are increasing pod count from 1, you need to add external database in cubeapm's `values.yaml` file to avoid any kind of errors.
         :::
 
-    - (Optional) Update `configVars.logs.retention` with your logs retention period. It is the number of days for which logs will be stored.
+        ```yaml
+        cluster:
+            # -- Number of pods for the cubeapm cluster
+            podCount: 2
+        ```
+
+    1. (Optional) Update `extraManifests` if you want to add extra kubernetes resources (ConfigMaps, Secrets, ExtraEnvs etc) in the cubeapm.
 
         ```yaml
-        configVars:
-            logs:
-                # -- Logs retention period. Must be at least 24h.
-                # -- Supported value hours (e.g., 24h).
-                retention: 24h
+        extraManifests: []
+        # Example of adding ConfigMap:
+        # extraManifests:
+        #   - apiVersion: v1
+        #     kind: ConfigMap
+        #     metadata:
+        #       name: cubeapm-config
+        #       namespace: default
+        #     data:
+        #       my-config-file.yaml: |
+        #         key: value
+        #   - apiVersion: v1
+        #     kind: Secret
+        #     metadata:
+        #       name: dotfile-secret
+        #     type: kubernetes.io/basic-auth
+        #     stringData:
+        #       username: admin
+        #       password: t0p-Secret
         ```
 
 ## Increase volume size
