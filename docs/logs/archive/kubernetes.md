@@ -179,13 +179,13 @@ import TabItem from '@theme/TabItem';
     metadata:
       name: cubeapm-logs-archive-pvc
       namespace: default
-    annotations:
-      juicefs/mount-pod-patch: '{"terminationGracePeriodSeconds": 600, "lifecycle": {"preStop": {"exec": {"command": ["sh", "-c","sleep 600"]}}}}'
+      annotations:
+        juicefs/mount-pod-patch: '{"terminationGracePeriodSeconds": 600, "lifecycle": {"preStop": {"exec": {"command": ["sh", "-c","sleep 600"]}}}}'
       # CPU & Memory Configuration For JuiceFS Pod
-      juicefs/mount-cpu-request: "1000m"
-      juicefs/mount-cpu-limit: "2000m"
-      juicefs/mount-memory-request: "1Gi"
-      juicefs/mount-memory-limit: "3Gi"
+        juicefs/mount-cpu-request: "1000m"
+        juicefs/mount-cpu-limit: "2000m"
+        juicefs/mount-memory-request: "1Gi"
+        juicefs/mount-memory-limit: "3Gi"
     spec:
       accessModes:
         - ReadWriteMany

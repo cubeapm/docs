@@ -145,6 +145,11 @@ import TabItem from '@theme/TabItem';
             # bucket_url: https://cubeapm-logs-archive.s3.us-east-1.amazonaws.com
             #
             # cache-size is in MiB. 51200 == 50 GiB.
+            # cache-dir=/var/lib/cubeapm/cache/logs_archive (Path can be changed) : 
+            #   This tells the JuiceFS client **where on your local server's hard drive** 
+            #   to store temporary data (cache) and metadata.
+            #   The actual log files and objects are stored in S3,
+            #   but the client keeps a copy of recent data on this local path for fast reading/writing.
             ExecStart=/usr/local/bin/juicefs mount <database_string> /var/lib/cubeapm/logs_archive \
               --storage s3 \
               --bucket <bucket_url> \
@@ -234,6 +239,11 @@ import TabItem from '@theme/TabItem';
             # bucket_url: gs://cubeapm-logs-archive
             #
             # cache-size is in MiB. 51200 == 50 GiB.
+            # cache-dir=/var/lib/cubeapm/cache/logs_archive (Path can be changed.): 
+            #   This tells the JuiceFS client **where on your local server's hard drive** 
+            #   to store temporary data (cache) and metadata.
+            #   The actual log files and objects are stored in S3,
+            #   but the client keeps a copy of recent data on this local path for fast reading/writing.
             ExecStart=/usr/local/bin/juicefs mount <database_string> /var/lib/cubeapm/logs_archive \
               --storage gs \
               --bucket <bucket_url> \
