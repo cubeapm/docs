@@ -199,10 +199,10 @@ import TabItem from '@theme/TabItem';
           juicefs-name: cubeapm-logs-archive   # binds to the PV above
     ```
 
-1.  Apply storage class to cluster
+1.  Apply PV and PVC to cluster
 
     ```shell
-    kubectl apply -f cubeapm-logs-archive-sc.yaml -n <namespace>
+    kubectl apply -f cubeapm-logs-archive-pv-pvc.yaml -n <namespace>
     ```
 
 1.  Update your CubeAPM `values.yaml` file. Set `configVars.logs.archive.enabled` as `true`, `configVars.logs.archive.existingClaim` as `cubeapm-logs-archive-pvc` and  run `helm upgrade`
