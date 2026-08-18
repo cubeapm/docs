@@ -45,7 +45,8 @@ Header values can also use templates
       "endsAt": "{{ printf "%s" (.EndsAt.MarshalText) }}",
       "generatorURL": "{{ .GeneratorURL }}",
       "fingerprint": "{{ .Fingerprint }}",
-      "cubeImageURL": "{{ .CubeImageURL }}"
+      "cubeImageURL": "{{ .CubeImageURL }}",
+      "cubeSampleLog": "{{ .CubeSampleLog }}"
     }
     {{- $alertsComma = "," }}
     {{- end }}
@@ -74,6 +75,9 @@ Header values can also use templates
     {{- $comma = "," }}
     {{- end }}
   },
-  "externalURL": "{{ .ExternalURL }}"
+  "externalURL": "{{ .ExternalURL }}",
+  "groupKeyHash": "{{ .GroupKeyHash }}",
+  "incidentTime": "{{ printf "%s" (.IncidentTime.MarshalText) }}",
+  "notifyTime": "{{ printf "%s" (.NotifyTime.MarshalText) }}"
 }
 ```

@@ -139,7 +139,7 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
          scrapers:
            cpu:
            disk:
-           # load:
+           load:
            filesystem:
            memory:
            network:
@@ -152,7 +152,7 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
          preserve_leading_whitespaces: true
          # Note: `include_file_path` must not be set to false, else recombine
          # operator will mix up logs from different files.
-         # include_file_path: true
+         include_file_path: true
 
          # The maximum size of a log entry to read. A log entry will be truncated if it is
          # larger than max_log_size. Protects against reading large amounts of data into memory.
@@ -359,6 +359,10 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
          metrics:
            k8s.node.condition:
              enabled: true
+         resource_attributes:
+           # adds last_terminated_reason to k8s.container.restarts metric
+           k8s.container.status.last_terminated_reason:
+             enabled: true
      service:
        pipelines:
          metrics:
@@ -398,6 +402,25 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
    helm upgrade otel-collector-daemonset open-telemetry/opentelemetry-collector -f otel-collector-daemonset.yaml
    helm upgrade otel-collector-deployment open-telemetry/opentelemetry-collector -f otel-collector-deployment.yaml
    ```
+
+## Monitoring container status
+
+To monitor status of every container (ContainerCreating, CrashLoopBackOff, ImagePullBackOff, OOMKilled, Completed, etc.), enable container status metric in `k8s_cluster` receiver in the OTel Collector Deployment.
+
+```yaml title="otel-collector-deployment.yaml (k8s_cluster)"
+config:
+  receivers:
+    k8s_cluster:
+      collection_interval: 60s
+      allocatable_types_to_report:
+        - cpu
+        - memory
+      metrics:
+        // highlight-start
+        k8s.container.status.reason:
+          enabled: true
+          // highlight-end
+```
 
 ## Monitoring processes
 
@@ -453,7 +476,7 @@ The configuration above will monitor the k8s cluster at container-level granular
                  enabled: false
                system.disk.weighted_io_time:
                  enabled: false
-           # load:
+           load:
            filesystem:
              exclude_devices:
                devices:

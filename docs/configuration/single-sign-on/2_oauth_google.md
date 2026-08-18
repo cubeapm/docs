@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 slug: /configure/single-sign-on/sign-in-with-google
 ---
 
@@ -14,7 +14,6 @@ To enable Sign in with Google, you need to create an OAuth app in your Google Wo
    ![Create New Project](/img/configure/oauth/google/create-project.png)
 
 1. Go to [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent), and fill the following:
-
    - **App name**: CubeAPM
    - **User support email**: Your email address
    - **Audience**: Internal
@@ -38,7 +37,6 @@ To enable Sign in with Google, you need to create an OAuth app in your Google Wo
    ![Scopes Added](/img/configure/oauth/google/scopes-saved.png)
 
 1. Go to [Credentials](https://console.cloud.google.com/apis/credentials), and click on **Create Credentials** → **OAuth client ID**. Fill the following:
-
    - **Application type**: Web application
    - **Name**: CubeAPM
    - **Authorised redirect URIs**: `<cube_apm_address>/api/auth/self-service/methods/oidc/callback/google`, e.g.,

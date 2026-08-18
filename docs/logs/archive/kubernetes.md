@@ -1,0 +1,214 @@
+---
+slug: /logs/archive/kubernetes
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Kubernetes
+
+1.  Install JuiceFS (ref: https://juicefs.com/docs/csi/getting_started).
+
+    ```shell
+    # Add the JuiceFS repository.
+    helm repo add juicefs https://juicedata.github.io/charts/
+    # Update the repository.
+    helm repo update
+    # Install JuiceFS CSI Driver.
+    # JuiceFS needs certain permission on cluster, and hence needs
+    # to be installed in kube-system namespace.
+    helm install juicefs-csi-driver juicefs/juicefs-csi-driver -n kube-system
+    ```
+
+1.  Wait for the respective services and containers to deploy. Use kubectl to check the deployment status of pods
+
+    ```shell
+    kubectl get pods -n kube-system -l app.kubernetes.io/name=juicefs-csi-driver
+    ```
+
+1.  JuiceFS needs a database for storing metadata. Since CubeAPM already uses a database server (MySQL or PostgreSQL), same database server can be used for JuiceFS as well.
+
+    <Tabs>
+    <TabItem value="mysql" label="MySQL">
+        ```sql
+        CREATE DATABASE cubeapm_logs_archive_meta CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+        CREATE USER 'cubeapm_logs_archive_user'@'%' IDENTIFIED BY 'cubeapm_logs_archive_pass';
+
+        GRANT ALL PRIVILEGES ON cubeapm_logs_archive_meta.* TO 'cubeapm_logs_archive_user'@'%';
+
+        FLUSH PRIVILEGES;
+        ```
+
+    </TabItem>
+    <TabItem value="postgres" label="PostgreSQL">
+        ```sql
+        CREATE DATABASE cubeapm_logs_archive_meta;
+
+        CREATE USER cubeapm_logs_archive_user WITH PASSWORD 'cubeapm_logs_archive_pass';
+
+        GRANT ALL PRIVILEGES ON DATABASE cubeapm_logs_archive_meta TO cubeapm_logs_archive_user;
+
+        GRANT ALL ON SCHEMA public TO cubeapm_logs_archive_user;
+
+        \c cubeapm_logs_archive_meta
+
+        GRANT ALL ON SCHEMA public TO cubeapm_logs_archive_user;
+        ```
+
+    </TabItem>
+    </Tabs>
+
+1.  Create object storage bucket for storing archive logs data. Name the bucket as `cubeapm-logs-archive`
+
+1.  (**Applicable to GCP only**) Create a service account and give the (ObjectAdmin and Storage Admin) permission to access the gcp bucket from pods running inside kubernetes cluster.
+1.  (**Applicable to GCP only**) Generate a (JSON) key of the service account and using that service account key create a kubernetes secret in **kube-system** and namespace where cubeapm is running.
+
+    ```shell
+    kubectl create secret generic gc-secret \
+      --from-file=application_default_credentials.json=./application_default_credentials.json \
+      -n <namespace>  # Match your namespace
+    ```
+
+1.  Create Kubernetes Secret configuration file as `cubeapm-logs-archive-secret.yaml`. Replace the values with actual values.
+
+    <Tabs>
+    <TabItem value="aws" label="AWS">
+        ```yaml
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: cubeapm-logs-archive-secret
+        stringData:
+          name: logsarchive
+          # database_string
+          # MySQL: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+          # PostgreSQL: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+          metaurl: <database_string>
+          storage: s3
+          # bucket_url: https://cubeapm-logs-archive.s3.ap-south-1.amazonaws.com
+          bucket: <bucket_url>
+          access-key: <ACCESS_KEY>
+          secret-key: <SECRET_KEY>
+          # To create the file system in mount pod, add more juicefs format parameters to format-options.
+          ## Block size should be 16MB to upload large files to S3 (default is 4MB)
+          format-options: trash-days=1,block-size=16384
+        ```
+    </TabItem>
+    <TabItem value="gcp" label="GCP">
+        ```yaml
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: cubeapm-logs-archive-secret
+        stringData:
+          name: logsarchive
+          # database_string
+          # MySQL: mysql://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@tcp(localhost:3306)/cubeapm_logs_archive_meta
+          # PostgreSQL: postgres://cubeapm_logs_archive_user:cubeapm_logs_archive_pass@localhost:5432/cubeapm_logs_archive_meta
+          metaurl: <database_string>
+          storage: gs
+          # bucket_url: gs://cubeapm-logs-archive
+          bucket: <bucket_url>
+          # GCS auth: Use service account JSON keyfile
+          configs: "{gc-secret: /root/.config/gcloud}"
+          envs: "{GOOGLE_APPLICATION_CREDENTIALS: /root/.config/gcloud/application_default_credentials.json}"
+          # To create the file system in mount pod, add more juicefs format parameters to format-options.
+          ## Block size should be 16MB to upload large files to S3 (default is 4MB)
+          format-options: trash-days=1,block-size=16384
+        ```
+    </TabItem>
+    </Tabs>
+
+1.  Apply secret to cluster
+
+    ```shell
+    kubectl apply -f cubeapm-logs-archive-secret.yaml -n <namespace>
+    ```
+
+    :::note
+    These values need to be passed in the persistant volume configuration file. Refer to the step below.
+    :::
+
+    | Mount Options        | Type     | Description                            |
+    | :------------ | :------- | :----------------------------------------------------------------- |
+    | `cache-size`       | `int` | The  `cache-size`  flag controls a **strict limit on how much local disk space (in Megabytes)** JuiceFS is allowed to use on your Kubernetes worker node to store temporary data. *(Default value 100MB)* |
+    | `buffer-size`       | `int` | The `buffer-size` flag controls how much **RAM (Memory)** the JuiceFS client is allowed to use as a **temporary buffer for reading and writing data**. When your application writes data, it hits this fast memory buffer first before moving to S3. *(Default value 300MB)* |
+    | `max-uploads`     | `int` | The `max-uploads` flag controls the **maximum number of concurrent connections (threads)** JuiceFS will open to your S3 bucket at the exact same time when uploading data. *(Default value 20)* |
+    | `free-space-ratio`   | `float` | The `free-space-ratio` flag controls a safety mechanism for your local **cache disk**. If your local worker node's hard drive drops below **10% free space**, JuiceFS will aggressively start **deleting old cached data** and will **temporarily disable the local cache** to protect your server from running completely out of disk space. *(Default value 0.1 which means 10%)* |
+    | `put-timeout`        | `int` | The `put-timeout` flag controls the **maximum amount of time** it will wait for the upload to finish before giving up and throwing an **error/retrying** when JuiceFS tries to **upload (PUT)** a block of data to S3. *(Default value 0.1 which means 60s)* |
+    | `writeback` | `bool` | The  `writeback`  flag controls data write behavior from **"Synchronous" to "Asynchronous"**. This is a boolean flag (meaning you just pass `writeback` to turn it on). When enabled, instead of making your application wait for the data to be successfully uploaded to S3, JuiceFS quickly writes the data through its **RAM buffer** directly to the **local node's hard drive** and tells your application *"Done!"*. It then independently uploads the data from that local disk to S3 in the background. *(Default value false)* |
+
+    :::caution
+    Because setting these parameters increases processing and RAM demands, you must ensure the JuiceFS Mount Pod is allocated sufficient **CPU and Memory limits**. Failing to provide enough resources can lead to **CPU throttling or Out-Of-Memory (OOM) pod crashes**.
+    :::
+
+1.  Create Kubernetes *PV* and *PVC* configuration file as `cubeapm-logs-archive-pv-pvc.yaml`. Replace the values with actual values.
+
+    ```yaml
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: cubeapm-logs-archive-pv
+      labels:
+        juicefs-name: cubeapm-logs-archive   # label for PVC selector binding
+    spec:
+      capacity:
+        storage: 5Gi      # ignored by JuiceFS in static provisioning, just a label
+      volumeMode: Filesystem
+      accessModes:
+        - ReadWriteMany
+      persistentVolumeReclaimPolicy: Retain
+      mountOptions:
+        - cache-size=10480 
+        - buffer-size=2024
+        - max-uploads=20
+        - free-space-ratio=0.2
+        - put-timeout=90
+        - writeback
+      csi:
+        driver: csi.juicefs.com
+        volumeHandle: cubeapm-logs-archive-pv   # must be unique in cluster
+        fsType: juicefs
+        nodePublishSecretRef:
+          name: cubeapm-logs-archive-secret
+          namespace: default
+    ---
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: cubeapm-logs-archive-pvc
+      namespace: default
+      annotations:
+        juicefs/mount-pod-patch: '{"terminationGracePeriodSeconds": 600, "lifecycle": {"preStop": {"exec": {"command": ["sh", "-c","sleep 600"]}}}}'
+      # CPU & Memory Configuration For JuiceFS Pod
+        juicefs/mount-cpu-request: "1000m"
+        juicefs/mount-cpu-limit: "2000m"
+        juicefs/mount-memory-request: "1Gi"
+        juicefs/mount-memory-limit: "3Gi"
+    spec:
+      accessModes:
+        - ReadWriteMany
+      volumeMode: Filesystem
+      storageClassName: ""    # empty string = static provisioning, bypasses dynamic CSI quota
+      resources:
+        requests:
+          storage: 5Gi      # ignored by JuiceFS, just needs to be <= PV capacity
+      selector:
+        matchLabels:
+          juicefs-name: cubeapm-logs-archive   # binds to the PV above
+    ```
+
+1.  Apply pv and pvc to cluster
+
+    ```shell
+    kubectl apply -f cubeapm-logs-archive-pv-pvc.yaml -n <namespace>
+    ```
+
+1.  Update your CubeAPM `values.yaml` file. Set `configVars.logs.archive.enabled` as `true`, `configVars.logs.archive.existingClaim` as `cubeapm-logs-archive-pvc` and  run `helm upgrade`
+
+1.  Check for JuiceFS CSI driver mount pod in `kube-system` namespace. It follows specific pattern as `juicefs-<node-name>-<pv-name>-<random-chars>`
+
+    ```shell
+    kubectl get pods -n kube-system
+    ```
