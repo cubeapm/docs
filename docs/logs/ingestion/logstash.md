@@ -35,6 +35,25 @@ sudo systemctl status logstash.service
 
 Using Logstash, you can send logs to CubeAPM in multiple ways.
 
+### HTTP
+
+Using Logstash, you can send logs to CubeAPM using the HTTP output plugin.
+Configure `http` output plugin in `logstash.conf` file as below:
+
+```
+output {
+  http {
+    url          => "http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/jsonline?_msg_field=message&_time_field=@timestamp&_stream_fields=host.name,process.name"
+    http_method  => "post"
+    format       => "json"
+    content_type => "application/json"
+  }
+}
+
+```
+
+Reference: [Logstash HTTP documentation](https://www.elastic.co/docs/reference/logstash/plugins/plugins-outputs-http).
+
 ### Elasticsearch
 
 Using Logstash, you can send logs to CubeAPM using the Elasticsearch output plugin.
@@ -55,24 +74,9 @@ output {
 
 Reference: [Logstash Elasticsearch documentation](https://www.elastic.co/guide/en/logstash/current/plugins-outputs-elasticsearch.html).
 
-### HTTP
-
-Using Logstash, you can send logs to CubeAPM using the HTTP output plugin.
-Configure `http` output plugin in `logstash.conf` file as below:
-
-```
-output {
-  http {
-    url          => "http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/jsonline?_msg_field=message&_time_field=@timestamp&_stream_fields=host.name,process.name"
-    http_method  => "post"
-    format       => "json"
-    content_type => "application/json"
-  }
-}
-
-```
-
-Reference: [Logstash HTTP documentation](https://www.elastic.co/docs/reference/logstash/plugins/plugins-outputs-http).
+:::info
+es plugin adds `/_bulk` at the end of the `path`, so we added `&dummy=` to the end of the path to avoid unintended modification of the path.
+:::
 
 Here's a sample Logstash configuration file for collecting, processing and sending logs to CubeAPM.
 

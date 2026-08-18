@@ -72,6 +72,10 @@ Specify `elasticsearch` output section in `fluentd.conf` as below:
 
 Reference: [Fluentbit Elasticsearch documentation](https://docs.fluentbit.io/manual/pipeline/outputs/elasticsearch).
 
+:::info
+es plugin adds `/_bulk` at the end of the `path`, so we added `&dummy=` to the end of the path to avoid unintended modification of the path.
+:::
+
 Here's a sample Fluentd configuration file for collecting, processing and sending logs to CubeAPM.
 
 <details>
