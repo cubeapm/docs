@@ -39,7 +39,11 @@ sudo systemctl status fluentd.service
 
 ## Configuration
 
-Using Fluentd you can send logs to CubeAPM using HTTP output plugin.
+Using Fluentd you can send logs to CubeAPM by multiple ways.
+
+### HTTP
+
+Using Fluentd, you can send logs to CubeAPM using the HTTP output plugin.
 Specify `http` output section in `fluentd.conf` as below:
 
 ```
@@ -49,6 +53,24 @@ Specify `http` output section in `fluentd.conf` as below:
   headers {"Cube-Msg-Field": "log", "Cube-Time-Field": "time", "Cube-Stream-Fields": "path"}
 </match>
 ```
+
+Reference: [Fluentd HTTP documentation](https://docs.fluentd.org/output/http).
+
+### Elasticsearch
+
+Using Fluentd, you can send logs to CubeAPM using the Elasticsearch output plugin.
+Specify `elasticsearch` output section in `fluentd.conf` as below:
+
+```
+<match **>
+  @type elasticsearch
+  host <ip_address_of_cubeapm_server>
+  port 3130
+  path /api/logs/insert/elasticsearch/_bulk?_stream_fields=stream&_msg_field=log&_time_field=@timestamp&dummy=
+</match>
+```
+
+Reference: [Fluentbit Elasticsearch documentation](https://docs.fluentbit.io/manual/pipeline/outputs/elasticsearch).
 
 Here's a sample Fluentd configuration file for collecting, processing and sending logs to CubeAPM.
 
@@ -155,5 +177,3 @@ Here's a sample Fluentd configuration file for collecting, processing and sendin
 </details>
 
 A sample project with working Docker Compose setup is available at https://github.com/cubeapm/sample_logs_pipeline_fluentd.
-
-Reference: [Fluentd documentation](https://docs.fluentd.org/).
