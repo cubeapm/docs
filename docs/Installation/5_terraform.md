@@ -63,6 +63,11 @@ Before getting started, ensure you have the following ready:
     To avoid being prompted for these variables every time you run Terraform, create a `terraform.tfvars` file in the same directory:
     :::
 
+4. Sample `terraform.tfvars` file:
+
+    <Tabs>
+    <TabItem value="new load balancer" label="Creating new LB" default>
+
     **Example 1: Creating a New ALB**
     ```hcl
     aws_profile            = "my-aws-profile"
@@ -80,6 +85,9 @@ Before getting started, ensure you have the following ready:
     load_balancer_internal = false
     certificate_arn        = "arn:aws:acm:ap-south-1:123456789012:certificate/abcdef01-2345-6789-abcd-ef0123456789"
     ```
+
+    </TabItem>
+    <TabItem value="existing load balancer" label="Using existing LB" default>
 
     **Example 2: Using an Existing ALB**
     ```hcl
@@ -99,6 +107,9 @@ Before getting started, ensure you have the following ready:
     alb_listener_rule_priority     = 50
     existing_alb_security_group_id = "sg-0123456789abcdef0" # Optional: remove this line if you want to allow traffic from the entire VPC CIDR instead
     ```
+
+    </TabItem>
+    </Tabs>
 
     Once your variables are configured, run the following command to provision the infrastructure:
 
@@ -147,7 +158,6 @@ Before getting started, ensure you have the following ready:
     | `gcp_machine_type` | `string` | `"e2-standard-4"` | The GCP machine type to use. |
     | `gcp_network` | `string` | | VPC network name or self-link. |
     | `gcp_subnetwork` | `string` | | Subnetwork name or self-link. |
-    | `gcp_network_cidr` | `string` | | The CIDR block for the VPC, used for firewall rules. |
     | `load_balancer_scope` | `string` | | Select the load balancer scope: `"global"` or `"regional"`. |
     | `load_balancer_type` | `string` | | Select the load balancer type: `"internal"` or `"internet-facing"`. |
     | `create_lb` | `boolean` | `true` | Set to `true` to create a new Load Balancer (URL Map, Target Proxy, Forwarding Rule). If `false`, only the Backend Service is created. |
@@ -155,6 +165,11 @@ Before getting started, ensure you have the following ready:
     :::note
     To avoid being prompted for these variables every time you run Terraform, create a `terraform.tfvars` file in the same directory:
     :::
+
+4. Sample `terraform.tfvars` file:
+
+    <Tabs>
+    <TabItem value="new load balancer" label="Creating new LB" default>
 
     **Example 1: Creating a New Load Balancer**
     ```hcl
@@ -170,13 +185,14 @@ Before getting started, ensure you have the following ready:
     # Networking
     gcp_network           = "my-vpc-network"
     gcp_subnetwork        = "my-app-subnet"
-    gcp_network_cidr      = "10.0.0.0/16"
 
     # Load Balancer Configuration
     create_lb             = true
     load_balancer_scope   = "global"
     load_balancer_type    = "internet-facing"
     ```
+    </TabItem>
+    <TabItem value="existing load balancer" label="Using existing LB" default>
 
     **Example 2: Using an Existing Load Balancer**
     ```hcl
@@ -192,13 +208,14 @@ Before getting started, ensure you have the following ready:
     # Networking
     gcp_network           = "my-vpc-network"
     gcp_subnetwork        = "my-app-subnet"
-    gcp_network_cidr      = "10.0.0.0/16"
 
     # Load Balancer Configuration
     create_lb             = false
     load_balancer_scope   = "global"
     load_balancer_type    = "internet-facing"
     ```
+    </TabItem>
+    </Tabs>
 
     :::info
     **Why are `load_balancer_scope` and `load_balancer_type` required when `create_lb = false`?**
