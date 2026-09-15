@@ -97,8 +97,9 @@ OTel Collector needs to be deployed as a **daemon service**.
         logs_endpoint: http://<cubeapm_endpoint>:3130/api/logs/insert/opentelemetry/v1/logs
         headers:
           Cube-Stream-Fields: severity, host.name
-      otlp/traces:
-        endpoint: <cubeapm_endpoint>:4317/v1/traces
+
+      otlphttp/traces:
+        endpoint: <cubeapm_endpoint>:4318/v1/traces
         tls:
           insecure: true
 
@@ -107,7 +108,7 @@ OTel Collector needs to be deployed as a **daemon service**.
         traces:
           exporters:
             # - debug
-            - otlp/traces
+            - otlphttp/traces
           processors:
             - batch
             - resourcedetection
@@ -345,7 +346,7 @@ OTel Collector needs to be deployed as a **sidecar**.
         headers:
           Cube-Stream-Fields: severity, host.name
 
-      otlp/traces:
+      otlphttp/traces:
         endpoint: <cubeapm_endpoint>:4318/v1/traces
         tls:
           insecure: true
@@ -354,7 +355,7 @@ OTel Collector needs to be deployed as a **sidecar**.
       pipelines:
         traces:
           exporters: 
-            - otlp/traces
+            - otlphttp/traces
           processors: 
             - batch 
             - resourcedetection
