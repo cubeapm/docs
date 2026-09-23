@@ -28,6 +28,7 @@ If a parameter if specified through multiple means, the following order of prefe
 
 - [Teams](./teams.md) — create and manage teams
 - [Roles and Permissions](./roles-and-permissions.md) — global roles and per-alert/dashboard access
+- [Multiple Accounts](/configure/accounts) — separate telemetry into tenants, control who reads each one
 
 ## Essential Configuration
 

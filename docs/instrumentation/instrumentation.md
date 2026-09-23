@@ -26,3 +26,7 @@ CubeAPM can receive data directly from applications already instrumented with Ne
 ## OpenTelemetry
 
 CubeAPM natively supports the OpenTelemetry Protocol (OTLP), the industry standard for observability data.
+
+## Sending data to a specific account
+
+With [Accounts](/configure/accounts), no new instrumentation setting is needed — each agent's existing credential (license key, API key, secret token) routes its data once registered against an account. See [Routing telemetry](/instrumentation/routing).

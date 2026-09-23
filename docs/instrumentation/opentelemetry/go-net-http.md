@@ -4,6 +4,8 @@ title: "Go Net/HTTP"
 slug: /instrumentation/opentelemetry/go-net-http
 ---
 
+import AccountRouting from './_account_routing.mdx';
+
 ## Prerequisites
 
 Go 1.23+
@@ -221,11 +223,15 @@ Go 1.23+
    OTEL_LOGS_EXPORTER=none \
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
+   OTEL_EXPORTER_OTLP_METRICS_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    go run main.go
    ```
+
+1. <AccountRouting />
 
 ### Sample App
 
