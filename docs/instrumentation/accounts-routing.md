@@ -5,19 +5,12 @@ sidebar_position: 5
 
 # Routing telemetry to an account
 
-Every agent's config already has a field for its vendor credential — New Relic's `license_key`,
-Datadog's `DD_API_KEY`, Elastic's `secret_token`, an OpenTelemetry exporter header. CubeAPM
-doesn't check this value against the vendor; it only reads it to pick an account.
+CubeAPM picks the account from the credential the agent already sends (see the table below).
 
-**No new config field is needed.** Generate a key from **Admin → Accounts → License keys** and
-put it in the agent's existing field. Reusing whatever value is already there works too, but
-only if it's unique to this agent — many installs leave it as a placeholder, and registering a
-shared placeholder pulls every agent using it into the same account.
+1. Generate a key at **Admin → Accounts → License keys**.
+2. Set it in the agent's credential field.
 
-:::info
-An unregistered key lands in **account 1**, the default account. Adding accounts never breaks a
-running agent — it lands in account 1 until you register its key.
-:::
+Telemetry with an unregistered key goes to the default account (account 1).
 
 ---
 
@@ -25,50 +18,41 @@ running agent — it lands in account 1 until you register its key.
 
 | Agent | Credential field | Example |
 | :--- | :--- | :--- |
-| New Relic APM (all languages) | The `license_key` it's already configured with | `license_key: ABC4567890ABC4567890ABC4567890ABC4567890` |
-| New Relic Log, Event and Metric API | The `X-License-Key` or `Api-Key` value it already sends | `Api-Key: ABC4567890ABC4567890ABC4567890ABC4567890` |
-| New Relic Browser agent | The browser license key, in the beacon URL | `https://bam.nr-data.net/1/ABC4567890ABC4567890ABC4567890ABC4567890` |
-| New Relic Lambda extension | The `X-License-Key` it's already configured with | `X-License-Key: ABC4567890ABC4567890ABC4567890ABC4567890` |
-| Datadog Agent | The `DD_API_KEY` it's already configured with | `DD_API_KEY=<your_datadog_key>` |
-| Elastic APM agents | The `secret_token` (or API key) it's already configured with | `ELASTIC_APM_SECRET_TOKEN=<secret_token>` |
-| AWS Data Firehose | The `X-Amz-Firehose-Access-Key` header, set from the destination's access key | `X-Amz-Firehose-Access-Key: <value>` |
-| OpenTelemetry (traces, metrics, logs) | A `x-cube-token` exporter header, set once | `OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key>` |
-| Anything else | No key read. Lands in account 1 | N/A |
+| New Relic APM (all languages) | `license_key` | `license_key: ABC4567890ABC4567890ABC4567890ABC4567890` |
+| New Relic Log, Event and Metric API | `X-License-Key` or `Api-Key` header | `Api-Key: ABC4567890ABC4567890ABC4567890ABC4567890` |
+| New Relic Browser agent | License key in the beacon URL | `https://bam.nr-data.net/1/ABC4567890ABC4567890ABC4567890ABC4567890` |
+| New Relic Lambda extension | `X-License-Key` | `X-License-Key: ABC4567890ABC4567890ABC4567890ABC4567890` |
+| Datadog Agent | `DD_API_KEY` | `DD_API_KEY=<your_datadog_key>` |
+| Elastic APM agents | `secret_token` or API key | `ELASTIC_APM_SECRET_TOKEN=<secret_token>` |
+| AWS Data Firehose | `X-Amz-Firehose-Access-Key` header | `X-Amz-Firehose-Access-Key: <value>` |
+| OpenTelemetry (traces, metrics, logs) | `x-cube-token` exporter header | `OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key>` |
+| Anything else | None. Goes to account 1 | N/A |
 
 ---
 
 ## Registering a key
 
-1. Open **Admin → Accounts**, pick the account, then **License keys**.
-2. **Generate a key** and copy it into the agent's credential field — the safe default. Only use
-   **add an existing key** if that field already holds a value unique to this agent; a shared
-   placeholder would pull every agent using it into this account.
-3. Name the key so you know which agent or environment it belongs to.
+1. **Admin → Accounts**, select the account, **License keys**.
+2. **Generate a key** or **Add existing key**.
+3. Name the key.
 
-A key already registered to another live account is rejected — revoke it there, or use a
-different key. Deleting an account revokes its keys. Any admin of the
-account can view and copy a registered key in full at any time, not just at creation.
-
-**Revoking is permanent.** A revoked key can't be reactivated; an agent still sending it keeps
-sending, but the data lands nowhere readable — re-key the agent instead.
+- All agents that send the same key go to the same account.
+- A key can belong to only one account.
+- Account admins can view and copy keys at any time.
+- Deleting an account revokes its keys.
+- Revoked keys can't be restored. Data sent with a revoked key isn't visible in any account.
 
 ---
 
 ## Verification {#verifying}
 
-Check that data appears in the target account **and not** the default one — a misconfigured agent
-looks identical to a working one if you only check the account you expect.
+Wait a minute or two for agents to flush, then:
 
-1. As a user in both accounts (a sys admin always is), open **APM** and switch to the target
-   account. Confirm the service and its charts show data.
-2. Switch to **Default**. Confirm the service is **not** listed there.
+1. In **APM**, switch to the target account. The service should be listed.
+2. Switch to **Default**. The service should not be listed.
 
-If it still shows up in Default, the registered key doesn't match what the agent actually sends.
-Check each signal separately — traces and logs often use different agent settings.
-
-:::info
-Give ingestion a minute or two before checking; agents batch.
-:::
+If the service is still in Default, the agent isn't sending a registered key. Traces, metrics and
+logs can use different credential settings, so check each.
 
 ---
 
@@ -76,11 +60,11 @@ Give ingestion a minute or two before checking; agents batch.
 
 | Symptom | Likely cause |
 | :--- | :--- |
-| Data lands in the default account instead of the target | Key not registered, or registered value doesn't match what the agent sends |
-| A newly added key isn't routing yet on a multi-node install | Allow it a short delay to reach every node |
-| Datadog traces never leave the default account | Tracer is pointed directly at CubeAPM via `DD_TRACE_AGENT_URL` — route through the Datadog Agent instead |
-| OpenTelemetry ignores the registered account | Confirm the exporter's `x-cube-token` header is actually set |
-| New Relic Browser data isn't routing | The key lives in the beacon URL, not a header — confirm it matches |
-| Data lands in no account at all | The key was revoked — re-key the agent |
-| A user can't see an account that has data | Ingest is fine; their account access isn't — see [Administration](/configure/roles-and-permissions#switching) |
-| An account that used to work now errors | The account was deleted; data is retained but unreadable |
+| Data goes to the default account instead of the target | Key not registered, or the agent sends a different key |
+| A new key isn't routing yet on a multi-node install | New keys take a short time to reach every node |
+| Datadog traces always go to the default account | Tracer sends directly to CubeAPM via `DD_TRACE_AGENT_URL`. Send through the Datadog Agent |
+| OpenTelemetry data goes to the default account | The exporter's `x-cube-token` header isn't set |
+| New Relic Browser data isn't routing | The key in the beacon URL doesn't match |
+| Data doesn't show in any account | The key was revoked. Use a new key |
+| A user can't see an account that has data | The user isn't a member of that account. See [Roles and Permissions](/configure/roles-and-permissions#switching) |
+| An account that used to work now errors | The account was deleted. Its data is kept until retention but can't be read |

@@ -11,8 +11,8 @@ Teams group users in CubeAPM. A user can belong to multiple teams. Teams are use
 2. **Access on alerts and dashboards** — a team listed under [Custom permissions](/configure/roles-and-permissions#custom) passes that access to every member
 
 :::info
-Installations that use [Accounts](/configure/accounts) scope teams to the account they were created in. A
-team can only be granted access to resources in that same account.
+With [accounts](/configure/accounts), a team belongs to the account it was created in and can only
+get access to resources in that account.
 :::
 
 ---

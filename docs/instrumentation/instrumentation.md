@@ -29,4 +29,4 @@ CubeAPM natively supports the OpenTelemetry Protocol (OTLP), the industry standa
 
 ## Sending data to a specific account
 
-With [Accounts](/configure/accounts), no new instrumentation setting is needed — each agent's existing credential (license key, API key, secret token) routes its data once registered against an account. See [Routing telemetry](/instrumentation/routing).
+To send data to a specific [account](/configure/accounts), use a license key registered for it. See [Routing telemetry](/instrumentation/routing).

@@ -16,8 +16,8 @@ CubeAPM controls access at two levels:
 specific alert or dashboard.
 
 :::info
-Accounts add a third scope: a role **per account**. The global role above is the role a user
-holds in the default account. See [Roles per account](#roles).
+With [accounts](/configure/accounts), users also have a role per account. The global role is their
+role in the default account. See [Roles per account](#roles).
 :::
 
 ```text
@@ -51,15 +51,14 @@ flows.
 | Parameter | Description |
 | :--- | :--- |
 | `auth.default-role` | Role assigned on signup. Default `viewer`. Values: `none`, `viewer`, `editor`, `admin`. |
-| `auth.sys-admins` | Comma-separated emails of the installation's administrators — the only ones who can create/delete accounts and manage users, settings and stats. See [who can do what](#permissions). |
+| `auth.sys-admins` | Comma-separated emails of sys admins. Only they can create/delete accounts and manage users, settings and stats. See [Sys admin vs account admin](#permissions). |
 
 ---
 
 ## Per-resource permissions
 
-Alerts and dashboards — not metrics, logs, traces or other features — support optional
-permissions controlling who can view and edit that specific resource. Configured in the
-**Permissions** section when creating or editing one: **Role Based** or **Custom**.
+Alerts and dashboards can have their own view/edit permissions: **Role Based** (default) or
+**Custom**. Set them in the **Permissions** section.
 
 ### Role Based (default) {#role-based}
 
@@ -70,7 +69,7 @@ Access follows global role: **Viewer** → view, **Editor**/**Admin** → view a
 Grants **Viewer** or **Editor** on one resource to specific users (by email) or [teams](/configure/teams). Custom permissions are an **allowlist** — only listed users/teams get access, including global admins.
 
 :::warning
-Switching a resource to Custom? Add yourself (or your team) first, or you may lose access to it.
+Before switching a resource to Custom, add yourself or your team, or you'll lose access.
 :::
 
 ### Effective permission
@@ -123,24 +122,16 @@ Programmatic access: [Alert Rules API](/http-apis/alerts/alert-rules#how-to-conf
 
 ## Accounts
 
-Creating accounts, assigning users, managing license keys, and how per-account roles interact
-with the [global role](#global-roles) a user already has.
-
-Account management lives on the **Admin** page (`/admin`), reachable from the Admin item in the
-left navigation rail.
+Manage accounts from **Admin** (`/admin`) in the left nav.
 
 ![The Admin page's Accounts tab, with the account switcher, member list and Join/Leave controls](/img/accounts/admin-accounts-tab.png)
 
 ### Sys admin vs account admin {#permissions}
 
-A **sys admin** is an email listed in the `auth.sys-admins` config parameter. Sys admins are the
-installation's administrators: they create and delete accounts, manage users/settings/stats, and
-are admin of every account including ones created later. This is the only source of install-wide
-administration.
-
-An **account admin** holds the `admin` role in one specific account, including the default one.
-They can rename and staff that account and reach its Admin page — nothing wider. Being an admin
-of the default account does **not** make you an installation admin.
+- **Sys admin**: email listed in `auth.sys-admins`. Creates and deletes accounts, manages users,
+  settings and stats, and is admin of every account.
+- **Account admin**: `admin` role in one account. Manages that account only. An admin of the
+  default account isn't a sys admin.
 
 | Action | Sys admin | Account admin | Others |
 | :--- | :---: | :---: | :---: |
@@ -152,74 +143,48 @@ of the default account does **not** make you an installation admin.
 | Read an account's data | Own accounts | Own accounts | Assigned accounts |
 
 :::caution
-`auth.sys-admins` has no fallback — if it's empty, nobody can create an account or a user. Set it
-before relying on accounts; CubeAPM warns about this at startup.
+If `auth.sys-admins` is empty, no one can create accounts or users.
 :::
 
-The Admin page shows only the tabs a caller is authorized for: **Accounts** and **Audit Logs** to
-any account admin; **Users** to any account admin for the account they're viewing, though identity
-actions (password reset, MFA, delete) are sys-admin only; **Settings**, **Stats** and **Signin
-Audit Logs** to sys admins only.
+| Admin tab | Visible to |
+| :--- | :--- |
+| Accounts, Audit Logs | Account admins |
+| Users | Account admins. Password reset, MFA and delete are sys admin only |
+| Settings, Stats, Signin Audit Logs | Sys admins |
 
 ### Creating an account
 
-Sys admin required. **Admin → Accounts → New**, enter a name. CubeAPM assigns the number — always
-higher than any ever issued, including deleted ones. You don't need to give this number to
-agents; routing is done by license key (see [Routing telemetry](/instrumentation/routing)).
+Requires sys admin. **Admin → Accounts → New**, enter a name. You become its first admin.
 
-You're added as the new account's first admin, so you can open it immediately. It starts with no
-other members and no data.
-
-**Join / Leave** — each account row has one. Leave is disabled while you're the only admin, so
-add another first. **Rename** — edit icon, name only; the number never changes.
-
-**Delete** — sys admin required; the default account can't be deleted.
+- **Rename**: edit icon. The account number doesn't change.
+- **Join / Leave**: on each account row. You can't leave if you're the only admin.
+- **Delete**: sys admin only. The default account can't be deleted.
 
 :::caution
-Deleting an account removes it from the UI and every member's list, and its data becomes
-unreadable — but isn't deleted, and stays until it ages out of retention, with its number never
-reissued. Agents pointed at it keep sending into the void; revoke its keys or repoint them as part
-of decommissioning. **Its alert rules and synthetic monitors keep running** until removed by hand.
+Deleting an account doesn't stop its alert rules, synthetic monitors or agents. Remove the rules
+and monitors and move the agents to another account's key first.
 :::
 
 ### Assigning users to accounts
 
-**Admin**, pick the account from the switcher at the head of the tab strip, **Users** tab. Add a
-user and pick their role in this account, or change an existing member's. New users can be given
-their accounts directly on the invite form.
+1. **Admin**, select the account in the switcher at the top of the tabs, **Users** tab.
+2. Add a user and pick their role in this account.
 
-CubeAPM refuses any change that would leave an account with no admin.
+You can also assign accounts on the invite form. Every account must keep at least one admin.
 
-**Disabling** a user (Status switch, sys-admin only) drops their live sessions — unlike a role of
-`none`, which leaves them signed in with nothing to do.
+To block a user everywhere, disable them (Status switch, sys admin only). This ends their sessions.
 
 ### License keys
 
-License keys decide which account an agent's telemetry belongs to — see
-[Routing telemetry](/instrumentation/routing) for where each vendor's key lives.
-
-**Admin → Accounts**, pick the account, **License keys**. **Generate a key** and put it in the
-agent's credential field — the safe default. Only use **add an existing key** if that field
-already holds a value unique to this agent; a shared placeholder pulls every agent using it into
-this account. Name it so you know what it's for.
+License keys route agent data to an account. See [Routing telemetry](/instrumentation/routing).
 
 ![The License keys screen: generate a new key or add an existing one, with the key list below](/img/accounts/license-keys-modal.png)
 
-A key already claimed by another live account is rejected — revoke it there first. Deleting an
-account revokes its keys. Any admin of the account can view and copy a key in full at any time,
-not just at creation.
-
-**Revoking is permanent** — a revoked key can't be reactivated; an agent still sending it keeps
-sending, but the data lands nowhere readable.
-
 :::info
-Keys are written to the Audit Logs in full on every create, add, rename and revoke — treat Audit
-Log access as sensitive once license keys are in use.
+Audit Logs record full key values. Restrict Audit Log access accordingly.
 :::
 
 ### Roles per account {#roles}
-
-This adds a third scope on top of the roles above:
 
 ```text
 Global role (viewer / editor / admin)
@@ -231,20 +196,17 @@ Global role (viewer / editor / admin)
                     └──► Custom resource → allowlist of users and teams
 ```
 
-Same three roles, same meanings, scoped to one account:
-
 | Role in an account | View data | Create / edit resources | Manage members |
 | :--- | :---: | :---: | :---: |
 | Viewer | Yes | No | No |
 | Editor | Yes | Yes | No |
 | Admin | Yes | Yes | Yes |
 
-Not a member → no role → no access.
+Non-members have no access.
 
 #### Global role fallback
 
-The global role is a user's role in the default account, and the fallback for anyone not assigned
-elsewhere:
+The global role is the user's role in the default account.
 
 | Situation | Effective access |
 | :--- | :--- |
@@ -254,48 +216,41 @@ elsewhere:
 | No role set at all | `auth.default-role` |
 | Sys admin | Admin of every account, including future ones |
 
-Upgrades rely on the first row: every pre-existing user keeps their default-account role
-unchanged. Disabling someone by setting global role to `none` only removes default-account
-access — remove other account assignments too, or use the Status switch instead. The fallback
-only applies to the default account; a global admin isn't automatically an admin of account 2.
+- Upgrading changes no one's access.
+- Global role `none` only removes default-account access. To block a user everywhere, disable them.
+- A global admin isn't an admin of other accounts unless assigned.
 
 ### Switching accounts in the UI {#switching}
 
-Users in more than one account get a switcher in the left nav rail, with a generated icon per
-account. Users in only the default account never see it.
+Users in more than one account get an account switcher in the left nav and at the top of the Admin
+tabs.
 
 ![The account switcher at the foot of the left navigation rail](/img/accounts/account-switcher.png)
 
-It's in the nav rail, not a page filter, because it decides which tenant *every* page reads from — switching reloads the page, since dashboards, charts and config are all fetched per account. It
-appears again at the head of the Admin tab strip. The selection is per browser tab; a new tab with
-no account in its URL starts on the default account. Losing access mid-session (revoked, or the
-account deleted) drops you back to Default and reloads.
+- Switching reloads the page.
+- The selection is per browser tab. A new tab opens on Default.
+- If you lose access to the current account, the UI switches back to Default.
 
-**Verifying access:** sign in as the user, confirm the switcher lists the expected accounts, open
-**APM** and confirm the service list changes between accounts. No switcher → member of only the
-default account. Switcher shows it but pages are empty → access is fine, check
-[Routing telemetry](/instrumentation/routing) instead.
+To check a user's access, sign in as them and confirm the switcher lists their accounts. If an
+account shows but its pages are empty, check [Routing telemetry](/instrumentation/routing).
 
 ### Auditing
 
-Account create/rename/delete, member add/remove, and license key create/add/rename/revoke are all
-logged with actor, account, and before/after values. **Audit Logs** tab, any account admin.
+Account, member and license key changes are logged with actor and before/after values in the
+**Audit Logs** tab.
 
 ### Limitations {#limitations}
 
-- **Notification-channel credentials are install-wide** — Slack, PagerDuty, email and the rest are
-  configured once and shared by every account's alert rules. Alert rules themselves, silences,
-  alert history and notification charts are all scoped per account.
-- **Deleting an account doesn't stop its alert rules or synthetic monitors** — remove them by hand.
-
-For hard separation of notification credentials between tenants, run separate installations
-rather than separate accounts within one.
+- Notification channels (Slack, PagerDuty, email, etc.) are shared by all accounts. Alert rules,
+  silences and alert history are per account. For separate notification credentials per tenant,
+  use separate installations.
+- Deleting an account doesn't stop its alert rules or synthetic monitors.
 
 ---
 
 ## Related documentation
 
-- [Accounts](/configure/accounts) — what accounts are, and how telemetry routing works
+- [Accounts](/configure/accounts) — multi-account setup
 - [Teams](/configure/teams) — create and manage teams
 - [Alert Rules API](/http-apis/alerts/alert-rules) — permissions via API
 - [Dashboards API](/http-apis/dashboards) — permissions via API

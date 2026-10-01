@@ -19,6 +19,6 @@ Please follow the links below for relevant API details.
 - [Alerts](alerts/alert-rules.md)
 - [Dashboards](dashboards.md)
 
-With [Accounts](/configure/accounts), every API here reads from or writes to a single account. Ingestion APIs take the account from the license key the agent already sends; querying APIs take it from the `x-cube-account-id` header. An unregistered key uses the default account. See [Routing telemetry](/instrumentation/routing).
+With [multiple accounts](/configure/accounts), query APIs read the account from the `x-cube-account-id` header. Ingestion is routed by license key; see [Routing telemetry](/instrumentation/routing).
 
 For how roles and per-resource permissions work in the UI, see [Roles and Permissions](/configure/roles-and-permissions). For teams, see [Teams](/configure/teams).

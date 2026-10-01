@@ -5,15 +5,11 @@ sidebar_position: 4
 
 # Multiple Accounts
 
-If you want to separate telemetry data across multiple tenants — different clients, teams or
-business units — create an account per tenant. Data, dashboards, alerts and permissions in one
-account are invisible to every other account.
+If you want to separate telemetry across tenants (clients, teams, business units), create an account
+per tenant. An account's data, dashboards, alerts and permissions are visible only inside that
+account.
 
-Account `1` is the default, and exists in every install.
-
-:::info
-Single tenant: nothing to do. Data stays in account 1, no switcher appears.
-:::
+Account 1 (**Default**) exists in every install. With a single tenant there's nothing to set up.
 
 ---
 
@@ -27,56 +23,37 @@ Single tenant: nothing to do. Data stays in account 1, no switcher appears.
 | Users | No, shared across every account |
 | Notification-channel credentials (email, Slack, PagerDuty, etc.) | No, see [limitations](/configure/roles-and-permissions#limitations) |
 
-Users are shared on purpose: one person can be an admin of one account and a viewer of another
-without a duplicate entry. [Teams](/configure/teams) belong to the account they were created in.
+A user can have a different role in each account.
 
 ---
 
 ## Setup
 
-**Telemetry routing.** Every agent already authenticates with a credential — a license key, an
-API key, a secret token. Register it against an account from **Admin → Accounts → License keys**,
-or generate a new one there and use it in the agent's config. Details:
-[Routing telemetry](/instrumentation/routing). An unregistered key lands in account 1.
-
-**User access.** Assign users to accounts, with a role per account, from **Admin → Accounts**.
-Users in more than one account get a switcher in the nav rail. Details:
-[Roles and Permissions](/configure/roles-and-permissions#accounts).
-
-Order doesn't matter — set up either one first.
+1. Create the account: **Admin → Accounts → New**.
+2. Route telemetry to it with a license key. See [Routing telemetry](/instrumentation/routing).
+3. Add users with a role. See [Roles and Permissions](/configure/roles-and-permissions#accounts).
 
 ---
 
-## Account 1, the default account {#default-account}
+## Default account {#default-account}
 
-Account 1 isn't provisioned like the ones you create:
-
-- Named **Default**, cannot be renamed or deleted
-- **Every user is already a member**, at their [global role](/configure/roles-and-permissions#global-roles)
-- **Its admins are ordinary account admins, not installation admins** — creating accounts and
-  managing users install-wide is reserved for sys admins (`auth.sys-admins`), see
-  [sys admin vs account admin](/configure/roles-and-permissions#permissions)
-- Unregistered telemetry lands here
-- On upgrade, every existing user, dashboard, alert and data point is already in it — adopting
-  accounts changes nobody's access and moves no data
+- Named **Default**. Can't be renamed or deleted.
+- Every user is a member, with their [global role](/configure/roles-and-permissions#global-roles).
+- Unregistered telemetry goes here.
+- After an upgrade, all existing users, dashboards, alerts and data are here.
+- Admins of the default account aren't sys admins. See
+  [Sys admin vs account admin](/configure/roles-and-permissions#permissions).
 
 ---
 
 ## Account numbering
 
-Ids are assigned by CubeAPM, never chosen, and **never reused** — a new account always gets a
-number higher than any ever issued, including deleted ones. Deleting account 4 and creating
-another gives you 5, never 4 again.
+CubeAPM assigns account numbers. A number is never reused, even after the account is deleted.
 
-**Deleting an account doesn't delete its data.** It disappears from the UI and every member's
-list, and its stored telemetry becomes unreadable, but stays around until it ages out of your
-retention period. This prevents a recycled id from surfacing a previous tenant's data in a new
-tenant's dashboards.
+Deleting an account hides its data. The data isn't deleted; it ages out with your retention period.
 
 :::caution
-Account `0` isn't valid — it's the sentinel for telemetry CubeAPM couldn't resolve to any account
-(e.g. a revoked license key). You never set this yourself; if you see data there, check
-[Routing telemetry](/instrumentation/routing).
+Account `0` is reserved. Telemetry sent with a revoked key is stored there and can't be read.
 :::
 
 ---
