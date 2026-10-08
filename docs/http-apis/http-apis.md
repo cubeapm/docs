@@ -19,6 +19,6 @@ Please follow the links below for relevant API details.
 - [Alerts](alerts/alert-rules.md)
 - [Dashboards](dashboards.md)
 
-With [multiple accounts](/configure/accounts), query APIs read the account from the `x-cube-account-id` header. Ingestion is routed by license key; see [Routing telemetry](/instrumentation/routing).
+With [multiple accounts](/configure/accounts), query APIs read the account from the `x-cube-account-id` header. Ingestion is routed by license key; see [Routing telemetry](/configure/accounts/routing).
 
 For how roles and per-resource permissions work in the UI, see [Roles and Permissions](/configure/roles-and-permissions). For teams, see [Teams](/configure/teams).

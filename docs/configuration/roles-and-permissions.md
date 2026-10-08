@@ -176,7 +176,7 @@ To block a user everywhere, disable them (Status switch, sys admin only). This e
 
 ### License keys
 
-License keys route agent data to an account. See [Routing telemetry](/instrumentation/routing).
+License keys route agent data to an account. See [Routing telemetry](/configure/accounts/routing).
 
 ![The License keys screen: generate a new key or add an existing one, with the key list below](/img/accounts/license-keys-modal.png)
 
@@ -232,7 +232,7 @@ tabs.
 - If you lose access to the current account, the UI switches back to Default.
 
 To check a user's access, sign in as them and confirm the switcher lists their accounts. If an
-account shows but its pages are empty, check [Routing telemetry](/instrumentation/routing).
+account shows but its pages are empty, check [Routing telemetry](/configure/accounts/routing).
 
 ### Auditing
 

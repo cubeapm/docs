@@ -1,6 +1,7 @@
 ---
-slug: /instrumentation/routing
-sidebar_position: 5
+slug: /configure/accounts/routing
+sidebar_position: 1
+sidebar_label: Routing telemetry
 ---
 
 # Routing telemetry to an account

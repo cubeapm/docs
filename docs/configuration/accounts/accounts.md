@@ -1,6 +1,5 @@
 ---
 slug: /configure/accounts
-sidebar_position: 4
 ---
 
 # Multiple Accounts
@@ -30,7 +29,7 @@ A user can have a different role in each account.
 ## Setup
 
 1. Create the account: **Admin → Accounts → New**.
-2. Route telemetry to it with a license key. See [Routing telemetry](/instrumentation/routing).
+2. Route telemetry to it with a license key. See [Routing telemetry](/configure/accounts/routing).
 3. Add users with a role. See [Roles and Permissions](/configure/roles-and-permissions#accounts).
 
 ---
@@ -61,4 +60,4 @@ Account `0` is reserved. Telemetry sent with a revoked key is stored there and c
 ## Next steps
 
 - [Roles and Permissions](/configure/roles-and-permissions#accounts) — create accounts, assign users, set per-account roles
-- [Routing telemetry](/instrumentation/routing) — point each agent at an account
+- [Routing telemetry](/configure/accounts/routing) — point each agent at an account
