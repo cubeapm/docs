@@ -6,6 +6,7 @@ slug: /instrumentation/datadog/go-gin
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './_account_routing.mdx';
 
 ## Prerequisites
 
@@ -105,6 +106,8 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
    DD_APM_NON_LOCAL_TRAFFIC=true
    DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
    ```
+
+1. <AccountRouting />
 
 ## Sample Application
 

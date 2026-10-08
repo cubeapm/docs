@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/ruby-rails
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './_account_routing.mdx';
 
 ## Installation
 
@@ -23,6 +24,8 @@ import TabItem from '@theme/TabItem';
          ELASTIC_APM_SERVICE_NAME=<app_name>
          # send traces to CubeAPM
          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+         # optional, only for multi-account routing - see below
+         ELASTIC_APM_SECRET_TOKEN=<secret_token>
 
          # optional settings
          # Elastic agent sets environment from ENV['RAILS_ENV'] by default
@@ -32,6 +35,8 @@ import TabItem from '@theme/TabItem';
          ```
       </TabItem>
    </Tabs>
+
+1. <AccountRouting />
 
 ## Sample App
 

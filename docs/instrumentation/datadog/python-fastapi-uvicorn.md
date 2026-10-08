@@ -4,6 +4,8 @@ title: "Python FastAPI Uvicorn"
 slug: /instrumentation/datadog/python-fastapi-uvicorn
 ---
 
+import AccountRouting from './_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3+
@@ -53,6 +55,8 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
    DD_APM_NON_LOCAL_TRAFFIC=true
    DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
    ```
+
+1. <AccountRouting />
 
 ## Sample Application
 
