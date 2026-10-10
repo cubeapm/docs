@@ -78,13 +78,11 @@ For example
             },
             {
               "key": "thread.id",
-              "v_type": 2,
-              "v_int64": 55
+              "v_str": "55"
             },
             {
               "key": "http.response_content_length",
-              "v_type": 2,
-              "v_int64": 2
+              "v_str": "2"
             },
             {
               "key": "http.route",
@@ -92,8 +90,7 @@ For example
             },
             {
               "key": "http.status_code",
-              "v_type": 2,
-              "v_int64": 200
+              "v_str": "200"
             },
             {
               "key": "http.method",
@@ -101,8 +98,7 @@ For example
             },
             {
               "key": "http.request_content_length",
-              "v_type": 2,
-              "v_int64": 510
+              "v_str": "510"
             },
             {
               "key": "net.host.name",
@@ -123,8 +119,7 @@ For example
               },
               {
                 "key": "process.pid",
-                "v_type": 2,
-                "v_int64": 1
+                "v_str": "1"
               },
               {
                 "key": "cube.environment",
@@ -161,30 +156,25 @@ curl 'http://<ip_address_of_cubeapm_server>:3140/api/traces/api/v1/traces/61b660
 
 #### Response Format
 
-| Field                          | Type      | Description                                                                                         |
-| ------------------------------ | --------- | --------------------------------------------------------------------------------------------------- |
-| `spans`                        | `array`   | Array os spans.                                                                                     |
-| `spans[].trace_id`             | `string`  | Base-64 encoded Trace ID.                                                                           |
-| `spans[].span_id`              | `string`  | Base-64 encoded Span ID.                                                                            |
-| `spans[].operation_name`       | `string`  | Name of span.                                                                                       |
-| `span[].references`            | `array`   | Array of trace references (e.g. parent). May be undefined.                                          |
-| `span[].references[].trace_id` | `string`  | Base-64 encoded reference Trace ID.                                                                 |
-| `span[].references[].span_id`  | `string`  | Base-64 encoded reference Span ID.                                                                  |
-| `span[].start_time`            | `string`  | RFC3339 formatted start time of the span.                                                           |
-| `span[].duration`              | `integer` | Duration of the span in nanoseconds.                                                                |
-| `span[].tags`                  | `array`   | Tags (key/value pairs) associated with the span.                                                    |
-| `span[].tags[].key`            | `string`  | Name of the tag.                                                                                    |
-| `span[].tags[].v_type`         | `integer` | Indicates type of value. 0 or undefined => string, 1 => bool, 2 => int64, 3 => float64, 4 => binary |
-| `span[].tags[].v_str`          | `string`  | String value if v_type is 0 or undefined.                                                           |
-| `span[].tags[].v_bool`         | `bool`    | Boolean value if v_type is 1.                                                                       |
-| `span[].tags[].v_int64`        | `integer` | Integer value if v_type is 2.                                                                       |
-| `span[].tags[].v_float64`      | `float`   | Float value if v_type is 3.                                                                         |
-| `span[].tags[].v_binary`       | `string`  | Base-64 encoded binary value if v_type is 4.                                                        |
-| `span[].logs`                  | `array`   | Details of exceptions associated with the span.                                                     |
-| `span[].logs[].timestamp`      | `string`  | RFC3339 formatted timestamp of the exception.                                                       |
-| `span[].logs[].fields`         | `array`   | Details of the exception as key/value pairs.                                                        |
-| `span[].process.service_name`  | `string`  | Name of the service to which the span belongs.                                                      |
-| `span[].process.tags`          | `string`  | Tags (key/value pairs) associated with the service.                                                 |
+| Field                          | Type      | Description                                                |
+| ------------------------------ | --------- | ---------------------------------------------------------- |
+| `spans`                        | `array`   | Array os spans.                                            |
+| `spans[].trace_id`             | `string`  | Base-64 encoded Trace ID.                                  |
+| `spans[].span_id`              | `string`  | Base-64 encoded Span ID.                                   |
+| `spans[].operation_name`       | `string`  | Name of span.                                              |
+| `span[].references`            | `array`   | Array of trace references (e.g. parent). May be undefined. |
+| `span[].references[].trace_id` | `string`  | Base-64 encoded reference Trace ID.                        |
+| `span[].references[].span_id`  | `string`  | Base-64 encoded reference Span ID.                         |
+| `span[].start_time`            | `string`  | RFC3339 formatted start time of the span.                  |
+| `span[].duration`              | `integer` | Duration of the span in nanoseconds.                       |
+| `span[].tags`                  | `array`   | Tags (key/value pairs) associated with the span.           |
+| `span[].tags[].key`            | `string`  | Name of the tag.                                           |
+| `span[].tags[].v_str`          | `string`  | String value.                                              |
+| `span[].logs`                  | `array`   | Details of exceptions associated with the span.            |
+| `span[].logs[].timestamp`      | `string`  | RFC3339 formatted timestamp of the exception.              |
+| `span[].logs[].fields`         | `array`   | Details of the exception as key/value pairs.               |
+| `span[].process.service_name`  | `string`  | Name of the service to which the span belongs.             |
+| `span[].process.tags`          | `string`  | Tags (key/value pairs) associated with the service.        |
 
 For example
 
@@ -219,8 +209,7 @@ For example
         },
         {
           "key": "thread.id",
-          "v_type": 2,
-          "v_int64": 48
+          "v_str": "48"
         },
         {
           "key": "span.kind",
@@ -237,8 +226,7 @@ For example
           },
           {
             "key": "process.pid",
-            "v_type": 2,
-            "v_int64": 1
+            "v_str": "1"
           },
           {
             "key": "telemetry.sdk.language",
