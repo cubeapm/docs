@@ -31,17 +31,37 @@ If a parameter if specified through multiple means, the following order of prefe
 
 ## Essential Configuration
 
-CubeAPM provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for CubeAPM to start up. Following is a list of such parameters:
+CubeAPM provides reasonable defaults to configuration parameters wherever possible. However, some parameters do not have reasonable default values and therefore their values must be provided at the time of setup for CubeAPM in the CubeAPM's `config.properties` file which is located at `/etc/cubeapm/config.properties` to start up. Following is a list of such parameters:
 
 1. `token`
 1. `auth.key.session`
 
 In addition, the following configuration parameters have some default value, but it is quite likely that you may need to override them as per your environment for CubeAPM to work properly.
 
-1. `base-url`
-1. `auth.sys-admins`
-1. `cluster.peers`
-1. `time-zone`
+1. `base-url` : *For accessing CubeAPM UI.*
+1. `auth.sys-admins` : *For sysadmin users.*
+1. `cluster.peers` : *For multi-node CubeAPM cluster.*
+1. `time-zone` : *For the time-zone of CubeAPM users.*
+1. `logs.retention` : *For retention of logs.*
+1. `metrics.retention` : *For retention of metrics.*
+1. `traces.retention` : *For retention of traces.*
+
+    :::note
+    The retention period is the maximum amount of time that data is stored on the CubeAPM disk. After this period, data gets deleted periodically. Also, the value should be provided in the format of `h` (hours).
+
+    - For logs, the default retention period is 1 day (24 hours).
+    - For metrics, the default retention period is 30 days (720 hours).
+    - For traces, the default retention period is 7 days (168 hours).
+    :::
+
+1. `database.url` : *For storing configuration like dashboards, alerts, records etc.*
+1. `auth.database.url` : *For storing user accounts, authentication details, role/permissions data, etc.*
+
+    :::note
+    By default CubeAPM runs with an embedded (SQLite) database. However, for production deployments, it is recommended to use a separate or external database (e.g., MySQL, PostgreSQL).
+
+    - For configuring external database CubeAPM required 2 databases: one for config data named `cubeapm` and one for auth data named `cubeapm_auth`.
+    :::
 
 ## Configuration Reference
 
