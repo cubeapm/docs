@@ -108,6 +108,15 @@ Sample content for configuration is available at https://docs.newrelic.com/docs/
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/newrelic
 
+## Additional Configuration
+
+To enable application deployment version tracking, you need to configure the following as an environment variable:
+
+```bash
+NEW_RELIC_METADATA_CUBE_ATTRS_SERVICE_P_VERSION=<app_version>
+```
+
+
 ## Troubleshooting
 
 The following can be used for troubleshooting:
