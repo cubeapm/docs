@@ -68,6 +68,14 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 A working example is available at https://github.com/cubeapm/sample_app_ruby_rails/tree/newrelic
 
+## Additional Configuration
+
+To enable application deployment version tracking, you need to configure the following as an environment variable:
+
+```bash
+NEW_RELIC_METADATA_CUBE_ATTRS_SERVICE_P_VERSION=<app_version>
+```
+
 ## Troubleshooting
 
 The following can be used for troubleshooting:
