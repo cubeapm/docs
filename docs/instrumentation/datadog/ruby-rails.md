@@ -6,6 +6,7 @@ slug: /instrumentation/datadog/ruby-rails
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import NoAgentRouting from './_no_agent_routing.mdx';
 
 ## Installation
 
@@ -41,6 +42,8 @@ import TabItem from '@theme/TabItem';
          ```
       </TabItem>
    </Tabs>
+
+1. <NoAgentRouting />
 
 ## Sample App
 

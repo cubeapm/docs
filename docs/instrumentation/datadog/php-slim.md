@@ -4,6 +4,8 @@ title: "PHP Slim"
 slug: /instrumentation/datadog/php-slim
 ---
 
+import NoAgentRouting from './_no_agent_routing.mdx';
+
 ## Installation
 
 1. Install the Datadog PHP tracer.
@@ -36,6 +38,8 @@ slug: /instrumentation/datadog/php-slim
    datadog.version = 1.2.3
    datadog.tags = mykey1:myvalue1,mykey2:myvalue2
    ```
+
+1. <NoAgentRouting />
 
 ## Sample App
 

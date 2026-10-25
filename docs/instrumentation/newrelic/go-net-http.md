@@ -7,6 +7,7 @@ slug: /instrumentation/newrelic/go-net-http
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import ProxySetup from './\_proxy_setup.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -127,6 +128,8 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          ```
       </TabItem>
    </Tabs>
+
+1. <AccountRouting />
 
 ### Sample App
 

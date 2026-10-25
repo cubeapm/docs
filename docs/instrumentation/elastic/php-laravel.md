@@ -4,6 +4,8 @@ title: "PHP Laravel"
 slug: /instrumentation/elastic/php-laravel
 ---
 
+import AccountRouting from './_account_routing.mdx';
+
 ## Installation
 
 1. Follow this link to install Elastic APM PHP agent: https://www.elastic.co/docs/reference/apm/agents/php/set-up-apm-php-agent.
@@ -14,11 +16,15 @@ slug: /instrumentation/elastic/php-laravel
    elastic_apm.service_name = "<app_name>"
    # send traces to CubeAPM
    elastic_apm.server_url = "http://<ip_address_of_cubeapm_server>:3130"
+   # optional, only for multi-account routing - see below
+   elastic_apm.secret_token = "<secret_token>"
    # optional settings
    elastic_apm.environment = "UNSET"
    elastic_apm.service_version = "1.2.3"
    elastic_apm.global_labels = "mykey1=myvalue1,mykey2=myvalue2"
    ```
+
+1. <AccountRouting />
 
 ## Sample App
 
