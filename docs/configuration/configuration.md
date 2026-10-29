@@ -148,6 +148,16 @@ alertmanager.jira.user-email=
 # Format: team1:token1,team2:token2,...,teamN:tokenN
 alertmanager.opsgenie.tokens=
 
+# Enable the Google Chat app, for choosing spaces and people to mention in Google Chat alert notifications.
+# Credentials are read from alertmanager.googlechat.credentials-file if set, else from Application Default Credentials.
+# See https://cloud.google.com/docs/authentication/application-default-credentials
+alertmanager.googlechat.app-enabled=false
+
+# Path to credentials json of the service account of a Google Chat app. Used only if alertmanager.googlechat.app-enabled is set.
+# Accepts a service account key, an impersonated service account or a workload identity federation config.
+# See https://developers.google.com/workspace/chat/authenticate-authorize-chat-app
+alertmanager.googlechat.credentials-file=
+
 # URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
 # Example:
 #  smtp.url=smtp://<username>:<password>@<mailserver>:25/?disable_starttls=false
