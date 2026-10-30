@@ -103,6 +103,10 @@ Google only lets people add a Chat app to spaces if the app has an endpoint that
    }
    ```
 
+:::info
+`timeZone` here is the script's time zone, which Apps Script uses only for date and time functions. We currently don't use any, so the timeZone setting does not matter. Alerts are posted via the Chat API rather than the script, so this setting does not affect alert notifications in any way.
+:::
+
 1. Go to **Project Settings** → **Google Cloud Platform (GCP) Project**, click on **Change project**, enter the **project number** from step 1, and click on **Set project** button.
 
 1. Click on **Deploy** → **New deployment**. Click on the gear icon next to **Select type**, and select **Add-on**. Fill `CubeAPM v1` for description, and click on **Deploy** button. Authorize the script if asked.
@@ -128,6 +132,11 @@ In the Google Cloud Console, go to **APIs & Services** → **Google Chat API** �
 | Triggers             | Keep the defaults: `onAddedToSpace`, `onMessage`, `onRemovedFromSpace`, `onAppCommand`                                                 |
 | Visibility           | Select **Make this Chat app available to specific people and groups in your domain**, and add the people or groups who will add it to spaces |
 | Logs                 | Tick **Log errors to Logging**                                                                                                         |
+
+<!-- Note: For Visibility, there are two options:
+1. We can mention specific people or groups, which we are using now. (E.g. atul@cubeapm.com, tech@cubeapm.com, etc.)
+2. The whole domain. For this, we have to publish the app privately to the organization through the Google Workspace Marketplace SDK, which means an extra store listing and admin approval.
+-->
 
 Click on **Save** button.
 

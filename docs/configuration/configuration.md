@@ -132,6 +132,16 @@ alertmanager.oauth.pagerduty.app-id=
 # Bot user OAuth token for sending alert notifications on Slack. Slack bot tokens start with 'xoxb'.
 alertmanager.oauth.slack.token=
 
+# Enable the Google Chat app, for choosing spaces and people to mention in Google Chat alert notifications.
+# Credentials are read from alertmanager.googlechat.credentials-file if set, else from Application Default Credentials.
+# See https://cloud.google.com/docs/authentication/application-default-credentials
+alertmanager.googlechat.app-enabled=false
+
+# Path to credentials json of the service account of a Google Chat app. Used only if alertmanager.googlechat.app-enabled is set.
+# Accepts a service account key, an impersonated service account or a workload identity federation config.
+# See https://developers.google.com/workspace/chat/authenticate-authorize-chat-app
+alertmanager.googlechat.credentials-file=
+
 # Name of the site for sending alert notifications on Jira. If you access Jira on https://youraccountid.atlassian.net, the site name is youraccountid.
 alertmanager.jira.site-name=
 
@@ -147,16 +157,6 @@ alertmanager.jira.user-email=
 # API tokens for sending alert notifications on Opsgenie.
 # Format: team1:token1,team2:token2,...,teamN:tokenN
 alertmanager.opsgenie.tokens=
-
-# Enable the Google Chat app, for choosing spaces and people to mention in Google Chat alert notifications.
-# Credentials are read from alertmanager.googlechat.credentials-file if set, else from Application Default Credentials.
-# See https://cloud.google.com/docs/authentication/application-default-credentials
-alertmanager.googlechat.app-enabled=false
-
-# Path to credentials json of the service account of a Google Chat app. Used only if alertmanager.googlechat.app-enabled is set.
-# Accepts a service account key, an impersonated service account or a workload identity federation config.
-# See https://developers.google.com/workspace/chat/authenticate-authorize-chat-app
-alertmanager.googlechat.credentials-file=
 
 # URL of SMTP server for sending emails, e.g., reset password email, alert notifications.
 # Example:
