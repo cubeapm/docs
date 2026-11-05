@@ -4,6 +4,8 @@ title: "Ruby Rails"
 slug: /instrumentation/opentelemetry/ruby-rails
 ---
 
+import AccountRouting from './_account_routing.mdx';
+
 ## Prerequisites
 
 - CRuby >= 3.0, JRuby >= 9.3.2.0, or TruffleRuby >= 22.1
@@ -39,9 +41,12 @@ slug: /instrumentation/opentelemetry/ruby-rails
    OTEL_LOGS_EXPORTER=none \
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    bin/rails server
    ```
+
+1. <AccountRouting />
 
 ## Sample App
 

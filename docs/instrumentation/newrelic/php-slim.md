@@ -5,6 +5,7 @@ slug: /instrumentation/newrelic/php-slim
 ---
 
 import ProxySetup from './\_proxy_setup.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -44,6 +45,8 @@ Following are the steps to install the New Relic agent and connect it with CubeA
    ; don't report E_WARNING as errors (optional)
    newrelic.error_collector.ignore_errors = E_WARNING
    ```
+
+1. <AccountRouting />
 
 ## Sample App
 

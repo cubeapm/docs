@@ -4,6 +4,8 @@ title: "Python Django uWSGI"
 slug: /instrumentation/opentelemetry/python-django-uwsgi
 ---
 
+import AccountRouting from './_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3
@@ -100,11 +102,15 @@ Python 3
    OTEL_LOGS_EXPORTER=none \
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
+   OTEL_EXPORTER_OTLP_METRICS_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    uwsgi --module=mysite.wsgi:application --http=127.0.0.1:8000 --master --need-app
    ```
+
+4. <AccountRouting />
 
 ## Sample Application
 

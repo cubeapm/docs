@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/java
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './_account_routing.mdx';
 
 ## Installation
 
@@ -23,6 +24,8 @@ import TabItem from '@theme/TabItem';
           ELASTIC_APM_SERVICE_NAME=<app_name>
           # send traces to CubeAPM
           ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+          # optional, only for multi-account routing - see below
+          ELASTIC_APM_SECRET_TOKEN=<secret_token>
 
           # capture jvm non-heap buffer pool metrics (optional but recommended)
           ELASTIC_APM_CAPTURE_JMX_METRICS=object_name[java.nio:type=BufferPool,name=*] attribute[*]
@@ -39,6 +42,8 @@ import TabItem from '@theme/TabItem';
     :::info
     Elastic APM Java agent also supports ELASTIC_APM_SERVER_URLS environment variable, which can be used to specify multiple urls. CubeAPM does not support it, so it should not be used with CubeAPM. In fact, Elastic APM's own documentation recommends against using it.
     :::
+
+1.  <AccountRouting />
 
 ## Sample App
 

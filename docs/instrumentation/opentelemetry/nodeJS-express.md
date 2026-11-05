@@ -4,6 +4,8 @@ title: "NodeJS Express"
 slug: /instrumentation/opentelemetry/nodejs-express
 ---
 
+import AccountRouting from './_account_routing.mdx';
+
 ## Installation
 
 1. Install dependencies
@@ -63,12 +65,16 @@ slug: /instrumentation/opentelemetry/nodejs-express
    OTEL_LOGS_EXPORTER=none \
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
+   OTEL_EXPORTER_OTLP_METRICS_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \
    node app.js
    ```
+
+1. <AccountRouting />
 
 :::info
 If the application is running in PM2 cluster mode, then setting NODE_OPTIONS does not work. In this case, add `require('./tracing.js');` as the first line in your application code.

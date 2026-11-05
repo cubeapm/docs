@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/go-net-http
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './_account_routing.mdx';
 
 ## Prerequisites
 
@@ -53,6 +54,8 @@ import TabItem from '@theme/TabItem';
          ELASTIC_APM_SERVICE_NAME=<app_name>
          # send traces to CubeAPM
          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+         # optional, only for multi-account routing - see below
+         ELASTIC_APM_SECRET_TOKEN=<secret_token>
          # optional settings
          ELASTIC_APM_ENVIRONMENT=myenv
          ELASTIC_APM_SERVICE_VERSION=1.2.3
@@ -60,6 +63,8 @@ import TabItem from '@theme/TabItem';
          ```
       </TabItem>  
    </Tabs>
+
+1. <AccountRouting />
 
 ## Sample Application
 
