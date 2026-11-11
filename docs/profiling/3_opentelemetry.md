@@ -1,14 +1,14 @@
 ---
-sidebar_position: 1
+sidebar_position: 3
 sidebar_label: OpenTelemetry
 slug: /profiling/opentelemetry
 ---
 
 # Profiling with the OpenTelemetry eBPF profiler
 
-CubeAPM accepts CPU profiles from the official OpenTelemetry eBPF profiler. The profiler runs once per host, samples every process on it from the kernel, and sends profiles to CubeAPM over OTLP. Your applications need no code change, no agent and no restart.
+CubeAPM accepts CPU profiles from the official OpenTelemetry eBPF profiler. The profiler runs once per host, samples every process on it from the kernel, and sends profiles to CubeAPM over OTLP. Your applications need no code change and no agent.
 
-Profiles show up on the CubeAPM Profiles page with the source **OpenTelemetry**: flame graph, top methods and comparison between time ranges.
+Profiles show up on the CubeAPM **Profiles** page with the source **OpenTelemetry**. See [Explore profiles](./4_explore.md) for what you can do with them.
 
 ## What you get
 
@@ -26,7 +26,7 @@ Not available with this profiler:
 - the per-endpoint breakdown;
 - symbol names for native C, C++ and Rust code.
 
-For those, use a language profiler such as [Datadog's](../instrumentation/datadog/datadog.md), which CubeAPM also accepts.
+For those, use a language profiler such as [Datadog's](./1_datadog.md), which CubeAPM also accepts.
 
 Not supported: Windows, macOS, and platforms that do not allow privileged pods or containers (for example AWS Fargate and GKE Autopilot).
 
@@ -57,7 +57,7 @@ A partial success on every export is normal. It lists what CubeAPM dropped and w
 :::
 
 :::warning
-Send profiles straight from the profiler to CubeAPM, not through an OpenTelemetry Collector. Current Collector versions lose resource attributes when they decode and re-encode profiles, and CubeAPM then sees no service names.
+Send profiles straight from the profiler to CubeAPM, not through an OpenTelemetry Collector. That is the setup we test. OpenTelemetry Collector versions 0.152 to 0.160 lose resource attributes when they decode and re-encode profiles, and CubeAPM then sees no service names. If you put a Collector in between, check that your profiles still show their service names.
 :::
 
 ## Before you start
@@ -372,7 +372,7 @@ A process on a VM is named in one of two ways:
   Environment=OTEL_SERVICE_NAME=billing-worker
   ```
 
-  Then restart the service. This works for Python, PHP CLI, Node.js, Java, .NET, Go and Ruby processes, and is the only way to tell apart two services that run the same interpreter binary (two Python apps both run `python3`).
+  Then restart the service. This works for Python, PHP CLI, Node.js, Java, .NET, Go and Ruby processes, and is how you tell apart two services that run the same interpreter binary (two Python apps both run `python3`). Setting `service.name` in `OTEL_RESOURCE_ATTRIBUTES` works too.
 
 - **By executable, with a rule in `transform`,** as in the example above. Use this for **php-fpm**, which overwrites its own environment, for **Apache with mod_php** (`apache2`, or `httpd` on Red Hat systems), and for any process you cannot restart with a new variable. Find the executable name with `basename $(readlink /proc/<pid>/exe)`, for example `php-fpm8.3` on Ubuntu 24.04 or `php-fpm` on other systems. Add one statement per service.
 
@@ -425,16 +425,16 @@ Give it a minute after the profiler starts.
 
 ## Languages
 
-What the profiler can read differs by language and version. CubeAPM stores every profile that carries frames of a supported language.
+What the profiler can read differs by language and version. CubeAPM stores the CPU profiles of named processes that carry frames of a supported language, within the limits in [Settings in CubeAPM](#settings-in-cubeapm).
 
 | Language | Works well | Weak or not supported |
 |---|---|---|
 | Python (CPython) | 3.12 tested; the profiler reads 3.6 to 3.14 | |
 | Java (HotSpot) | 17, 21, 25; 8 and 11 on x86_64 | 8 and 11 on arm64 (few Java frames). OpenJ9 and GraalVM native images not supported |
-| Node.js | 18, 20, 22 on glibc images | Alpine (musl) images show about 40% of frames; `apk add musl-dbg` raises it to about 90% on x86_64. Node 24 mostly unnamed |
+| Node.js | 18, 20, 22 on glibc images | Alpine (musl) images lose many Node.js frames. Adding `musl-dbg` to the image helped on x86_64 in our tests; restart the profiler after you deploy it. Node 24 mostly unnamed |
 | .NET | 8, 9, 10 | Small methods the JIT inlines do not show; on x86_64 upper frames often show as addresses. NativeAOT not supported |
 | Go | 1.26, 1.27, also stripped binaries | |
-| PHP | 7.4, 8.1, 8.2, 8.3, 8.4, 8.5; CLI, php-fpm and Apache mod_php; opcache JIT on or off; in containers and on VMs; x86_64 and arm64 | Alpine (musl) images show about 40% of frames; on x86_64 `apk add musl-dbg` in the image brings it to 100%, on arm64 it does not help. The php-fpm master process runs no PHP and does not show |
+| PHP | 7.4, 8.1, 8.2, 8.3, 8.4, 8.5; CLI, php-fpm and Apache mod_php; opcache JIT on or off; in containers and on VMs; x86_64 and arm64 | Alpine (musl) images lose many PHP frames. `apk add musl-dbg` in the image fixed it on x86_64 in our tests, but not on arm64. The php-fpm master process runs no PHP and does not show |
 | Ruby | 3.3, 3.4, 4.0 with the option below | 3.2 shows no Ruby frames |
 
 **Ruby 3.3 and newer:** without this option, about half of the samples have no Ruby frames. Set it in the profiler configuration:
@@ -454,7 +454,7 @@ The profiler logs CubeAPM's answer for each export.
 | Answer | Meaning | What to do |
 |---|---|---|
 | `Partial success response` with a message such as `3 of 7 profiles rejected: 2 resource profiles missing service.name; 1 profile from an unsupported runtime` | Some processes stored, the rest dropped | Nothing, if your services show up. Unnamed and system processes are always among the dropped ones |
-| `all profiles in the request were rejected` (HTTP 400) | Nothing in this export could be used | If it keeps happening, naming is not working: check the processor is in the pipeline and, on Kubernetes, the RBAC |
+| `all profiles in the request were rejected` (HTTP 400), followed by the reasons | Nothing in this export could be used | Read the reasons (table below). If it keeps happening with `missing service.name` or `missing container.id and host.name`, naming is not working: check the processor is in the pipeline and, on Kubernetes, the RBAC |
 | HTTP 404 or `Unimplemented` | This CubeAPM does not accept OpenTelemetry profiles, or they are switched off | Upgrade CubeAPM, or turn `profiles.otlp.disable` off |
 | HTTP 415 | The HTTP exporter sends JSON | Remove `encoding: json` |
 | HTTP 503 or `Unavailable`, `profiles admission gate full` | CubeAPM is at its limit of concurrent profile uploads | None; the profiler retries. If constant, raise `profiles.otlp.max-concurrent-uploads` (up to 16) |
@@ -469,6 +469,7 @@ Reasons in the partial-success message:
 | `missing container.id` | Older CubeAPM versions, which accept only processes in containers. Upgrade CubeAPM to profile processes on a VM |
 | `from an unsupported runtime` | A process with no frames of a supported language, for example a native daemon |
 | `with an unsupported sample type` | Off-CPU or another non-CPU profile; only CPU is stored |
+| `over the translation budget` | The export was too large to convert in full. Not expected with normal settings; contact CubeAPM support if you see it often |
 
 ## Troubleshooting
 
@@ -486,10 +487,10 @@ Reasons in the partial-success message:
 
 ## Settings in CubeAPM
 
-These go in the CubeAPM [configuration file](../configuration/configuration.md):
+These go in the CubeAPM [configuration file](/configure):
 
 ```properties
-# Stop accepting OpenTelemetry profiles (uploads get 404). Traces are not affected.
+# Set to true to stop accepting OpenTelemetry profiles (uploads then get 404). Traces are not affected.
 profiles.otlp.disable=false
 
 # Profile uploads handled at once, 1 to 16.
@@ -501,11 +502,13 @@ profiles.retention=168h
 
 Fixed limits:
 - 1 MiB per export after decompression; real exports are tens of kilobytes;
-- 512 processes per export.
+- 512 processes, 512 profiles and 32,768 samples per export.
+
+If one export holds more profiles than CubeAPM can convert at once, the rest are dropped and the partial-success message says `over the translation budget`.
 
 ## FAQ
 
-**Can I send the profiles through my own OpenTelemetry Collector?** No. Send them straight from the profiler to CubeAPM. Current Collector versions lose resource attributes when they decode and re-encode profiles, and CubeAPM then sees no service names.
+**Can I send the profiles through my own OpenTelemetry Collector?** We recommend sending them straight from the profiler to CubeAPM. That is the setup we test. OpenTelemetry Collector versions 0.152 to 0.160 lose resource attributes when they decode and re-encode profiles, and CubeAPM then sees no service names. If you put a Collector in between, check that your profiles still show their service names.
 
 **How much data is this?** About one record per profiled process every 5 seconds, a few kilobytes each.
 
