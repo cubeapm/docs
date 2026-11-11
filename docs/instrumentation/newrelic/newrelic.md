@@ -18,10 +18,6 @@ However, there is one more thing that needs to be taken care of. New Relic agent
 
 That's it! New Relic agents can now be used to send data to CubeAPM.
 
-:::tip
-The New Relic Java agent can also send continuous profiles (JFR) to CubeAPM. See [Profiling > New Relic Java](/profiling/newrelic).
-:::
-
 ![CubeAPM with New Relic](/img/new-relic.svg)
 
 :::info
