@@ -20,7 +20,7 @@ Elastic has donated their profiling code to OTel, and now recommends using OTel 
 
 ## New Relic
 
-As of year 2026, New Relic has mature profiling support for Java, and _early preview_ support for some other languages, with more coverage planned over time. CubeAPM, at present, supports profiling with New Relic only for Java. Support for other languages will be added as they mature.
+As of November 2026, New Relic has mature profiling support for Java, and _early preview_ support for some other languages, with more coverage planned over time. CubeAPM, at present, supports profiling with New Relic only for Java. Support for other languages will be added as they mature.
 
 Profiling support is built into the New Relic agents themselves, so no separate integration is required. Only some config changes are needed to start profiling with New Relic agents.
 

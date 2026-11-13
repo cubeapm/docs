@@ -4,81 +4,57 @@ sidebar_label: OpenTelemetry
 slug: /profiling/opentelemetry
 ---
 
-# Profiling with the OpenTelemetry eBPF profiler
+# Profiling with OpenTelemetry eBPF profiler
 
-CubeAPM accepts CPU profiles from the official OpenTelemetry eBPF profiler. The profiler runs once per host, samples every process on it from the kernel, and sends profiles to CubeAPM over OTLP. Your applications need no code change and no agent.
+OpenTelemetry (OTel) supports profiling via their eBPF agents. eBPF collects profiling data directly from the Linux kernel, and hence it can collect profiling data even when the application is not instrumented with OTel, or is not instrumented at all. This also means that eBPF integration does not require any changes to the application code at all. However, Profiling is in relatively early stages of development at OTel, and hence the capabilities are limited at present - it only supports CPU profiling and not memory, locks, etc.
 
-Profiles show up on the CubeAPM **Profiles** page with the source **OpenTelemetry**. See [Explore profiles](./4_explore.md) for what you can do with them.
+OTel is the recommended method for getting baseline profiling support for all applications irrespective of programming language and tracing integration method.
 
-## What you get
+OpenTelemetry eBPF profiler runs one process per host (virtual machine or k8s node), samples every process on it from the kernel, and sends profiles to CubeAPM over OTLP.
 
-| Area | Support |
-|---|---|
-| Profile type | CPU (on-CPU sampling, 20 samples a second per CPU) |
-| Where your services run | Kubernetes, a Docker host, or directly on a Linux VM |
-| Languages | Python, Java (HotSpot), Node.js, .NET, Go, PHP, Ruby. See [Languages](#languages) |
-| Linux | Kernel 5.10 or newer, x86_64 or arm64. Tested on Ubuntu 24.04 (kernel 7.0) and Amazon Linux 2023 (kernel 6.1) |
-| Transport | OTLP/gRPC (port 4317) or OTLP/HTTP (port 4318), protobuf |
+## Coverage
+
+| Area         | Support                                                                           |
+| ------------ | --------------------------------------------------------------------------------- |
+| Profile type | CPU (on-CPU sampling)                                                             |
+| Languages    | .NET, Go, Java (HotSpot), Node.js, PHP, Python, Ruby. See [Languages](#languages) |
+| Linux        | Kernel 5.10 or newer, x86_64 or arm64                                             |
 
 Not available with this profiler:
+
 - memory, allocation, lock or wall-clock profiles;
 - the link from a trace to its profile;
 - the per-endpoint breakdown;
 - symbol names for native C, C++ and Rust code.
 
-For those, use a language profiler such as [Datadog's](./1_datadog.md), which CubeAPM also accepts.
-
 Not supported: Windows, macOS, platforms that do not allow root pods in the host PID namespace with extra capabilities (for example AWS Fargate and GKE Autopilot), and local clusters whose nodes are themselves containers, such as kind or minikube with the docker driver.
 
 ## How it works
 
-```
-your hosts                                   CubeAPM
-+--------------------------------+
-| app processes                  |
-|      ^ sampled from the kernel |
-| otelcol-ebpf-profiler          | --OTLP-->  port 4317 (gRPC) or 4318 (HTTP)
-|   names each process           |            keeps processes with a name,
-|   (service.name, host.name)    |            stores one profile per process
-+--------------------------------+            every ~5 seconds
-```
+The profiler sends one profile per process about few seconds. Each carries the process id, the executable, and the container id when the process runs in a container.
 
-The profiler sends one profile per process about every 5 seconds. Each carries the process id, the executable, and the container id when the process runs in a container.
+CubeAPM keeps a profile when it has:
 
-CubeAPM keeps a process when it has:
 - a `service.name`;
 - a process id;
 - a container id, or for a process running directly on a VM, a `host.name`.
 
-Everything else the profiler sees (system daemons, unnamed processes) is dropped and reported back to the profiler as a partial success.
+Everything else that CubeAPM sees (system daemons, unnamed processes) is dropped and reported back to the profiler as a partial success.
 
 :::info
 A partial success on every export is normal. It lists what CubeAPM dropped and why.
 :::
 
 :::warning
-Send profiles straight from the profiler to CubeAPM, not through an OpenTelemetry Collector. That is the setup we test. OpenTelemetry Collector versions 0.152 to 0.160 lose resource attributes when they decode and re-encode profiles, and CubeAPM then sees no service names. If you put a Collector in between, check that your profiles still show their service names.
+Send profiles straight from the profiler to CubeAPM, not through an OTel Collector. OTel Collector (at least till v0.160) loses resource attributes when it decodes and re-encodes profiles, and Cu
+beAPM then sees no service names.
 :::
 
 ## Before you start
 
-1. **CubeAPM version.** Check that your CubeAPM accepts OpenTelemetry profiles. An empty upload is a valid no-op:
+1. **Privileges.** The profiler needs root in the host PID namespace: on Kubernetes the Helm chart sets this up, on a Docker host a privileged container, on a VM a root service.
 
-   ```shell
-   curl -s -o /dev/null -w '%{http_code}\n' -X POST \
-     -H 'Content-Type: application/x-protobuf' --data-binary '' \
-     http://<ip_address_of_cubeapm_server>:4318/v1development/profiles
-   ```
-
-   `200` means it does. `404` means this CubeAPM version does not, or OpenTelemetry profiles are switched off (`profiles.otlp.disable`).
-
-2. **Network.** Every host must reach CubeAPM on port 4317 (gRPC) or 4318 (HTTP).
-
-3. **License key.** Use the same key your other agents send to CubeAPM. It goes in the `x-cube-token` header. Without a key, or with a key CubeAPM does not know, data lands in the default account.
-
-4. **Privileges.** The profiler needs root in the host PID namespace: on Kubernetes the Helm chart sets this up, on a Docker host a privileged container, on a VM a root service.
-
-5. **Profiler version.** Use 0.164.0, as below. This page is tested with that version.
+1. **Profiler version.** Use 0.164.0, as below. This page is tested with that version.
 
 :::warning
 The OpenTelemetry profiles format is still alpha and changes between releases. Pin the profiler version, and test a newer one before you roll it out.
@@ -88,23 +64,16 @@ The OpenTelemetry profiles format is still alpha and changes between releases. P
 
 One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Collector Helm chart and its `profiling` preset. The chart runs the profiler image itself, so there is no separate Collector in between. Service names come from Kubernetes metadata. Nodes with taints need matching `tolerations` in the values.
 
-1. Create the namespace and the key secret:
-
-   ```shell
-   kubectl create namespace otel-profiler
-   kubectl -n otel-profiler create secret generic cube-token --from-literal=token='<your_license_key>'
-   ```
-
-2. Add the chart repository:
+1. Add the chart repository:
 
    ```shell
    helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
    helm repo update open-telemetry
    ```
 
-3. Save this as `profiler-values.yaml` and set your CubeAPM address:
+1. Copy the files below and save as `profiler-values.yaml`. Edit it to set your CubeAPM address.
 
-   ```yaml
+   ```yaml title="profiler-values.yaml"
    mode: daemonset
 
    image:
@@ -122,17 +91,17 @@ One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Co
 
    # Turns off the chart's default host ports (4317, 4318, 6831, 9411, 14250, 14268). The profiler does not use them.
    ports:
-     otlp: {enabled: false}
-     otlp-http: {enabled: false}
-     jaeger-compact: {enabled: false}
-     jaeger-thrift: {enabled: false}
-     jaeger-grpc: {enabled: false}
-     zipkin: {enabled: false}
+     otlp: { enabled: false }
+     otlp-http: { enabled: false }
+     jaeger-compact: { enabled: false }
+     jaeger-thrift: { enabled: false }
+     jaeger-grpc: { enabled: false }
+     zipkin: { enabled: false }
 
    extraEnvs:
      - name: CUBE_TOKEN
        valueFrom:
-         secretKeyRef: {name: cube-token, key: token}
+         secretKeyRef: { name: cube-token, key: token }
 
    config:
      receivers:
@@ -146,13 +115,9 @@ One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Co
        k8s_attributes:
          wait_for_metadata: true
      exporters:
-       otlp_grpc/cube:
-         endpoint: "<ip_address_of_cubeapm_server>:4317"
-         tls:
-           insecure: true
+       otlp_http/cube:
+         profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
          compression: gzip
-         headers:
-           x-cube-token: "${env:CUBE_TOKEN}"
      service:
        pipelines:
          traces: null
@@ -161,24 +126,15 @@ One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Co
          profiles:
            receivers: [profiling]
            processors: [k8s_attributes]
-           exporters: [otlp_grpc/cube]
+           exporters: [otlp_http/cube]
    ```
 
-4. Install it:
+1. Install it:
 
    ```shell
    helm install otel-profiler open-telemetry/opentelemetry-collector --version 0.178.3 \
-     -n otel-profiler -f profiler-values.yaml
+     -f profiler-values.yaml
    ```
-
-5. Check that it started:
-
-   ```shell
-   kubectl -n otel-profiler rollout status ds/otel-profiler-opentelemetry-collector-agent --timeout=300s
-   kubectl -n otel-profiler logs ds/otel-profiler-opentelemetry-collector-agent | grep -E 'eBPF tracer loaded|Everything is ready|Exporting failed'
-   ```
-
-   You want `eBPF tracer loaded` and `Everything is ready`, and no `Exporting failed`. `kubectl -n otel-profiler get pods -o wide` should show one running pod per node. A warning at startup that `container.image.tag is configured but will NOT be emitted` comes from the chart's defaults and can be ignored. Then [check that it works](#check-that-it-works) in CubeAPM.
 
 What the presets set up:
 
@@ -188,34 +144,6 @@ What the presets set up:
 :::info
 Keep the `ports` block. Without it, the profiler pods stay `Pending` on nodes where another OpenTelemetry Collector DaemonSet already uses these host ports, for example the one from [Kubernetes infra monitoring](/infra-monitoring/kubernetes).
 :::
-
-**OTLP/HTTP instead of gRPC.** Some proxies and load balancers only pass HTTP/1.1. In that case, in `profiler-values.yaml`, replace the `otlp_grpc/cube` exporter under `config.exporters` with:
-
-```yaml
-config:
-  exporters:
-    otlp_http/cube:
-      profiles_endpoint: "http://<ip_address_of_cubeapm_server>:4318/v1development/profiles"
-      compression: gzip
-      headers:
-        x-cube-token: "${env:CUBE_TOKEN}"
-```
-
-Then set `exporters: [otlp_http/cube]` in the profiles pipeline and apply the change. The pods restart with the new configuration:
-
-```shell
-helm upgrade otel-profiler open-telemetry/opentelemetry-collector --version 0.178.3 \
-  -n otel-profiler -f profiler-values.yaml
-```
-
-**Without a license key** (single-account CubeAPM): skip the secret, and remove the `extraEnvs` and `headers:` blocks.
-
-**To remove the profiler:**
-
-```shell
-helm uninstall otel-profiler -n otel-profiler
-kubectl delete namespace otel-profiler
-```
 
 ### Service names on Kubernetes
 
@@ -251,20 +179,16 @@ For a host without Kubernetes that runs a single containerized service, with any
            action: upsert
 
    exporters:
-     otlp_grpc/cube:
-       endpoint: "<ip_address_of_cubeapm_server>:4317"
-       tls:
-         insecure: true
+     otlp_http/cube:
+       profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
        compression: gzip
-       headers:
-         x-cube-token: "<your_license_key>"
 
    service:
      pipelines:
        profiles:
          receivers: [profiling]
          processors: [resource]
-         exporters: [otlp_grpc/cube]
+         exporters: [otlp_http/cube]
    ```
 
 2. Run the profiler:
@@ -290,7 +214,7 @@ For services that run directly on a VM, for example php-fpm, a PHP worker or a P
 
 Save this as `/etc/otel-profiler/config.yaml`, with your CubeAPM address, key and naming rules:
 
-```yaml
+```yaml title="config.yaml"
 receivers:
   profiling: {}
 
@@ -308,20 +232,16 @@ processors:
           - set(attributes["service.name"], "shop-web") where attributes["process.executable.name"] == "apache2"
 
 exporters:
-  otlp_grpc/cube:
-    endpoint: "<ip_address_of_cubeapm_server>:4317"
-    tls:
-      insecure: true
+  otlp_http/cube:
+    profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
     compression: gzip
-    headers:
-      x-cube-token: "<your_license_key>"
 
 service:
   pipelines:
     profiles:
       receivers: [profiling]
       processors: [resource_detection, transform]
-      exporters: [otlp_grpc/cube]
+      exporters: [otlp_http/cube]
 ```
 
 `resource_detection` adds the VM's host name. It must be unique among your VMs, which it normally is.
@@ -330,14 +250,8 @@ service:
 
 A process on a VM is named in one of two ways:
 
-- **By its own `OTEL_SERVICE_NAME`.** The profiler reads it from the process environment. Set it in the service's systemd unit, for example with `systemctl edit my-worker`:
-
-  ```ini
-  [Service]
-  Environment=OTEL_SERVICE_NAME=billing-worker
-  ```
-
-  Then restart the service. This works for Python, PHP CLI, Node.js, Java, .NET, Go and Ruby processes, and is how you tell apart two services that run the same interpreter binary (two Python apps both run `python3`). Setting `service.name` in `OTEL_RESOURCE_ATTRIBUTES` works too.
+- **By its own `OTEL_SERVICE_NAME`.** The profiler reads it from the process environment. This works for Python, PHP CLI, Node.js, Java, .NET, Go and Ruby processes, and is how you tell apart two
+  services that run the same interpreter binary (two Python apps both run `python3`). Setting `service.name` in `OTEL_RESOURCE_ATTRIBUTES` works too.
 
 - **By executable, with a rule in `transform`,** as in the example above. Use this for **php-fpm**, which overwrites its own environment, for **Apache with mod_php** (`apache2`, or `httpd` on Red Hat systems), and for any process you cannot restart with a new variable. Find the executable name with `basename $(readlink /proc/<pid>/exe)`, for example `php-fpm8.3` on Ubuntu 24.04 or `php-fpm` on other systems. Add one statement per service.
 
@@ -377,30 +291,19 @@ Check it: `sudo journalctl -u otel-ebpf-profiler | grep -E 'eBPF tracer loaded|E
 
 After a configuration change, restart the profiler (`sudo systemctl restart otel-ebpf-profiler`).
 
-## Check that it works
-
-Give it a minute after the profiler starts.
-
-1. **Profiler log:** `eBPF tracer loaded`, then `Everything is ready`. After that, a `Partial success response` warning on most exports is normal: it lists what CubeAPM dropped and why. `Exporting failed` is not normal.
-2. **CubeAPM:**
-   - Open the Profiles page and set the environment picker to `UNSET`; these profiles carry no environment by default.
-   - Filter on `profile.source` = `opentelemetry` and your `service`.
-   - Each row shows the container's short id and process id, or on a VM the executable and process id; the host has its own column.
-   - Open a row for its flame graph.
-
 ## Languages
 
-What the profiler can read differs by language and version. CubeAPM stores the CPU profiles of named processes that carry frames of a supported language, within the limits in [Settings in CubeAPM](#settings-in-cubeapm).
+What the profiler can read differs by language and version.
 
-| Language | Works well | Weak or not supported |
-|---|---|---|
-| Python (CPython) | 3.12 tested; the profiler reads 3.6 to 3.14 | |
-| Java (HotSpot) | 17, 21, 25; 8 and 11 on x86_64 | 8 and 11 on arm64 (few Java frames). OpenJ9 and GraalVM native images not supported |
-| Node.js | 18, 20, 22 on glibc images | Alpine (musl) images lose many Node.js frames. Adding `musl-dbg` to the image helped on x86_64 in our tests; restart the profiler after you deploy it. Node 24 mostly unnamed |
-| .NET | 8, 9, 10 | Small methods the JIT inlines do not show; on x86_64 upper frames often show as addresses. NativeAOT not supported |
-| Go | 1.26, 1.27, also stripped binaries | |
-| PHP | 7.4, 8.1, 8.2, 8.3, 8.4, 8.5; CLI, php-fpm and Apache mod_php; opcache JIT on or off; in containers and on VMs; x86_64 and arm64 | Alpine (musl) images lose many PHP frames. `apk add musl-dbg` in the image fixed it on x86_64 in our tests, but not on arm64. The php-fpm master process runs no PHP and does not show |
-| Ruby | 3.3, 3.4, 4.0 with the option below | 3.2 shows no Ruby frames |
+| Language         | Works well                                                                                                                       | Weak or not supported                                                                                                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Python (CPython) | 3.12 tested; the profiler reads 3.6 to 3.14                                                                                      |                                                                                                                                                                                        |
+| Java (HotSpot)   | 17, 21, 25; 8 and 11 on x86_64                                                                                                   | 8 and 11 on arm64 (few Java frames). OpenJ9 and GraalVM native images not supported                                                                                                    |
+| Node.js          | 18, 20, 22 on glibc images                                                                                                       | Alpine (musl) images lose many Node.js frames. Adding `musl-dbg` to the image helped on x86_64 in our tests; restart the profiler after you deploy it. Node 24 mostly unnamed          |
+| .NET             | 8, 9, 10                                                                                                                         | Small methods the JIT inlines do not show; on x86_64 upper frames often show as addresses. NativeAOT not supported                                                                     |
+| Go               | 1.26, 1.27, also stripped binaries                                                                                               |                                                                                                                                                                                        |
+| PHP              | 7.4, 8.1, 8.2, 8.3, 8.4, 8.5; CLI, php-fpm and Apache mod_php; opcache JIT on or off; in containers and on VMs; x86_64 and arm64 | Alpine (musl) images lose many PHP frames. `apk add musl-dbg` in the image fixed it on x86_64 in our tests, but not on arm64. The php-fpm master process runs no PHP and does not show |
+| Ruby             | 3.3, 3.4, 4.0 with the option below                                                                                              | 3.2 shows no Ruby frames                                                                                                                                                               |
 
 **Ruby 3.3 and newer:** without this option, about half of the samples have no Ruby frames. Set it in the profiler configuration:
 
@@ -416,69 +319,33 @@ receivers:
 
 The profiler logs CubeAPM's answer for each export.
 
-| Answer | Meaning | What to do |
-|---|---|---|
-| `Partial success response` with a message such as `3 of 7 profiles rejected: 2 resource profiles missing service.name; 1 profile from an unsupported runtime` | Some processes stored, the rest dropped | Nothing, if your services show up. Unnamed and system processes are always among the dropped ones |
-| `all profiles in the request were rejected` (HTTP 400), followed by the reasons | Nothing in this export could be used | Read the reasons (table below). If it keeps happening with `missing service.name` or `missing container.id and host.name`, naming is not working: check the processor is in the pipeline and, on Kubernetes, the RBAC |
-| HTTP 404 or `Unimplemented` | This CubeAPM does not accept OpenTelemetry profiles, or they are switched off | Upgrade CubeAPM, or turn `profiles.otlp.disable` off |
-| HTTP 415 | The HTTP exporter sends JSON | Remove `encoding: json` |
-| HTTP 503 or `Unavailable`, `profiles admission gate full` | CubeAPM is at its limit of concurrent profile uploads | None; the profiler retries. If constant, raise `profiles.otlp.max-concurrent-uploads` (up to 16) |
-| HTTP 413 or `ResourceExhausted` | An export over 1 MiB or over a structural limit | Contact CubeAPM support with the log line |
+| Answer                                                                                                                                                        | Meaning                                               | What to do                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Partial success response` with a message such as `3 of 7 profiles rejected: 2 resource profiles missing service.name; 1 profile from an unsupported runtime` | Some processes stored, the rest dropped               | Nothing, if your services show up. Unnamed and system processes are always among the dropped ones                                                                                                                     |
+| `all profiles in the request were rejected` (HTTP 400), followed by the reasons                                                                               | Nothing in this export could be used                  | Read the reasons (table below). If it keeps happening with `missing service.name` or `missing container.id and host.name`, naming is not working: check the processor is in the pipeline and, on Kubernetes, the RBAC |
+| HTTP 404 or `Unimplemented`                                                                                                                                   | This CubeAPM does not accept OpenTelemetry profiles   | Upgrade CubeAPM                                                                                                                                                                                                       |
+| HTTP 415                                                                                                                                                      | The HTTP exporter sends JSON                          | Remove `encoding: json`                                                                                                                                                                                               |
+| HTTP 503 or `Unavailable`, `profiles admission gate full`                                                                                                     | CubeAPM is at its limit of concurrent profile uploads | None; the profiler retries. If constant, raise `profiles.otlp.max-concurrent-uploads` (up to 16)                                                                                                                      |
+| HTTP 413 or `ResourceExhausted`                                                                                                                               | An export over 1 MiB or over a structural limit       | Contact CubeAPM support with the log line                                                                                                                                                                             |
 
 Reasons in the partial-success message:
 
-| Reason | Meaning |
-|---|---|
-| `missing service.name` | A process that was not named. Expected for system processes |
-| `missing container.id and host.name` | A named process outside a container, from a profiler that sends no host name. On a VM, add `resource_detection` |
-| `missing container.id` | Older CubeAPM versions, which accept only processes in containers. Upgrade CubeAPM to profile processes on a VM |
-| `from an unsupported runtime` | A process with no frames of a supported language, for example a native daemon |
-| `with an unsupported sample type` | Off-CPU or another non-CPU profile; only CPU is stored |
-| `over the translation budget` | The export was too large to convert in full. Not expected with normal settings; contact CubeAPM support if you see it often |
+| Reason                               | Meaning                                                                                                                     |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `missing service.name`               | A process that was not named. Expected for system processes                                                                 |
+| `missing container.id and host.name` | A named process outside a container, from a profiler that sends no host name. On a VM, add `resource_detection`             |
+| `from an unsupported runtime`        | A process with no frames of a supported language, for example a native daemon                                               |
+| `with an unsupported sample type`    | Off-CPU or another non-CPU profile; only CPU is stored                                                                      |
+| `over the translation budget`        | The export was too large to convert in full. Not expected with normal settings; contact CubeAPM support if you see it often |
 
 ## Troubleshooting
 
-| Symptom | Check |
-|---|---|
-| The profiler exits with `failed to load eBPF tracer` | Kernel 5.10 or newer, and the privileges above. On Kubernetes, a non-empty `securityContext` in your values must include the root user and capabilities the chart would add |
-| The profiler exits with `system analysis request was not handled` | A known cause is a node that is itself a container (kind, minikube with the docker driver). Use a real node or VM |
-| The profiler refuses its configuration: `gated under the "service.profilesSupport" feature gate` | Add `--feature-gates=+service.profilesSupport` |
-| The profiler refuses its configuration: `telemetry type is not supported` | Remove any `batch` processor from the profiles pipeline |
-| The profiler exits with a `k8s_attributes` error | The ClusterRole and ClusterRoleBinding the chart creates, and access to the API server |
-| The profiler pods stay `Pending` with `didn't have free ports` | Keep the `ports` block from `profiler-values.yaml` |
-| `Exporting failed` with connection refused or a DNS error | CubeAPM address, port, firewall |
-| Exports succeed but nothing shows | The license key (an unknown key lands in the default account), the environment picker (`UNSET`), the time range |
-| A service is missing | Is it named (see the naming sections)? Is it a supported language? On a VM, does the profiler add `host.name`? |
-| A service has the wrong name | On Kubernetes, the container's own `OTEL_SERVICE_NAME` comes first. On a VM, check your `transform` rules |
-| php-fpm on a VM is missing | Name it by executable; its environment variables are not readable |
-
-## Settings in CubeAPM
-
-These go in the CubeAPM [configuration file](/configure):
-
-```properties
-# Set to true to stop accepting OpenTelemetry profiles (uploads then get 404). Traces are not affected.
-profiles.otlp.disable=false
-
-# Profile uploads handled at once, 1 to 16.
-profiles.otlp.max-concurrent-uploads=8
-
-# How long profiles are kept.
-profiles.retention=168h
-```
-
-Fixed limits:
-- 1 MiB per export after decompression; real exports are tens of kilobytes;
-- 512 processes, 512 profiles and 32,768 samples per export.
-
-If one export holds more profiles than CubeAPM can convert at once, the rest are dropped and the partial-success message says `over the translation budget`.
-
-## FAQ
-
-**Can I send the profiles through my own OpenTelemetry Collector?** We recommend sending them straight from the profiler to CubeAPM. That is the setup we test. OpenTelemetry Collector versions 0.152 to 0.160 lose resource attributes when they decode and re-encode profiles, and CubeAPM then sees no service names. If you put a Collector in between, check that your profiles still show their service names.
-
-**How much data is this?** About one record per profiled process every 5 seconds, a few kilobytes each.
-
-**What does the profiler cost on the host?** It samples each CPU 20 times a second from the kernel. It does not change or restart your processes.
-
-**Can I upgrade the profiler?** Yes, after you test the new version. The OpenTelemetry profiles format is still alpha and changes between releases. This page is tested with 0.164.0.
+| Symptom                                                                                          | Check                                                                                                          |
+| ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| The profiler exits with `failed to load eBPF tracer`                                             | Privileges and kernel: the privileged settings above, kernel 5.10 or newer                                     |
+| The profiler refuses its configuration: `gated under the "service.profilesSupport" feature gate` | Add `--feature-gates=+service.profilesSupport`                                                                 |
+| The profiler refuses its configuration: `telemetry type is not supported`                        | Remove any `batch` processor from the profiles pipeline                                                        |
+| The profiler exits with a `k8s_attributes` error                                                 | The ServiceAccount, ClusterRole and ClusterRoleBinding, and access to the API server                           |
+| A service is missing                                                                             | Is it named (see the naming sections)? Is it a supported language? On a VM, does the profiler add `host.name`? |
+| A service has the wrong name                                                                     | On Kubernetes, the container's own `OTEL_SERVICE_NAME` comes first. On a VM, check your `transform` rules      |
+| php-fpm on a VM is missing                                                                       | Name it by executable; its environment variables are not readable                                              |
