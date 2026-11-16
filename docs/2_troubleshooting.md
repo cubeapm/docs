@@ -174,5 +174,105 @@ After adding the version tag you can see these versions on the **Services** page
 
 -------------------------------------------------------------------------
 
+## Differential Retention
+
+CubeAPM supports two types of retention for logs. One is global-level retention (`logs.retention`), which applies to all logs. The other is differential retention, which lets you keep selected log streams for a shorter period. For example, you can keep `info` logs for 7 days and `error` logs for 30 days or want to keep `Service A` logs for 14 days and `Service B` logs for 30 days etc.
+
+Differential retention rules match logs by [stream fields](./logs/logs.md#streams), such as `service.name`, `env` or `log.level`.
+
+:::note
+Differential retention can only shorten retention. Logs are always deleted once they are older than the global retention period, so set `logs.retention` to the longest period you need.
+:::
+
+:::note
+Differential retention is available for logs only. Traces and profiles use their global retention (`traces.retention`, `profiles.retention`).
+:::
+
+#### How to Configure Differential Retention.
+
+1. Create a YAML file (for example `/etc/cubeapm/retention.yml`) with your retention rules:
+
+    ```yaml
+    logs:
+      # Rules for logs on local disk
+      express:
+        - streams: '{service.name="payment-service"}'
+          retention: 720h
+        - streams: '{log.level="info"}'
+          retention: 168h   # 7 days
+        - streams: '{env in("staging","dev")}'
+          retention: 72h    # 3 days
+      # Rules for archived logs (used only when logs.archive.dir is set)
+      archive:
+        - streams: '{service.name not_in("billing","audit")}'
+          retention: 720h   # 30 days
+    ```
+
+1. Set the path to this file in CubeAPM's config properties file and set the global retention to the longest period you need:
+
+    ```
+    logs.retention=720h
+    retention.config-file=/etc/cubeapm/retention.yml
+    ```
+
+    Or set the environment variable `CUBE_RETENTION_CONFIG_FILE=/etc/cubeapm/retention.yml`.
+
+1. Restart CubeAPM. The file is read only at startup, so restart CubeAPM after every change to it.
+
+#### Rule Options.
+
+| Option | Description |
+| --- | --- |
+| `logs.express` | Rules for logs stored on local disk. |
+| `logs.archive` | Rules for logs stored in the [archive](./logs/archive/archive.md). Used only when `logs.archive.dir` is set. Archive logs without a matching rule are kept for `logs.archive.retention` (default 2160h, i.e. 90 days). |
+| `streams` | Stream filter that selects the logs the rule applies to. Required. |
+| `retention` | How long matching logs are kept before they are deleted. Must be at least `24h` and a multiple of `24h` (e.g. `24h`, `72h`, `168h`). |
+| `retentionForSearch` | Express rules only. After this period, searches for matching logs read from the archive instead of local disk. Must be a multiple of `24h` and not more than `retention`. Defaults to `retention`. Has no effect when the archive is not enabled. |
+
+#### Stream Filter Syntax.
+
+The `streams` value is a stream filter written inside a single pair of braces `{...}`.
+
+| Operator | Example | Matches |
+| --- | --- | --- |
+| `=` | `{service.name="payment"}` | Exact value |
+| `!=` | `{log.level!="error"}` | Any other value, including streams without the field |
+| `=~` | `{log.level=~"(?i)info\|debug"}` | Regex that matches the whole value |
+| `!~` | `{service.name!~"auth-.*"}` | Regex that does not match |
+| `in(...)` | `{env in("staging","dev")}` | Any of the listed values |
+| `not_in(...)` | `{service.name not_in("billing","audit")}` | None of the listed values |
+
+You can combine conditions inside the braces:
+
+- **AND**, with a comma: `{service.name="payment", log.level="info"}`
+- **OR**, with `or`: `{log.level="debug" or service.name="healthcheck"}`
+
+#### Things to Keep in Mind.
+
+- **Only stream fields can be used.** A filter such as `{http.status="500"}` works only if `http.status` is a stream field. Filters on regular log fields or message text (for example `error` or `_msg:~"timeout"`) are rejected.
+- **Use a single brace group.** `{a="x"} or {b="y"}` is invalid. Write `{a="x" or b="y"}` instead.
+- **Values are case-sensitive.** `{log.level="info"}` does not match `INFO`. Use `{log.level=~"(?i)info"}` to match any case.
+- **Regex matches the whole value.** `=~"info"` matches only `info`, not `information`. Use `=~"info.*"` to match a prefix.
+- **Negative operators also match missing fields.** A stream without the `log.level` field matches `{log.level!="error"}` and `{log.level not_in("error")}`.
+- **When rules overlap, the shortest retention wins.** With the example above, a `staging` log with level `info` is kept for 3 days.
+- **Rules apply to all tenants.** You cannot set different rules for different tenants.
+- **Invalid files stop CubeAPM from starting.** Unknown keys, invalid filters or invalid durations (such as `36h`) cause a startup error.
+
+-------------------------------------------------------------------------------------------------------
+
+## Disable sign-in with email and password
+
+By default, users can sign in to CubeAPM using email and password. But you can disable this setting. To get more control over the authentication, you can also use SSO integration.
+
+To disable sign-in with email and password, you need to set the following in the CubeAPM config file.
+
+```yaml
+# Set this to true to disable sign-in with email and password
+auth.method.email.disable=true
+```
+
+After setting this property, restart CubeAPM and you'll not able to see **Login with Email and Password** option on the login page.
+
+-------------------------------------------------------------------------------------------------------
 
 
