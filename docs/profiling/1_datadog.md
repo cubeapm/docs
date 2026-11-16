@@ -262,8 +262,6 @@ If you use more than one CubeAPM account, profiles go to the same account as you
 | Uploads processed at once | `profiles.max-concurrent-uploads`, default twice the number of CPUs. Above it, CubeAPM answers 429 with `Retry-After: 60` |
 | Retention | `profiles.retention`, default 7 days |
 
-See [Profiling > Settings](/profiling#settings) for all CubeAPM settings.
-
 ## Troubleshooting
 
 To see each upload in the CubeAPM log, set `log-level=info` on CubeAPM. A good upload logs `profiles: received datadog profile payload` and then `profiles: datadog profile parsed` with the service and the record types. A rejected one logs `profiles: datadog parse failed` at `warn` level with the reason.
