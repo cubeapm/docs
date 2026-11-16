@@ -28,7 +28,7 @@ Not available with this profiler:
 
 For those, use a language profiler such as [Datadog's](./1_datadog.md), which CubeAPM also accepts.
 
-Not supported: Windows, macOS, and platforms that do not allow privileged pods or containers (for example AWS Fargate and GKE Autopilot).
+Not supported: Windows, macOS, platforms that do not allow root pods in the host PID namespace with extra capabilities (for example AWS Fargate and GKE Autopilot), and local clusters whose nodes are themselves containers, such as kind or minikube with the docker driver.
 
 ## How it works
 
@@ -76,7 +76,7 @@ Send profiles straight from the profiler to CubeAPM, not through an OpenTelemetr
 
 3. **License key.** Use the same key your other agents send to CubeAPM. It goes in the `x-cube-token` header. Without a key, or with a key CubeAPM does not know, data lands in the default account.
 
-4. **Privileges.** The profiler needs root: a privileged container in the host PID namespace, or a root service on a VM.
+4. **Privileges.** The profiler needs root in the host PID namespace: on Kubernetes the Helm chart sets this up, on a Docker host a privileged container, on a VM a root service.
 
 5. **Profiler version.** Use 0.164.0, as below. This page is tested with that version.
 
@@ -86,7 +86,7 @@ The OpenTelemetry profiles format is still alpha and changes between releases. P
 
 ## Kubernetes
 
-One profiler pod per node (DaemonSet). Service names come from Kubernetes metadata.
+One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Collector Helm chart and its `profiling` preset. The chart runs the profiler image itself, so there is no separate Collector in between. Service names come from Kubernetes metadata. Nodes with taints need matching `tolerations` in the values.
 
 1. Create the namespace and the key secret:
 
@@ -95,164 +95,127 @@ One profiler pod per node (DaemonSet). Service names come from Kubernetes metada
    kubectl -n otel-profiler create secret generic cube-token --from-literal=token='<your_license_key>'
    ```
 
-2. Save the profiler configuration as `profiler-config.yaml`:
-
-   ```yaml
-   receivers:
-     profiling: {}
-
-   processors:
-     k8s_attributes:
-       auth_type: serviceAccount
-       wait_for_metadata: true
-       filter:
-         node_from_env_var: KUBE_NODE_NAME
-       extract:
-         otel_annotations: true
-         metadata:
-           - service.name
-           - k8s.namespace.name
-           - k8s.pod.name
-           - k8s.deployment.name
-           - k8s.container.name
-           - container.id
-       pod_association:
-         - sources:
-             - from: resource_attribute
-               name: container.id
-
-   exporters:
-     otlp_grpc/cube:
-       endpoint: "${env:CUBEAPM_HOST}:4317"
-       tls:
-         insecure: true
-       compression: gzip
-       headers:
-         x-cube-token: "${env:CUBE_TOKEN}"
-
-   service:
-     pipelines:
-       profiles:
-         receivers: [profiling]
-         processors: [k8s_attributes]
-         exporters: [otlp_grpc/cube]
-   ```
+2. Add the chart repository:
 
    ```shell
-   kubectl -n otel-profiler create configmap profiler-config --from-file=config.yaml=profiler-config.yaml
+   helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+   helm repo update open-telemetry
    ```
 
-3. Save this as `profiler-daemonset.yaml`, set your CubeAPM address, and apply it with `kubectl apply -f profiler-daemonset.yaml`:
+3. Save this as `profiler-values.yaml` and set your CubeAPM address:
 
    ```yaml
-   apiVersion: v1
-   kind: ServiceAccount
-   metadata:
-     name: ebpf-profiler
-     namespace: otel-profiler
-   ---
-   apiVersion: rbac.authorization.k8s.io/v1
-   kind: ClusterRole
-   metadata:
-     name: otel-profiler-k8s-attributes
-   rules:
-     - apiGroups: [""]
-       resources: ["pods", "namespaces", "nodes"]
-       verbs: ["get", "watch", "list"]
-     - apiGroups: ["apps"]
-       resources: ["replicasets", "deployments", "statefulsets", "daemonsets"]
-       verbs: ["get", "list", "watch"]
-     - apiGroups: ["batch"]
-       resources: ["jobs"]
-       verbs: ["get", "list", "watch"]
-   ---
-   apiVersion: rbac.authorization.k8s.io/v1
-   kind: ClusterRoleBinding
-   metadata:
-     name: otel-profiler-k8s-attributes
-   subjects:
-     - kind: ServiceAccount
-       name: ebpf-profiler
-       namespace: otel-profiler
-   roleRef:
-     kind: ClusterRole
-     name: otel-profiler-k8s-attributes
-     apiGroup: rbac.authorization.k8s.io
-   ---
-   apiVersion: apps/v1
-   kind: DaemonSet
-   metadata:
-     name: ebpf-profiler
-     namespace: otel-profiler
-   spec:
-     selector:
-       matchLabels: {app: ebpf-profiler}
-     template:
-       metadata:
-         labels: {app: ebpf-profiler}
-       spec:
-         serviceAccountName: ebpf-profiler
-         hostPID: true
-         containers:
-           - name: profiler
-             image: otel/opentelemetry-collector-ebpf-profiler:0.164.0@sha256:37a3779edfd51f648dbdcb3dc79194eaf42912e6c6d46e3ad570ff42b2bd3bfe
-             args: ["--config=/etc/otelcol/config.yaml", "--feature-gates=+service.profilesSupport"]
-             env:
-               - name: KUBE_NODE_NAME
-                 valueFrom: {fieldRef: {fieldPath: spec.nodeName}}
-               - name: CUBEAPM_HOST
-                 value: "<ip_address_of_cubeapm_server>"
-               - name: CUBE_TOKEN
-                 valueFrom: {secretKeyRef: {name: cube-token, key: token}}
-             securityContext:
-               privileged: true
-               capabilities: {add: ["SYS_ADMIN", "SYS_RESOURCE", "PERFMON", "BPF"]}
-               appArmorProfile: {type: Unconfined}
-             volumeMounts:
-               - {name: config, mountPath: /etc/otelcol, readOnly: true}
-               - {name: sys, mountPath: /sys}
-               - {name: proc, mountPath: /proc, readOnly: true}
-               - {name: debugfs, mountPath: /sys/kernel/debug}
-         volumes:
-           - {name: config, configMap: {name: profiler-config}}
-           - {name: sys, hostPath: {path: /sys}}
-           - {name: proc, hostPath: {path: /proc}}
-           - {name: debugfs, hostPath: {path: /sys/kernel/debug}}
+   mode: daemonset
+
+   image:
+     repository: otel/opentelemetry-collector-ebpf-profiler
+     tag: "0.164.0@sha256:37a3779edfd51f648dbdcb3dc79194eaf42912e6c6d46e3ad570ff42b2bd3bfe"
+
+   command:
+     extraArgs: ["--feature-gates=+service.profilesSupport"]
+
+   presets:
+     profiling:
+       enabled: true
+     kubernetesAttributes:
+       enabled: true
+
+   # Turns off the chart's default host ports (4317, 4318, 6831, 9411, 14250, 14268). The profiler does not use them.
+   ports:
+     otlp: {enabled: false}
+     otlp-http: {enabled: false}
+     jaeger-compact: {enabled: false}
+     jaeger-thrift: {enabled: false}
+     jaeger-grpc: {enabled: false}
+     zipkin: {enabled: false}
+
+   extraEnvs:
+     - name: CUBE_TOKEN
+       valueFrom:
+         secretKeyRef: {name: cube-token, key: token}
+
+   config:
+     receivers:
+       otlp: null
+       jaeger: null
+       zipkin: null
+       prometheus: null
+     processors:
+       batch: null
+       memory_limiter: null
+       k8s_attributes:
+         wait_for_metadata: true
+     exporters:
+       otlp_grpc/cube:
+         endpoint: "<ip_address_of_cubeapm_server>:4317"
+         tls:
+           insecure: true
+         compression: gzip
+         headers:
+           x-cube-token: "${env:CUBE_TOKEN}"
+     service:
+       pipelines:
+         traces: null
+         metrics: null
+         logs: null
+         profiles:
+           receivers: [profiling]
+           processors: [k8s_attributes]
+           exporters: [otlp_grpc/cube]
    ```
 
-   :::info
-   The manifest needs Kubernetes 1.30 or newer (`appArmorProfile`). Keep the privileges and mounts as they are.
-   :::
-
-4. Check that it started:
+4. Install it:
 
    ```shell
-   kubectl -n otel-profiler rollout status ds/ebpf-profiler --timeout=300s
-   kubectl -n otel-profiler logs ds/ebpf-profiler | grep -E 'eBPF tracer loaded|Everything is ready|Exporting failed'
+   helm install otel-profiler open-telemetry/opentelemetry-collector --version 0.178.3 \
+     -n otel-profiler -f profiler-values.yaml
    ```
 
-   You want `eBPF tracer loaded` and `Everything is ready`, and no `Exporting failed`.
+5. Check that it started:
 
-**OTLP/HTTP instead of gRPC.** Some proxies and load balancers only pass HTTP/1.1. In that case, replace the exporter with:
+   ```shell
+   kubectl -n otel-profiler rollout status ds/otel-profiler-opentelemetry-collector-agent --timeout=300s
+   kubectl -n otel-profiler logs ds/otel-profiler-opentelemetry-collector-agent | grep -E 'eBPF tracer loaded|Everything is ready|Exporting failed'
+   ```
+
+   You want `eBPF tracer loaded` and `Everything is ready`, and no `Exporting failed`. `kubectl -n otel-profiler get pods -o wide` should show one running pod per node. A warning at startup that `container.image.tag is configured but will NOT be emitted` comes from the chart's defaults and can be ignored. Then [check that it works](#check-that-it-works) in CubeAPM.
+
+What the presets set up:
+
+- `profiling` runs the profiler as root in the host PID namespace, with the capabilities it needs (`BPF`, `PERFMON`, `SYS_PTRACE`, `SYS_RESOURCE`, `DAC_READ_SEARCH`, `SYSLOG`, `CHECKPOINT_RESTORE`, `IPC_LOCK`) instead of a privileged container, and mounts the host's `/sys/kernel/tracing`. If your values set a non-empty `securityContext`, the chart no longer adds these settings, so yours must include them.
+- `kubernetesAttributes` adds the `k8s_attributes` processor and the ClusterRole it needs to read pods, namespaces and ReplicaSets.
+
+:::info
+Keep the `ports` block. Without it, the profiler pods stay `Pending` on nodes where another OpenTelemetry Collector DaemonSet already uses these host ports, for example the one from [Kubernetes infra monitoring](/infra-monitoring/kubernetes).
+:::
+
+**OTLP/HTTP instead of gRPC.** Some proxies and load balancers only pass HTTP/1.1. In that case, in `profiler-values.yaml`, replace the `otlp_grpc/cube` exporter under `config.exporters` with:
 
 ```yaml
-exporters:
-  otlp_http/cube:
-    profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
-    compression: gzip
-    headers:
-      x-cube-token: "${env:CUBE_TOKEN}"
+config:
+  exporters:
+    otlp_http/cube:
+      profiles_endpoint: "http://<ip_address_of_cubeapm_server>:4318/v1development/profiles"
+      compression: gzip
+      headers:
+        x-cube-token: "${env:CUBE_TOKEN}"
 ```
 
-Then set `exporters: [otlp_http/cube]` in the pipeline. The profiler reads its configuration only at start, so reload the ConfigMap and restart the DaemonSet:
+Then set `exporters: [otlp_http/cube]` in the profiles pipeline and apply the change. The pods restart with the new configuration:
 
 ```shell
-kubectl -n otel-profiler create configmap profiler-config --from-file=config.yaml=profiler-config.yaml \
-  --dry-run=client -o yaml | kubectl apply -f -
-kubectl -n otel-profiler rollout restart ds/ebpf-profiler
+helm upgrade otel-profiler open-telemetry/opentelemetry-collector --version 0.178.3 \
+  -n otel-profiler -f profiler-values.yaml
 ```
 
-**Without a license key** (single-account CubeAPM): skip the secret, and remove the `headers:` block and the `CUBE_TOKEN` variable.
+**Without a license key** (single-account CubeAPM): skip the secret, and remove the `extraEnvs` and `headers:` blocks.
+
+**To remove the profiler:**
+
+```shell
+helm uninstall otel-profiler -n otel-profiler
+kubectl delete namespace otel-profiler
+```
 
 ### Service names on Kubernetes
 
@@ -261,8 +224,10 @@ The first of these that a process has becomes its service name:
 1. The `OTEL_SERVICE_NAME` set in the container's environment, or its OpenTelemetry resource. Apps instrumented with OpenTelemetry usually set this already, so profiles get the same name as their traces.
 2. The pod annotation `resource.opentelemetry.io/service.name`.
 3. The pod label `app.kubernetes.io/instance`, then `app.kubernetes.io/name`.
-4. The owning Deployment, StatefulSet, DaemonSet, Job or CronJob name.
+4. The owning Deployment, ReplicaSet, StatefulSet, DaemonSet, CronJob or Job name.
 5. The pod name.
+
+Profiles from the Helm install also get a `version`. Unless the pod sets the `app.kubernetes.io/version` label or the `resource.opentelemetry.io/service.version` annotation, it comes from the application's image: its tag, for example `3.12-slim`, its digest, or both (see the [OpenTelemetry rules](https://opentelemetry.io/docs/specs/semconv/non-normative/k8s-attributes/#how-serviceversion-should-be-calculated)).
 
 To set a name explicitly, put the annotation on the pod template (`spec.template.metadata.annotations`), not on the Deployment itself. It only takes effect when the container does not set `OTEL_SERVICE_NAME`.
 
@@ -475,10 +440,12 @@ Reasons in the partial-success message:
 
 | Symptom | Check |
 |---|---|
-| The profiler exits with `failed to load eBPF tracer` | Privileges and kernel: the privileged settings above, kernel 5.10 or newer |
+| The profiler exits with `failed to load eBPF tracer` | Kernel 5.10 or newer, and the privileges above. On Kubernetes, a non-empty `securityContext` in your values must include the root user and capabilities the chart would add |
+| The profiler exits with `system analysis request was not handled` | A known cause is a node that is itself a container (kind, minikube with the docker driver). Use a real node or VM |
 | The profiler refuses its configuration: `gated under the "service.profilesSupport" feature gate` | Add `--feature-gates=+service.profilesSupport` |
 | The profiler refuses its configuration: `telemetry type is not supported` | Remove any `batch` processor from the profiles pipeline |
-| The profiler exits with a `k8s_attributes` error | The ServiceAccount, ClusterRole and ClusterRoleBinding, and access to the API server |
+| The profiler exits with a `k8s_attributes` error | The ClusterRole and ClusterRoleBinding the chart creates, and access to the API server |
+| The profiler pods stay `Pending` with `didn't have free ports` | Keep the `ports` block from `profiler-values.yaml` |
 | `Exporting failed` with connection refused or a DNS error | CubeAPM address, port, firewall |
 | Exports succeed but nothing shows | The license key (an unknown key lands in the default account), the environment picker (`UNSET`), the time range |
 | A service is missing | Is it named (see the naming sections)? Is it a supported language? On a VM, does the profiler add `host.name`? |
