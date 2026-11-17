@@ -6,7 +6,7 @@ slug: /instrumentation/elastic/go-net-http
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -30,18 +30,19 @@ import AccountRouting from './_account_routing.mdx';
    # highlight-end
 
    func main() {
-    
-	    srv := &http.Server{
-		    Addr:         ":8000",
-		    BaseContext:  func(_ net.Listener) context.Context { return ctx },
-		    ReadTimeout:  time.Second,
-		    WriteTimeout: 10 * time.Second,
+
+       srv := &http.Server{
+   	    Addr:         ":8000",
+   	    BaseContext:  func(_ net.Listener) context.Context { return ctx },
+   	    ReadTimeout:  time.Second,
+   	    WriteTimeout: 10 * time.Second,
        # highlight-start
-		    Handler:      apmhttp.Wrap(newHTTPHandler()),
+   	    Handler:      apmhttp.Wrap(newHTTPHandler()),
        # highlight-end
-        } 
+        }
    }
    ```
+
    :::info
    For more information, refer to the [Elastic APM Go agent](https://www.elastic.co/docs/reference/apm/agents/go/set-up-apm-go-agent#installation).
    :::
@@ -54,8 +55,6 @@ import AccountRouting from './_account_routing.mdx';
          ELASTIC_APM_SERVICE_NAME=<app_name>
          # send traces to CubeAPM
          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional, only for multi-account routing - see below
-         ELASTIC_APM_SECRET_TOKEN=<secret_token>
          # optional settings
          ELASTIC_APM_ENVIRONMENT=myenv
          ELASTIC_APM_SERVICE_VERSION=1.2.3

@@ -4,7 +4,7 @@ title: "Java"
 slug: /instrumentation/opentelemetry/java
 ---
 
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -29,11 +29,9 @@ Ref: https://github.com/open-telemetry/opentelemetry-java/blob/main/VERSIONING.m
        -Dotel.instrumentation.runtime-telemetry-java17.enable-all=true \
        -Dotel.resource.attributes=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
        -Dotel.exporter.otlp.metrics.endpoint=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
-       -Dotel.exporter.otlp.metrics.headers=x-cube-token=<account_key> \
        -Dotel.exporter.otlp.logs.endpoint=http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/opentelemetry/v1/logs \
-       -Dotel.exporter.otlp.logs.headers=Cube-Stream-Fields=service.name%2Cseverity,x-cube-token=<account_key> \
+       -Dotel.exporter.otlp.logs.headers=Cube-Stream-Fields=service.name%2Cseverity \
        -Dotel.exporter.otlp.traces.endpoint=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
-       -Dotel.exporter.otlp.traces.headers=x-cube-token=<account_key> \
        -Dotel.exporter.otlp.compression=gzip \
        -Dotel.service.name=<app_name> \
        -jar <myapp>.jar
@@ -50,11 +48,9 @@ Ref: https://github.com/open-telemetry/opentelemetry-java/blob/main/VERSIONING.m
    OTEL_INSTRUMENTATION_RUNTIME_TELEMETRY_JAVA17_ENABLE_ALL=true
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2
    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp
-   OTEL_EXPORTER_OTLP_METRICS_HEADERS=x-cube-token=<account_key>
    OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/logs/insert/opentelemetry/v1/logs
-   OTEL_EXPORTER_OTLP_LOGS_HEADERS=Cube-Stream-Fields=service.name%2Cseverity,x-cube-token=<account_key>
+   OTEL_EXPORTER_OTLP_LOGS_HEADERS=Cube-Stream-Fields=service.name%2Cseverity
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces
-   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key>
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip
    OTEL_SERVICE_NAME=<app_name>
    ```

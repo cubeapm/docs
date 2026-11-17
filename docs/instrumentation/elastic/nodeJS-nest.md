@@ -6,7 +6,7 @@ slug: /instrumentation/elastic/nodejs-nest
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -22,9 +22,9 @@ import AccountRouting from './_account_routing.mdx';
    ```javascript
    // highlight-start
    // Add the following line at the top of your project's main file.
-   import 'elastic-apm-node/start'
+   import "elastic-apm-node/start";
    // highlight-end
-   import { Injectable } from '@nestjs/common';
+   import { Injectable } from "@nestjs/common";
    ```
 
 1. Configure the agent.
@@ -35,8 +35,6 @@ import AccountRouting from './_account_routing.mdx';
          ELASTIC_APM_SERVICE_NAME=<app_name>
          # send traces to CubeAPM
          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional, only for multi-account routing - see below
-         ELASTIC_APM_SECRET_TOKEN=<secret_token>
          # optional settings
          ELASTIC_APM_ENVIRONMENT=myenv
          ELASTIC_APM_SERVICE_VERSION=1.2.3

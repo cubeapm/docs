@@ -6,7 +6,7 @@ slug: /instrumentation/elastic/nodejs-fastify
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -21,7 +21,7 @@ import AccountRouting from './_account_routing.mdx';
    ```javascript
    // highlight-start
    // Add the following line at the top of your project's main file.
-   const apm = require('elastic-apm-node').start()
+   const apm = require("elastic-apm-node").start();
    // highlight-end
    const Fastify = require("fastify");
    ```
@@ -34,8 +34,6 @@ import AccountRouting from './_account_routing.mdx';
          ELASTIC_APM_SERVICE_NAME=<app_name>
          # send traces to CubeAPM
          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional, only for multi-account routing - see below
-         ELASTIC_APM_SECRET_TOKEN=<secret_token>
          # optional settings
          ELASTIC_APM_ENVIRONMENT=myenv
          ELASTIC_APM_SERVICE_VERSION=1.2.3
@@ -50,8 +48,6 @@ import AccountRouting from './_account_routing.mdx';
               serviceName: '<app_name>',
               // send traces to CubeAPM
               serverUrl: 'http://<ip_address_of_cubeapm_server>:3130',
-              // optional, only for multi-account routing - see below
-              secretToken: '<secret_token>',
               // optional settings
               environment: 'UNSET',
               serviceVersion: '1.0.1',

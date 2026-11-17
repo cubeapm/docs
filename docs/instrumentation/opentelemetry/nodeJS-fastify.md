@@ -4,7 +4,7 @@ title: "NodeJS Fastify"
 slug: /instrumentation/opentelemetry/nodejs-fastify
 ---
 
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -19,7 +19,11 @@ import AccountRouting from './_account_routing.mdx';
    ```javascript title="tracing.js"
    "use strict";
    const process = require("process");
-   const { diag, DiagConsoleLogger, DiagLogLevel } = require("@opentelemetry/api");
+   const {
+     diag,
+     DiagConsoleLogger,
+     DiagLogLevel,
+   } = require("@opentelemetry/api");
    const opentelemetry = require("@opentelemetry/sdk-node");
    const {
      getNodeAutoInstrumentations,
@@ -27,7 +31,7 @@ import AccountRouting from './_account_routing.mdx';
    const {
      OTLPTraceExporter,
    } = require("@opentelemetry/exporter-trace-otlp-proto");
-   const { FastifyOtelInstrumentation } = require('@fastify/otel');
+   const { FastifyOtelInstrumentation } = require("@fastify/otel");
 
    if (process.env.OTEL_LOG_LEVEL === "debug") {
      diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
@@ -47,7 +51,7 @@ import AccountRouting from './_account_routing.mdx';
        ...Object.values(
          getNodeAutoInstrumentations({
            "@opentelemetry/instrumentation-fs": { enabled: false },
-         })
+         }),
        ),
        new FastifyOtelInstrumentation({
          registerOnInitialization: true,
@@ -67,9 +71,7 @@ import AccountRouting from './_account_routing.mdx';
    OTEL_LOGS_EXPORTER=none \
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
-   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
-   OTEL_EXPORTER_OTLP_METRICS_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    NODE_OPTIONS="--require ./tracing.js" \

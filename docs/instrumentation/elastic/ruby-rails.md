@@ -6,37 +6,36 @@ slug: /instrumentation/elastic/ruby-rails
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
-1. Add the below gem to your Gemfile:
+1.  Add the below gem to your Gemfile:
 
-   ```gemfile
-   gem 'elastic-apm'
-   ```
+    ```gemfile
+    gem 'elastic-apm'
+    ```
 
-1. Configure the agent:
+1.  Configure the agent:
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         ELASTIC_APM_SERVICE_NAME=<app_name>
-         # send traces to CubeAPM
-         ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional, only for multi-account routing - see below
-         ELASTIC_APM_SECRET_TOKEN=<secret_token>
+    <Tabs>
+       <TabItem value="env" label="Environment Variables">
+          ```shell
+          ELASTIC_APM_SERVICE_NAME=<app_name>
+          # send traces to CubeAPM
+          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
 
-         # optional settings
-         # Elastic agent sets environment from ENV['RAILS_ENV'] by default
-         ELASTIC_APM_ENVIRONMENT=UNSET
-         ELASTIC_APM_SERVICE_VERSION=1.1.1
-         ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-         ```
-      </TabItem>
-   </Tabs>
+          # optional settings
+          # Elastic agent sets environment from ENV['RAILS_ENV'] by default
+          ELASTIC_APM_ENVIRONMENT=UNSET
+          ELASTIC_APM_SERVICE_VERSION=1.1.1
+          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+          ```
 
-1. <AccountRouting />
+       </TabItem>
+    </Tabs>
+
+1.  <AccountRouting />
 
 ## Sample App
 
@@ -54,5 +53,3 @@ ELASTIC_APM_LOG_FILE=stdout
 RAILS_LOG_LEVEL=debug
 ELASTIC_APM_LOG_LEVEL=debug
 ```
-
-

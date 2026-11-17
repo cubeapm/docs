@@ -4,7 +4,7 @@ title: "PHP Slim"
 slug: /instrumentation/elastic/php-slim
 ---
 
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -16,8 +16,6 @@ import AccountRouting from './_account_routing.mdx';
    elastic_apm.service_name = "<app_name>"
    # send traces to CubeAPM
    elastic_apm.server_url = "http://<ip_address_of_cubeapm_server>:3130"
-   # optional, only for multi-account routing - see below
-   elastic_apm.secret_token = "<secret_token>"
    # optional settings
    elastic_apm.environment = "UNSET"
    elastic_apm.service_version = "1.2.3"

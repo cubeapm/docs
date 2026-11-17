@@ -4,7 +4,7 @@ title: "JavaScript (browser)"
 slug: /instrumentation/opentelemetry/javascript-browser
 ---
 
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -44,8 +44,6 @@ import AccountRouting from './_account_routing.mdx';
    const CUBE_DEBUG = false;
    const CUBE_SERVICE_NAME = "cubeapm-web";
    const CUBE_EXPORTER_OTLP_TRACES_ENDPOINT = "http://localhost:4318/v1/traces";
-   // optional, only for multi-account routing — see below
-   const CUBE_ACCOUNT_KEY = "<account_key>";
    const CUBE_PROPAGATE_TRACE_HEADER_CORS_URLS = [/^http:\/\/localhost:8080\//];
 
    if (CUBE_DEBUG) {
@@ -66,7 +64,6 @@ import AccountRouting from './_account_routing.mdx';
        new BatchSpanProcessor(
          new OTLPTraceExporter({
            url: CUBE_EXPORTER_OTLP_TRACES_ENDPOINT,
-           headers: { "x-cube-token": CUBE_ACCOUNT_KEY },
          })
        )
      );

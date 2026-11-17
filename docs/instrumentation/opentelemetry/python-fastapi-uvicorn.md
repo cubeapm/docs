@@ -4,7 +4,7 @@ title: "Python FastAPI Uvicorn"
 slug: /instrumentation/opentelemetry/python-fastapi-uvicorn
 ---
 
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Python 3
 1. Install dependencies:
 
    ```shell
-   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http opentelemetry-instrumentation-fastapi opentelemetry-instrumentation-system-metrics 
+   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http opentelemetry-instrumentation-fastapi opentelemetry-instrumentation-system-metrics
    opentelemetry-bootstrap -a install
    ```
 
@@ -106,9 +106,7 @@ Python 3
    OTEL_LOGS_EXPORTER=none \
    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
-   OTEL_EXPORTER_OTLP_TRACES_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
-   OTEL_EXPORTER_OTLP_METRICS_HEADERS=x-cube-token=<account_key> \
    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
    OTEL_SERVICE_NAME=<app_name> \
    uvicorn main:app --host=0.0.0.0 --port=8000 --workers=4
