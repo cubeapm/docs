@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/python-django-uwsgi
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -13,49 +14,50 @@ Python 3.6+
 
 ## Installation
 
-1. Install dependencies:
+1.  Install dependencies:
 
-   ```shell
-   pip install elastic-apm
-   ```
+    ```shell
+    pip install elastic-apm
+    ```
 
-2. Add `elasticapm.contrib.django` in `settings.py`:
+1.  Add `elasticapm.contrib.django` in `settings.py`:
 
     ```python
     INSTALLED_APPS = [
     'elasticapm.contrib.django',
-    ]    
+    ]
     ```
 
-4. Configure the agent.
+1.  Configure the agent.
 
-   <Tabs>
-      <TabItem value="file" label="settings.py">
-         ```python
-         ELASTIC_APM = {
-         'SERVICE_NAME': '<app_name>',
-         # send traces to CubeAPM
-         'SERVER_URL': 'http://<ip_address_of_cubeapm_server>:3130',
-         # optional settings
-         'ENVIRONMENT': 'myenv',
-         'SERVICE_VERSION': '1.2.3',
-         'GLOBAL_LABELS': 'mykey1=myvalue1,mykey2=myvalue2',
-         }
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         ELASTIC_APM_SERVICE_NAME=<app_name>
-         # send traces to CubeAPM
-         ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional settings
-         ELASTIC_APM_ENVIRONMENT=myenv
-         ELASTIC_APM_SERVICE_VERSION=1.2.3
-         ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+    <Tabs>
+       <TabItem value="file" label="settings.py">
+          ```python
+          ELASTIC_APM = {
+          'SERVICE_NAME': '<app_name>',
+          # send traces to CubeAPM
+          'SERVER_URL': 'http://<ip_address_of_cubeapm_server>:3130',
+          # optional settings
+          'ENVIRONMENT': 'myenv',
+          'SERVICE_VERSION': '1.2.3',
+          'GLOBAL_LABELS': 'mykey1=myvalue1,mykey2=myvalue2',
+          }
+          ```
+       </TabItem>
+       <TabItem value="env" label="Environment Variables">
+          ```shell
+          ELASTIC_APM_SERVICE_NAME=<app_name>
+          # send traces to CubeAPM
+          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+          # optional settings
+          ELASTIC_APM_ENVIRONMENT=myenv
+          ELASTIC_APM_SERVICE_VERSION=1.2.3
+          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+          ```
+       </TabItem>
+    </Tabs>
 
-         ```
-      </TabItem>
-   </Tabs>
+1.  <AccountRouting />
 
 ## Sample Application
 

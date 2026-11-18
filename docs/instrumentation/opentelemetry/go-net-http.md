@@ -4,17 +4,20 @@ title: "Go Net/HTTP"
 slug: /instrumentation/opentelemetry/go-net-http
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Go 1.23+
 
 ## Installation
 
-1. Create a file `otel.go` in your project directory with the following content:
+1.  Create a file `otel.go` in your project directory with the following content:
 
-   <details>
-   <summary>otel.go</summary>
-   ```go
+    <details>
+    <summary>otel.go</summary>
+
+    ```go
     package main
 
     import (
@@ -161,73 +164,83 @@ Go 1.23+
         )
         return meterProvider, nil
     }
-   ```
-   </details>
+    ```
 
+    </details>
 
-1. Add the highlighted lines below to your project's `main.go` file:
+1.  Add the highlighted lines below to your project's `main.go` file:
 
-   ```go
-   package main
+    ```go
+    package main
 
-   # highlight-start
-   import "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-   # highlight-end
+    # highlight-start
+    import "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+    # highlight-end
 
-   func main() {
+    func main() {
+        if err := run(); err != nil {
+            log.Fatalln(err)
+        }
+    }
+
+    func run() (err error) {
         ......
-		# highlight-start
-       // Handle SIGINT (CTRL+C)
-       ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-       defer stop()
+        # highlight-start
+        // Handle SIGINT (CTRL+C)
+        ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+        defer stop()
 
-       // Set up OpenTelemetry.
-       otelShutdown, err := setupOTelSDK(ctx)
-       if err != nil {
-           return err
-       }
-       // Handle shutdown properly so nothing leaks.
-       defer func() {
-           err = errors.Join(err, otelShutdown(context.Background()))
-       }()
-	   # highlight-end
-   }
+        // Set up OpenTelemetry.
+        otelShutdown, err := setupOTelSDK(ctx)
+        if err != nil {
+            return err
+        }
+        // Handle shutdown properly so nothing leaks.
+        defer func() {
+            err = errors.Join(err, otelShutdown(context.Background()))
+        }()
+        # highlight-end
+        ......
+    }
 
-   func newHTTPHandler() http.Handler {    
-       mux := http.NewServeMux()
+    func newHTTPHandler() http.Handler {
+        mux := http.NewServeMux()
 
-       handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
-		   # highlight-start
-           // Configure the "http.route" for the HTTP instrumentation.
-           handler := otelhttp.WithRouteTag(pattern, http.HandlerFunc(handlerFunc))
-           // Add HTTP instrumentation for the whole server.
-           handler = otelhttp.Newhandler(handler, pattern)
-		   # highlight-end
-           mux.Handle(pattern, handler)
-       }
+        handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
+            # highlight-start
+            // Configure the "http.route" for the HTTP instrumentation.
+            handler := otelhttp.WithRouteTag(pattern, http.HandlerFunc(handlerFunc))
+            // Add HTTP instrumentation for the whole server.
+            handler = otelhttp.NewHandler(handler, pattern)
+            # highlight-end
+            mux.Handle(pattern, handler)
+        }
 
-       // Register handlers.
-       handleFunc("/", indexFunc)
-       return mux
-   }
-   ```
-   :::info
-   For more information, refer to the [OpenTelemetry Go documentation](https://opentelemetry.io/docs/languages/go/getting-started/).
-   :::
+        // Register handlers.
+        handleFunc("/", indexFunc)
+        return mux
+    }
+    ```
 
-1. Modify the application run command as follows:
+    :::info
+    For more information, refer to the [OpenTelemetry Go documentation](https://opentelemetry.io/docs/languages/go/getting-started/).
+    :::
 
-   ```shell
-   OTEL_LOGS_EXPORTER=none \
-   OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
-   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
-   OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
-   OTEL_SERVICE_NAME=<app_name> \
-   go run main.go
-   ```
+1.  Modify the application run command as follows:
 
-### Sample App
+    ```shell
+    OTEL_LOGS_EXPORTER=none \
+    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://<ip_address_of_cubeapm_server>:3130/api/metrics/v1/save/otlp \
+    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
+    OTEL_SERVICE_NAME=<app_name> \
+    go run main.go
+    ```
+
+1.  <AccountRouting />
+
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_go_net_http/tree/otel
 

@@ -4,6 +4,8 @@ title: "JavaScript (browser)"
 slug: /instrumentation/opentelemetry/javascript-browser
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Installation
 
 1. Install dependencies
@@ -95,3 +97,5 @@ slug: /instrumentation/opentelemetry/javascript-browser
      </React.StrictMode>
    );
    ```
+
+3. <AccountRouting />

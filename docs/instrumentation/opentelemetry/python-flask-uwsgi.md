@@ -4,6 +4,8 @@ title: "Python Flask uWSGI"
 slug: /instrumentation/opentelemetry/python-flask-uwsgi
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3
@@ -106,6 +108,8 @@ Python 3
    OTEL_SERVICE_NAME=<app_name> \
    uwsgi --http :8000 --wsgi-file app.py --callable app --master --enable-threads --need-app
    ```
+
+4. <AccountRouting />
 
 ## Capture Exception StackTraces
 

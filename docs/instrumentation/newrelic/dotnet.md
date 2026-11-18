@@ -7,6 +7,7 @@ slug: /instrumentation/newrelic/dotnet
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import ProxySetup from './\_proxy_setup.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -69,7 +70,9 @@ Following are the steps to install the New Relic agent and connect it with CubeA
    See [Using CubeAPM with New Relic agents](newrelic.md) for details on how to set up `<domain_of_cubeapm_server>`.
    :::
 
-## Sample App
+1. <AccountRouting />
+
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_dotnet_core/tree/newrelic
 

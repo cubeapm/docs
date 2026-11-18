@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/python-fastapi-uvicorn
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -13,66 +14,69 @@ Python 3.6+
 
 ## Installation
 
-1. Install dependencies:
+1.  Install dependencies:
 
-   ```shell
-   pip install elastic-apm
-   ```
+    ```shell
+    pip install elastic-apm
+    ```
 
-1. Add the highlighted lines below to your project's `main.py` file:
+1.  Add the highlighted lines below to your project's `main.py` file:
 
-   ```python
-   import requests
-   from fastapi import FastAPI
-   # highlight-start
-   from elasticapm.contrib.starlette import ElasticAPM
-   # highlight-end
+    ```python
+    import requests
+    from fastapi import FastAPI
+    # highlight-start
+    from elasticapm.contrib.starlette import ElasticAPM
+    # highlight-end
 
-   app = FastAPI()
-   # highlight-start
-   app.add_middleware(ElasticAPM)
-   # highlight-end
-   ```
+    app = FastAPI()
+    # highlight-start
+    app.add_middleware(ElasticAPM)
+    # highlight-end
+    ```
 
-1. Configure the agent.
+1.  Configure the agent.
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         ELASTIC_APM_SERVICE_NAME=<app_name>
-         # send traces to CubeAPM
-         ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional settings
-         ELASTIC_APM_ENVIRONMENT=myenv
-         ELASTIC_APM_SERVICE_VERSION=1.2.3
-         ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-         ```
-      </TabItem>  
-      <TabItem value="file" label="Code">
-         ```python
-         import requests
-         from fastapi import FastAPI
-         # highlight-start
-         from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
-         # highlight-end
+    <Tabs>
+       <TabItem value="env" label="Environment Variables">
+          ```shell
+          ELASTIC_APM_SERVICE_NAME=<app_name>
+          # send traces to CubeAPM
+          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+          # optional settings
+          ELASTIC_APM_ENVIRONMENT=myenv
+          ELASTIC_APM_SERVICE_VERSION=1.2.3
+          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+          ```
+       </TabItem>  
+       <TabItem value="file" label="Code">
+          ```python
+          import requests
+          from fastapi import FastAPI
+          # highlight-start
+          from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
+          # highlight-end
 
-         app = FastAPI()
-         # highlight-start
-         apm= make_apm_client({
-             'SERVICE_NAME': '<app_name>',
-             # send traces to CubeAPM
-             'SERVER_URL': 'http://<ip_address_of_cubeapm_server>:3130',
-             # optional settings
-             'ENVIRONMENT': 'myenv',
-             'SERVICE_VERSION': '1.2.3',
-             'GLOBAL_LABELS': 'mykey1=myvalue1,mykey2=myvalue2',
-         })
-         app.add_middleware(ElasticAPM)
-         # highlight-end
-         ```
-      </TabItem>
+          app = FastAPI()
+          # highlight-start
+          apm= make_apm_client({
+              'SERVICE_NAME': '<app_name>',
+              # send traces to CubeAPM
+              'SERVER_URL': 'http://<ip_address_of_cubeapm_server>:3130',
+              # optional settings
+              'ENVIRONMENT': 'myenv',
+              'SERVICE_VERSION': '1.2.3',
+              'GLOBAL_LABELS': 'mykey1=myvalue1,mykey2=myvalue2',
+          })
+          app.add_middleware(ElasticAPM)
+          # highlight-end
+          ```
 
-   </Tabs>
+       </TabItem>
+
+    </Tabs>
+
+1.  <AccountRouting />
 
 ## Sample Application
 

@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/nodejs-fastify
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -20,7 +21,7 @@ import TabItem from '@theme/TabItem';
    ```javascript
    // highlight-start
    // Add the following line at the top of your project's main file.
-   const apm = require('elastic-apm-node').start()
+   const apm = require("elastic-apm-node").start();
    // highlight-end
    const Fastify = require("fastify");
    ```
@@ -57,6 +58,8 @@ import TabItem from '@theme/TabItem';
             ```
       </TabItem>
    </Tabs>
+
+1. <AccountRouting />
 
 ## Sample Application
 

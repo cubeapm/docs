@@ -7,6 +7,7 @@ slug: /instrumentation/newrelic/java
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import ProxySetup from './\_proxy_setup.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -77,6 +78,8 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       </TabItem>
    </Tabs>
 
+1. <AccountRouting />
+
 ## Collect JMX Metrics (Optional)
 
 Create a folder named `extensions` in the same path as `newrelic-agent.jar` and place the configuration in a yml file in that folder. New Relic agent automatically picks the configuration defined in extensions folder.
@@ -104,7 +107,7 @@ Sample content for configuration is available at https://docs.newrelic.com/docs/
       </TabItem>
    </Tabs>
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/newrelic
 

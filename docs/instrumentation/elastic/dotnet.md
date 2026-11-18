@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/dotnet
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -27,7 +28,9 @@ import TabItem from '@theme/TabItem';
       </TabItem>
    </Tabs>
 
-## Sample App
+1. <AccountRouting />
+
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_dotnet_core/tree/elastic.
 

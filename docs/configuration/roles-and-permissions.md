@@ -12,7 +12,13 @@ CubeAPM controls access at two levels:
 | **Global role** | Entire workspace — metrics, logs, traces, alerts, dashboards, teams, etc. |
 | **Resource permission** | A single alert or dashboard |
 
-[Teams](/configure/teams) connect to resource permissions when you grant access to a team on a specific alert or dashboard.
+[Teams](/configure/teams) connect to resource permissions when you grant a team access to a
+specific alert or dashboard.
+
+:::info
+With [accounts](/configure/accounts), users also have a role per account. The global role is their
+role in the default account. See [Roles per account](#roles).
+:::
 
 ```text
 Global role (viewer / editor / admin)
@@ -28,7 +34,7 @@ Global role (viewer / editor / admin)
 
 ## Global roles {#global-roles}
 
-Every user has a global role assigned by an administrator (or at signup via `auth.default-role`).
+Every user has a global role, assigned by an administrator or at signup via `auth.default-role`.
 
 | Role | View data | Create / edit resources | Auth admin UI |
 | :--- | :---: | :---: | :---: |
@@ -36,155 +42,215 @@ Every user has a global role assigned by an administrator (or at signup via `aut
 | **Editor** | Yes | Yes | No |
 | **Admin** | Yes | Yes | Yes |
 
-Users with no role cannot access the workspace.
-
-### What global Editor can do
-
-Users with global **Editor** or **Admin** can:
-
-- Create and edit **alert rules**, **dashboards**, and **[teams](/configure/teams)**
-- Add or remove team members (if they are also a [team Admin](/configure/teams#team-member-roles))
-- Use the **New Alert** and **New Dashboard** flows in the UI
-
-Users with global **Viewer** can browse data and view alerts and dashboards they have access to, but cannot create or edit them.
+Users with no role cannot access the workspace. Editor/Admin can also add or remove team members
+(if they're a [team Admin](/configure/teams#team-member-roles)) and use the New Alert/Dashboard
+flows.
 
 ### Configuration
 
 | Parameter | Description |
 | :--- | :--- |
-| `auth.default-role` | Role assigned to new users on signup. Default: `viewer`. Allowed values: `none`, `viewer`, `editor`, `admin`. |
-| `auth.sys-admins` | Comma-separated email list with access to the auth admin UI (user management), regardless of global role. |
-
-Global roles are managed by workspace administrators.
+| `auth.default-role` | Role assigned on signup. Default `viewer`. Values: `none`, `viewer`, `editor`, `admin`. |
+| `auth.sys-admins` | Comma-separated emails of sys admins. Only they can create/delete accounts and manage users, settings and stats. See [Sys admin vs account admin](#permissions). |
 
 ---
 
 ## Per-resource permissions
 
-Alerts and dashboards support optional permissions that control who can view and edit **that specific resource**.
-
-Resource permissions apply only to **alerts** and **dashboards** — not to metrics, logs, traces, or other features.
-
-In the UI, permissions are configured in the **Permissions** section when creating or editing an alert or dashboard. You choose between **Role Based** and **Custom**.
+Alerts and dashboards can have their own view/edit permissions: **Role Based** (default) or
+**Custom**. Set them in the **Permissions** section.
 
 ### Role Based (default) {#role-based}
 
-**Role Based** is the default. No extra configuration is needed.
-
-Access follows each user's **global role**:
-
-- Global **Viewer** → can view the alert or dashboard
-- Global **Editor** / **Admin** → can view and edit the alert or dashboard
+Access follows global role: **Viewer** → view, **Editor**/**Admin** → view and edit.
 
 ### Custom {#custom}
 
-**Custom** lets you grant **Viewer** or **Editor** on a specific alert or dashboard to individual users or [teams](/configure/teams).
-
-For each entry you select:
-
-- A **user** (by email) or **team**
-- A permission level: **Viewer** or **Editor**
-
-Custom permissions form an **allowlist**. Only listed users and teams can access the resource. Everyone else — including global admins — is denied unless they appear in the list.
+Grants **Viewer** or **Editor** on one resource to specific users (by email) or [teams](/configure/teams). Custom permissions are an **allowlist** — only listed users/teams get access, including global admins.
 
 :::warning
-If you switch a resource to Custom permissions, add yourself (or a team you belong to) before saving. Otherwise you may lose access to that alert or dashboard.
+Before switching a resource to Custom, add yourself or your team, or you'll lose access.
 :::
 
-### How effective permission is calculated
+### Effective permission
 
-For each alert or dashboard:
+1. **Role Based** — effective permission = global role.
+2. **Custom** — highest matching grant (direct or via team), capped by global role.
+3. Not listed under Custom → **no access**.
 
-1. **Role Based** — effective permission equals the user's global role.
-2. **Custom** — check whether the user is listed directly, or belongs to a listed team. Use the highest matching grant (Editor beats Viewer). Cap at the global role (a global Viewer cannot edit even if granted Editor on the resource).
-3. If the user is not listed under Custom permissions, they have **no access**.
+**Examples** (Custom permissions on dashboard X):
 
-**Examples (Custom permissions on dashboard X):**
-
-The **Custom allowlist entry** column is what you configure on dashboard X under Custom permissions — a specific user (by email) or team, each assigned Viewer or Editor.
-
-| User | Global role | Custom allowlist entry on X | Effective on X |
+| User | Global role | Custom entry on X | Effective on X |
 | :--- | :--- | :--- | :--- |
-| Alice | Editor | User `alice@company.com` → Editor | Editor |
-| Bob | Editor | User `bob@company.com` → Viewer | Viewer |
-| Carol | Viewer | User `carol@company.com` → Editor | Viewer (capped by global role) |
+| Alice | Editor | User → Editor | Editor |
+| Bob | Editor | User → Viewer | Viewer |
+| Carol | Viewer | User → Editor | Viewer (capped) |
 | Dave | Editor | Team SRE → Viewer | Viewer |
-| Eve | Admin | *(not in allowlist)* | no access |
-
-### What users can do on a resource
+| Eve | Admin | *(not listed)* | No access |
 
 | Action | Required effective permission |
 | :--- | :--- |
-| View alert or dashboard (list, open) | Viewer, Editor, or Admin |
-| Edit alert, dashboard, or panels | Editor or Admin |
-| Delete alert or dashboard | Editor or Admin |
+| View | Viewer, Editor, or Admin |
+| Edit / delete | Editor or Admin |
 
-Creating a **new** alert or dashboard requires global **Editor** or **Admin**. Resource permissions apply after the resource is saved.
-
----
-
-## Permissions when creating an alert {#permissions-on-alert-creation}
-
-When creating or editing an alert in the UI:
-
-1. Go through the alert wizard. Permissions are on the **Mutes & Permissions** step.
-2. Under **Permissions**, choose **Role Based** or **Custom**.
-3. If **Custom**, click **Add Permission**, select a user or team, and set **Viewer** or **Editor**. Repeat for each grant.
-4. Save the alert.
-
-**Who can create alerts:** global **Editor** or **Admin**.
-
-**Who sees the alert after save:** users with effective **Viewer** access or higher. Users without access do not see the alert in the list.
-
-**Who can edit or delete:** users with effective **Editor** access or higher on that alert.
-
-For programmatic access, see [Alert Rules API](/http-apis/alerts/alert-rules#how-to-configure-role-based-and-custom-permissions).
+Creating a **new** alert or dashboard requires global Editor/Admin; resource permissions apply
+once it's saved.
 
 ---
 
-## Permissions when creating a dashboard {#permissions-on-dashboard-creation}
+## Setting permissions {#setting-permissions}
 
-When creating or editing a dashboard in the UI:
+1. Alert: **Mutes & Permissions** step in the wizard. Dashboard: **Permissions** section.
+2. Choose **Role Based** or **Custom**; for Custom, add user/team entries with Viewer or Editor.
+3. Save.
 
-1. Open **New Dashboard** (or edit an existing dashboard).
-2. Scroll to the **Permissions** section.
-3. Choose **Role Based** or **Custom**, and add user or team entries if using Custom.
-4. Save the dashboard.
+**Create:** global Editor/Admin. **See it after save:** effective Viewer+. **Edit/delete:**
+effective Editor+.
 
-**Who can create dashboards:** global **Editor** or **Admin**.
-
-**Who sees the dashboard after save:** users with effective **Viewer** access or higher.
-
-**Who can edit panels or delete the dashboard:** users with effective **Editor** access or higher on that dashboard.
-
-For programmatic access, see [Dashboards API](/http-apis/dashboards#how-to-configure-role-based-and-custom-permissions).
+Programmatic access: [Alert Rules API](/http-apis/alerts/alert-rules#how-to-configure-role-based-and-custom-permissions), [Dashboards API](/http-apis/dashboards#how-to-configure-role-based-and-custom-permissions).
 
 ---
 
 ## Common scenarios
 
-### Everyone with Editor role can manage all dashboards
+- **Everyone with Editor manages all dashboards** — leave Role Based everywhere.
+- **Restrict a dashboard to one team** — [create a team](/configure/teams#creating-a-team-in-the-ui), set Custom, grant it Viewer/Editor.
+- **One user views but can't edit an alert** — Custom, grant that user Viewer.
+- **Share an alert with a team read-only** — Custom, grant the team Viewer.
 
-Leave permissions on **Role Based** for each dashboard. Global editors can create and edit; global viewers can only view.
+---
 
-### Restrict a dashboard to one team
+## Accounts
 
-1. [Create a team](/configure/teams#creating-a-team-in-the-ui) and add members.
-2. Create or edit the dashboard. Under **Permissions**, select **Custom** and grant the team **Viewer** or **Editor**.
-3. Only team members see the dashboard.
+Manage accounts from **Admin** (`/admin`) in the left nav.
 
-### Let a user view but not edit an alert
+![The Admin page's Accounts tab, with the account switcher, member list and Join/Leave controls](/img/accounts/admin-accounts-tab.png)
 
-On the alert, use **Custom** permissions and grant that user **Viewer**. Even if they have global Editor, they can only view that specific alert.
+### Sys admin vs account admin {#permissions}
 
-### Share an alert with a team as read-only
+- **Sys admin**: email listed in `auth.sys-admins`. Creates and deletes accounts, manages users,
+  settings and stats, and is admin of every account.
+- **Account admin**: `admin` role in one account. Manages that account only. An admin of the
+  default account isn't a sys admin.
 
-Use **Custom** permissions and grant the team **Viewer**. All team members can view the alert; only those with effective Editor (and global Editor or Admin) can change it.
+| Action | Sys admin | Account admin | Others |
+| :--- | :---: | :---: | :---: |
+| Create / delete an account | Yes | No | No |
+| Rename / staff an account | Yes | Own accounts | No |
+| Join or leave an account | Yes | Own accounts | No |
+| Reach the Admin page | Yes | Yes | No |
+| Manage users, settings, stats | Yes | No | No |
+| Read an account's data | Own accounts | Own accounts | Assigned accounts |
+
+:::caution
+If `auth.sys-admins` is empty, no one can create accounts or users.
+:::
+
+| Admin tab | Visible to |
+| :--- | :--- |
+| Accounts, Audit Logs | Account admins |
+| Users | Account admins. Password reset, MFA and delete are sys admin only |
+| Settings, Stats, Signin Audit Logs | Sys admins |
+
+### Creating an account
+
+Requires sys admin. **Admin → Accounts → New**, enter a name. You become its first admin.
+
+- **Rename**: edit icon. The account number doesn't change.
+- **Join / Leave**: on each account row. You can't leave if you're the only admin.
+- **Delete**: sys admin only. The default account can't be deleted.
+
+:::caution
+Deleting an account doesn't stop its alert rules, synthetic monitors or agents. Remove the rules
+and monitors and move the agents to another account's key first.
+:::
+
+### Assigning users to accounts
+
+1. **Admin**, select the account in the switcher at the top of the tabs, **Users** tab.
+2. Add a user and pick their role in this account.
+
+You can also assign accounts on the invite form. Every account must keep at least one admin.
+
+To block a user everywhere, disable them (Status switch, sys admin only). This ends their sessions.
+
+### License keys
+
+License keys route agent data to an account. See [Routing telemetry](/configure/accounts/routing).
+
+![The License keys screen: generate a new key or add an existing one, with the key list below](/img/accounts/license-keys-modal.png)
+
+:::info
+Audit Logs record full key values. Restrict Audit Log access accordingly.
+:::
+
+### Roles per account {#roles}
+
+```text
+Global role (viewer / editor / admin)
+        │
+        └──► Per-account role (viewer / editor / admin)
+                    │
+                    ├──► Role Based resource → uses the account role
+                    │
+                    └──► Custom resource → allowlist of users and teams
+```
+
+| Role in an account | View data | Create / edit resources | Manage members |
+| :--- | :---: | :---: | :---: |
+| Viewer | Yes | No | No |
+| Editor | Yes | Yes | No |
+| Admin | Yes | Yes | Yes |
+
+Non-members have no access.
+
+#### Global role fallback
+
+The global role is the user's role in the default account.
+
+| Situation | Effective access |
+| :--- | :--- |
+| Never assigned to any account | Default account at their global role |
+| Assigned to accounts 2 and 3 | Default account at global role, plus 2 and 3 at their given roles |
+| Global role is `none` | No default-account access, regardless of other assignments |
+| No role set at all | `auth.default-role` |
+| Sys admin | Admin of every account, including future ones |
+
+- Upgrading changes no one's access.
+- Global role `none` only removes default-account access. To block a user everywhere, disable them.
+- A global admin isn't an admin of other accounts unless assigned.
+
+### Switching accounts in the UI {#switching}
+
+Users in more than one account get an account switcher in the left nav and at the top of the Admin
+tabs.
+
+![The account switcher at the foot of the left navigation rail](/img/accounts/account-switcher.png)
+
+- Switching reloads the page.
+- The selection is per browser tab. A new tab opens on Default.
+- If you lose access to the current account, the UI switches back to Default.
+
+To check a user's access, sign in as them and confirm the switcher lists their accounts. If an
+account shows but its pages are empty, check [Routing telemetry](/configure/accounts/routing).
+
+### Auditing
+
+Account, member and license key changes are logged with actor and before/after values in the
+**Audit Logs** tab.
+
+### Limitations {#limitations}
+
+- Notification channels (Slack, PagerDuty, email, etc.) are shared by all accounts. Alert rules,
+  silences and alert history are per account. For separate notification credentials per tenant,
+  use separate installations.
+- Deleting an account doesn't stop its alert rules or synthetic monitors.
 
 ---
 
 ## Related documentation
 
+- [Accounts](/configure/accounts) — multi-account setup
 - [Teams](/configure/teams) — create and manage teams
 - [Alert Rules API](/http-apis/alerts/alert-rules) — permissions via API
 - [Dashboards API](/http-apis/dashboards) — permissions via API

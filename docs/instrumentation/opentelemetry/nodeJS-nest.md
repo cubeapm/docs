@@ -4,6 +4,8 @@ title: "NodeJS Nest"
 slug: /instrumentation/opentelemetry/nodejs-nest
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Installation
 
 1. Install dependencies
@@ -70,11 +72,13 @@ slug: /instrumentation/opentelemetry/nodejs-nest
    npm run start
    ```
 
+1. <AccountRouting />
+
 :::info
 If the application is running in PM2 cluster mode, then setting NODE_OPTIONS does not work. In this case, add `require('./tracing.js');` as the first line in your application code.
 :::
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_nest/tree/otel
 

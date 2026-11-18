@@ -4,6 +4,8 @@ title: ".NET Core"
 slug: /instrumentation/opentelemetry/dotnet
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 - .NET SDK 8+
@@ -38,7 +40,9 @@ slug: /instrumentation/opentelemetry/dotnet
    $HOME/.otel-dotnet-auto/instrument.sh dotnet run
    ```
 
-## Sample App
+1. <AccountRouting />
+
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_dotnet_core/tree/otel
 

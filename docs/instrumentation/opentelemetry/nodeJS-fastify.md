@@ -4,6 +4,8 @@ title: "NodeJS Fastify"
 slug: /instrumentation/opentelemetry/nodejs-fastify
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Installation
 
 1. Install dependencies
@@ -17,7 +19,11 @@ slug: /instrumentation/opentelemetry/nodejs-fastify
    ```javascript title="tracing.js"
    "use strict";
    const process = require("process");
-   const { diag, DiagConsoleLogger, DiagLogLevel } = require("@opentelemetry/api");
+   const {
+     diag,
+     DiagConsoleLogger,
+     DiagLogLevel,
+   } = require("@opentelemetry/api");
    const opentelemetry = require("@opentelemetry/sdk-node");
    const {
      getNodeAutoInstrumentations,
@@ -25,7 +31,7 @@ slug: /instrumentation/opentelemetry/nodejs-fastify
    const {
      OTLPTraceExporter,
    } = require("@opentelemetry/exporter-trace-otlp-proto");
-   const { FastifyOtelInstrumentation } = require('@fastify/otel');
+   const { FastifyOtelInstrumentation } = require("@fastify/otel");
 
    if (process.env.OTEL_LOG_LEVEL === "debug") {
      diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
@@ -45,7 +51,7 @@ slug: /instrumentation/opentelemetry/nodejs-fastify
        ...Object.values(
          getNodeAutoInstrumentations({
            "@opentelemetry/instrumentation-fs": { enabled: false },
-         })
+         }),
        ),
        new FastifyOtelInstrumentation({
          registerOnInitialization: true,
@@ -72,6 +78,8 @@ slug: /instrumentation/opentelemetry/nodejs-fastify
    node app.js
    ```
 
+1. <AccountRouting />
+
 :::info
 If the application is running in PM2 cluster mode, then setting NODE_OPTIONS does not work. In this case, add `require('./tracing.js');` as the first line in your application code.
 :::
@@ -91,7 +99,7 @@ The most prominently difference in a module is usually that `import` is used ins
 For further details, please refer: https://github.com/open-telemetry/opentelemetry-js/blob/main/doc/esm-support.md
 :::
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_fastify/tree/otel
 

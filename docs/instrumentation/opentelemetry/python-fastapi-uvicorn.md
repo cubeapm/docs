@@ -4,6 +4,8 @@ title: "Python FastAPI Uvicorn"
 slug: /instrumentation/opentelemetry/python-fastapi-uvicorn
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3
@@ -13,7 +15,7 @@ Python 3
 1. Install dependencies:
 
    ```shell
-   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http opentelemetry-instrumentation-fastapi opentelemetry-instrumentation-system-metrics 
+   pip install opentelemetry-distro opentelemetry-exporter-otlp-proto-http opentelemetry-instrumentation-fastapi opentelemetry-instrumentation-system-metrics
    opentelemetry-bootstrap -a install
    ```
 
@@ -109,6 +111,8 @@ Python 3
    OTEL_SERVICE_NAME=<app_name> \
    uvicorn main:app --host=0.0.0.0 --port=8000 --workers=4
    ```
+
+5. <AccountRouting />
 
 ## Sample Application
 

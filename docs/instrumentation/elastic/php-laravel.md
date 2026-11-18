@@ -4,6 +4,8 @@ title: "PHP Laravel"
 slug: /instrumentation/elastic/php-laravel
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Installation
 
 1. Follow this link to install Elastic APM PHP agent: https://www.elastic.co/docs/reference/apm/agents/php/set-up-apm-php-agent.
@@ -20,7 +22,9 @@ slug: /instrumentation/elastic/php-laravel
    elastic_apm.global_labels = "mykey1=myvalue1,mykey2=myvalue2"
    ```
 
-## Sample App
+1. <AccountRouting />
+
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_php_laravel/tree/elastic.
 

@@ -4,6 +4,8 @@ title: "Python Sanic"
 slug: /instrumentation/opentelemetry/python-sanic
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 As of Apr 2024, OpenTelemetry does not provide auto-instrumentation for Sanic. That said, a fully functional Sanic instrumentation can be achieved as follows.
 
 ## Prerequisites
@@ -65,7 +67,7 @@ Python 3
       )
       metrics.set_meter_provider(meter_provider)
       SystemMetricsInstrumentor().instrument()
-      
+
       tracer = trace.get_tracer(__name__)
 
       SPAN_KEY = 'span_key'
@@ -133,6 +135,8 @@ Python 3
    OTEL_SERVICE_NAME=<app_name> \
    sanic server
    ```
+
+5. <AccountRouting />
 
 ## Sample Application
 

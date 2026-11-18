@@ -6,6 +6,7 @@ slug: /instrumentation/opentelemetry/php-slim
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -15,7 +16,6 @@ import TabItem from '@theme/TabItem';
 ## Installation
 
 1. Install the required dependencies:
-
    1. Install the required tools:
 
       <Tabs groupId="operating-systems">
@@ -86,6 +86,8 @@ import TabItem from '@theme/TabItem';
    OTEL_PROPAGATORS=baggage,tracecontext \
    php myapp.php
    ```
+
+3. <AccountRouting />
 
 Data should now be visible in your CubeAPM account.
 

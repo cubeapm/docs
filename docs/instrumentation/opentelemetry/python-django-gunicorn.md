@@ -4,6 +4,8 @@ title: "Python Django Gunicorn"
 slug: /instrumentation/opentelemetry/python-django-gunicorn
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3
@@ -127,6 +129,8 @@ Python 3
    OTEL_SERVICE_NAME=<app_name> \
    gunicorn mysite.wsgi -c gunicorn.conf.py
    ```
+
+5. <AccountRouting />
 
 ## Sample Application
 

@@ -6,6 +6,7 @@ slug: /instrumentation/datadog/dotnet
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -46,7 +47,9 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
    DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
    ```
 
-## Sample App
+1. <AccountRouting />
+
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_dotnet_core/tree/datadog.
 

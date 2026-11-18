@@ -4,6 +4,8 @@ title: "Java"
 slug: /instrumentation/opentelemetry/java
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Java 8+
@@ -53,6 +55,8 @@ Ref: https://github.com/open-telemetry/opentelemetry-java/blob/main/VERSIONING.m
    OTEL_SERVICE_NAME=<app_name>
    ```
 
+<AccountRouting />
+
 Logs/Metrics exporter can be set to `none` instead of `otlp` to disable sending logs/metrics.
 
 For Java applications running on Tomcat, we need to set the CATALINA_OPTS environment variable instead of JAVA_TOOL_OPTIONS. Rest of the steps are the same as above.
@@ -66,7 +70,7 @@ Ref: https://opentelemetry.io/docs/zero-code/java/agent/server-config/
 
 OTel agent does not support having different service name for multiple applications running in the same Tomcat instance. We recommend using New Relic agent in this case, with `enable_auto_app_naming` (ref: https://docs.newrelic.com/docs/apm/agents/java-agent/configuration/automatic-application-naming/).
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/otel
 

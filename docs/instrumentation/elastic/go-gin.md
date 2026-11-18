@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/go-gin
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -37,6 +38,7 @@ import TabItem from '@theme/TabItem';
        # highlight-end
    }
    ```
+
    :::info
    For more information, refer to the [Elastic APM Go agent](https://www.elastic.co/docs/reference/apm/agents/go/set-up-apm-go-agent#installation).
    :::
@@ -56,6 +58,8 @@ import TabItem from '@theme/TabItem';
          ```
       </TabItem>  
    </Tabs>
+
+1. <AccountRouting />
 
 ## Sample Application
 

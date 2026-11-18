@@ -4,6 +4,8 @@ title: "Ruby Rails"
 slug: /instrumentation/opentelemetry/ruby-rails
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 - CRuby >= 3.0, JRuby >= 9.3.2.0, or TruffleRuby >= 22.1
@@ -43,7 +45,9 @@ slug: /instrumentation/opentelemetry/ruby-rails
    bin/rails server
    ```
 
-## Sample App
+1. <AccountRouting />
+
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_ruby_rails/tree/otel
 

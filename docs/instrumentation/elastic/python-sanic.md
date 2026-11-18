@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/python-sanic
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -52,6 +53,8 @@ Python 3.6+
          ```
       </TabItem>
    </Tabs>
+
+1. <AccountRouting />
 
 ## Sample Application
 

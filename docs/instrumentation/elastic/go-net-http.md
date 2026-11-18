@@ -6,6 +6,7 @@ slug: /instrumentation/elastic/go-net-http
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -29,18 +30,19 @@ import TabItem from '@theme/TabItem';
    # highlight-end
 
    func main() {
-    
-	    srv := &http.Server{
-		    Addr:         ":8000",
-		    BaseContext:  func(_ net.Listener) context.Context { return ctx },
-		    ReadTimeout:  time.Second,
-		    WriteTimeout: 10 * time.Second,
+
+       srv := &http.Server{
+   	    Addr:         ":8000",
+   	    BaseContext:  func(_ net.Listener) context.Context { return ctx },
+   	    ReadTimeout:  time.Second,
+   	    WriteTimeout: 10 * time.Second,
        # highlight-start
-		    Handler:      apmhttp.Wrap(newHTTPHandler()),
+   	    Handler:      apmhttp.Wrap(newHTTPHandler()),
        # highlight-end
-        } 
+        }
    }
    ```
+
    :::info
    For more information, refer to the [Elastic APM Go agent](https://www.elastic.co/docs/reference/apm/agents/go/set-up-apm-go-agent#installation).
    :::
@@ -60,6 +62,8 @@ import TabItem from '@theme/TabItem';
          ```
       </TabItem>  
    </Tabs>
+
+1. <AccountRouting />
 
 ## Sample Application
 

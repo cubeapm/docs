@@ -4,6 +4,8 @@ title: "Python Django uWSGI"
 slug: /instrumentation/opentelemetry/python-django-uwsgi
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3
@@ -105,6 +107,8 @@ Python 3
    OTEL_SERVICE_NAME=<app_name> \
    uwsgi --module=mysite.wsgi:application --http=127.0.0.1:8000 --master --need-app
    ```
+
+4. <AccountRouting />
 
 ## Sample Application
 

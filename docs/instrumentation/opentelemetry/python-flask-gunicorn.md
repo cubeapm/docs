@@ -4,6 +4,8 @@ title: "Python Flask Gunicorn"
 slug: /instrumentation/opentelemetry/python-flask-gunicorn
 ---
 
+import AccountRouting from './\_account_routing.mdx';
+
 ## Prerequisites
 
 Python 3
@@ -126,6 +128,8 @@ Python 3
    OTEL_SERVICE_NAME=<app_name> \
    gunicorn app:app -c gunicorn.conf.py
    ```
+
+5. <AccountRouting />
 
 ## Capture Exception StackTraces
 
