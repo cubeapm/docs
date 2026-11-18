@@ -12,7 +12,7 @@ Every profile CubeAPM receives, from any source, shows up on the **Profiles** pa
 
 Open **Profiles** from the left navigation.
 
-- **Environment and time range.** The pickers at the top work like on the other pages. The environment picker lists the envs your profiles carry. `UNSET` shows profiles from all envs, including profiles with no env. New Relic profiles have no env, and OpenTelemetry profiles have one only when the profiler adds `deployment.environment.name`.
+- **Environment and time range.** The pickers at the top work like on the other pages. The environment picker lists the envs your profiles carry, and `UNSET` shows the profiles that have no env. Profiles get their env the same way as traces: Datadog from the tracer's `DD_ENV`, or else the Datadog Agent's, and OpenTelemetry from the `cube.environment` resource attribute. New Relic profiles have no env, so they are always under `UNSET`.
 - **Filter rail.** On the left, pick values for `service`, `profile.source` (`datadog`, `newrelic`, `opentelemetry`), `profile.runtime` and `profile.type`. The counts next to each value show how many profiles you would get.
 - **Search bar.** Each pick in the rail writes a clause into the search bar, for example `service:="checkout" profile.type:="cpu"`. You can also type a query yourself and press Enter. Other fields you can search on include `env`, `host.name`, `version`, `profile.format`, `profile.runtime_version` and `profile.profiler_version`. Recent searches are kept in the drop-down inside the search bar.
 - **Timeline.** The chart under the search bar shows how many profiles there are over time, by profile time.
