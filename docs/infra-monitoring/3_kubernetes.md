@@ -317,6 +317,9 @@ On k8s, the Collector can be in two modes - **daemonset** (collector runs as a d
        # extractAllPodLabels: false
      kubernetesEvents:
        enabled: true
+       # use the k8sobjects receiver (referenced in the logs pipeline below)
+       # instead of the k8s_events receiver
+       useK8sEventsReceiver: false
      clusterMetrics:
        enabled: true
    config:
