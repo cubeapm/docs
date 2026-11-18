@@ -58,3 +58,7 @@ As of November 2026, New Relic has mature profiling support for Java, and _early
          ```
       </TabItem>
    </Tabs>
+
+   :::info
+   To give profiles an environment, write the app name as `<app_name>%<env>`, for example `order-service%sandbox`. With `<app_name>;<env>` from the [multi-environment setup](../instrumentation/newrelic/newrelic.md#multi-environment-setup), only traces get the environment: the agent sends just the part before `;` with profiles, so they show under `UNSET`.
+   :::
