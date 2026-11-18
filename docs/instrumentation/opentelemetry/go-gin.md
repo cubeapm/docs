@@ -178,6 +178,12 @@ Go 1.23+
     # highlight-end
 
     func main() {
+        if err := run(); err != nil {
+            log.Fatalln(err)
+        }
+    }
+
+    func run() (err error) {
         ......
         # highlight-start
         // Handle SIGINT (CTRL+C)
