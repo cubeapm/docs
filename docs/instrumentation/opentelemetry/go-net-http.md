@@ -238,7 +238,7 @@ Go 1.23+
 
 1.  <AccountRouting />
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_go_net_http/tree/otel
 

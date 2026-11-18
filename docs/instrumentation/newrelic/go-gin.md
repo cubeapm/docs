@@ -35,24 +35,24 @@ Following are the steps to install the New Relic agent and connect it with CubeA
    # highlight-end
 
    func main() {
-        # highlight-start
-        // initialize newrelic
-        app, err := newrelic.NewApplication(
-		    newrelic.ConfigFromEnvironment(),
-	     )
-        # highlight-end
-
-        // Create Gin router
-	    router := gin.Default()
        # highlight-start
-	    router.Use(nrgin.Middleware(app))
+       // initialize newrelic
+       app, err := newrelic.NewApplication(
+           newrelic.ConfigFromEnvironment(),
+       )
+       # highlight-end
+
+       // Create Gin router
+       router := gin.Default()
+       # highlight-start
+       router.Use(nrgin.Middleware(app))
        # highlight-end
    }
    ```
+
    :::info
    For more information, refer to the [NewRelic Go documentation](https://docs.newrelic.com/docs/apm/agents/go-agent/installation/install-new-relic-go/#get-new-relic).
    :::
-
 
 1. Configure the agent.
 
@@ -67,13 +67,13 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       <TabItem value="file" label="Code">
          ```go
          func main() {
-            # highlight-start
-            // initialize newrelic
-            app, err := newrelic.NewApplication(
-		        newrelic.ConfigAppName("<app_name>"),
-		        newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
-	         )
-            # highlight-end
+             # highlight-start
+             // initialize newrelic
+             app, err := newrelic.NewApplication(
+                 newrelic.ConfigAppName("<app_name>"),
+                 newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
+             )
+             # highlight-end
          }
          ```
       </TabItem>
@@ -97,16 +97,16 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       <TabItem value="file" label="Code">
          ```go
          func main() {
-            // initialize newrelic
-            app, err := newrelic.NewApplication(
-		        newrelic.ConfigAppName("<app_name>"),
-		        newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
-              # highlight-start
-		        func(c *newrelic.Config) {
-			        c.Host = "<cubeapm-newrelic.yourdomain.com>" // Use your load balancer's domain name here
-		        },
-              # highlight-end
-	         )
+             // initialize newrelic
+             app, err := newrelic.NewApplication(
+                 newrelic.ConfigAppName("<app_name>"),
+                 newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
+                 # highlight-start
+                 func(c *newrelic.Config) {
+                     c.Host = "<cubeapm-newrelic.yourdomain.com>" // Use your load balancer's domain name here
+                 },
+                 # highlight-end
+             )
          }
          ```
       </TabItem>
@@ -114,7 +114,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. <AccountRouting />
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_go_gin/tree/newrelic
 
@@ -134,8 +134,8 @@ The following can be used for debugging:
    <TabItem value="file" label="Code">
       ```go
       app, err := newrelic.NewApplication(
-        newrelic.ConfigDebugLogger(os.Stdout),
-	  )
+          newrelic.ConfigDebugLogger(os.Stdout),
+      )
       ```
    </TabItem>
 </Tabs>

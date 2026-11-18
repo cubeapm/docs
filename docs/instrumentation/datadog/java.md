@@ -6,7 +6,7 @@ slug: /instrumentation/datadog/java
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
@@ -62,7 +62,7 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
 
 1. <AccountRouting />
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/datadog
 

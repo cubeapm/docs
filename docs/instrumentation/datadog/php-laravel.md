@@ -59,7 +59,7 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
 
 1. <AccountRouting />
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_php_laravel/tree/datadog.
 

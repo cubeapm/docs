@@ -30,6 +30,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
    Below timeout values need to be set for queue worker, but these values impact web worker performance negatively, so they should not be set for web workers in production.
    1. `newrelic.daemon.app_connect_timeout = 15s`
    1. `newrelic.daemon.start_timeout = 5s`
+
    :::
 
 1. Tell the agent to connect with CubeAPM instead of New Relic:
@@ -48,7 +49,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. <AccountRouting />
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_php_slim/tree/newrelic
 

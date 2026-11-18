@@ -99,7 +99,7 @@ The most prominently difference in a module is usually that `import` is used ins
 For further details, please refer: https://github.com/open-telemetry/opentelemetry-js/blob/main/doc/esm-support.md
 :::
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_nodejs_fastify/tree/otel
 

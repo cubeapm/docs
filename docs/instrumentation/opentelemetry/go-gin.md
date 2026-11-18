@@ -16,14 +16,15 @@ Go 1.23+
 
     <details>
     <summary>otel.go</summary>
+
     ```go
-     package main
+    package main
 
     import (
-    "context"
-    "errors"
-    "os"
-    "time"
+        "context"
+        "errors"
+        "os"
+        "time"
 
         "go.opentelemetry.io/contrib/instrumentation/host"
         "go.opentelemetry.io/contrib/instrumentation/runtime"
@@ -38,13 +39,12 @@ Go 1.23+
         "go.opentelemetry.io/otel/sdk/resource"
         "go.opentelemetry.io/otel/sdk/trace"
         semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
-
     )
 
     // setupOTelSDK bootstraps the OpenTelemetry pipeline.
     // If it does not return an error, make sure to call shutdown for proper cleanup.
     func setupOTelSDK(ctx context.Context) (shutdown func(context.Context) error, err error) {
-    var shutdownFuncs []func(context.Context) error
+        var shutdownFuncs []func(context.Context) error
 
         // shutdown calls cleanup functions registered via shutdownFuncs.
         // The errors from the calls are joined.
@@ -52,7 +52,7 @@ Go 1.23+
         shutdown = func(ctx context.Context) error {
             var err error
             for _, fn := range shutdownFuncs {
-        	    err = errors.Join(err, fn(ctx))
+                err = errors.Join(err, fn(ctx))
             }
             shutdownFuncs = nil
             return err
@@ -72,8 +72,8 @@ Go 1.23+
         res = resource.NewWithAttributes(
             res.SchemaURL(),
             append(res.Attributes(), attribute.KeyValue{
-        	    Key:   semconv.HostNameKey,
-        	    Value: attribute.StringValue(hostname),
+                Key:   semconv.HostNameKey,
+                Value: attribute.StringValue(hostname),
             })...,
         )
 
@@ -109,69 +109,64 @@ Go 1.23+
         }
 
         return
-
     }
 
     func newPropagator() propagation.TextMapPropagator {
-    return propagation.NewCompositeTextMapPropagator(
-    propagation.TraceContext{},
-    propagation.Baggage{},
-    )
+        return propagation.NewCompositeTextMapPropagator(
+            propagation.TraceContext{},
+            propagation.Baggage{},
+        )
     }
 
     func newTraceProvider(ctx context.Context, res *resource.Resource) (*trace.TracerProvider, error) {
-    var traceExporter trace.SpanExporter
-    var err error
-    if os.Getenv("OTEL_LOG_LEVEL") == "debug" {
-    traceExporter, err = stdouttrace.New(
-    stdouttrace.WithPrettyPrint(),
-    )
-    } else {
-    traceExporter, err = otlptracehttp.New(ctx)
-    }
-    if err != nil {
-    return nil, err
-    }
+        var traceExporter trace.SpanExporter
+        var err error
+        if os.Getenv("OTEL_LOG_LEVEL") == "debug" {
+            traceExporter, err = stdouttrace.New(
+                stdouttrace.WithPrettyPrint(),
+            )
+        } else {
+            traceExporter, err = otlptracehttp.New(ctx)
+        }
+        if err != nil {
+            return nil, err
+        }
 
         traceProvider := trace.NewTracerProvider(
             trace.WithResource(res),
             trace.WithBatcher(traceExporter),
         )
         return traceProvider, nil
-
     }
 
     func newMeterProvider(ctx context.Context, res *resource.Resource) (*metric.MeterProvider, error) {
-    var metricExporter metric.Exporter
-    var err error
-    var opts []metric.PeriodicReaderOption
-    if os.Getenv("OTEL_LOG_LEVEL") == "debug" {
-    metricExporter, err = stdoutmetric.New(
-    stdoutmetric.WithPrettyPrint(),
-    )
-    // Default is 1m. Set to 10s to get output faster.
-    opts = append(opts, metric.WithInterval(10\*time.Second))
-    } else {
-    metricExporter, err = otlpmetrichttp.New(ctx)
-    }
-    if err != nil {
-    return nil, err
-    }
+        var metricExporter metric.Exporter
+        var err error
+        var opts []metric.PeriodicReaderOption
+        if os.Getenv("OTEL_LOG_LEVEL") == "debug" {
+            metricExporter, err = stdoutmetric.New(
+                stdoutmetric.WithPrettyPrint(),
+            )
+            // Default is 1m. Set to 10s to get output faster.
+            opts = append(opts, metric.WithInterval(10*time.Second))
+        } else {
+            metricExporter, err = otlpmetrichttp.New(ctx)
+        }
+        if err != nil {
+            return nil, err
+        }
 
         meterProvider := metric.NewMeterProvider(
             metric.WithResource(res),
             metric.WithReader(
-        	    metric.NewPeriodicReader(metricExporter, opts...),
+                metric.NewPeriodicReader(metricExporter, opts...),
             ),
         )
         return meterProvider, nil
-
     }
-
     ```
+
     </details>
-
-    ```
 
 1.  Add the highlighted lines below to your project's `main.go` file:
 
@@ -184,26 +179,26 @@ Go 1.23+
 
     func main() {
         ......
-       # highlight-start
-       // Handle SIGINT (CTRL+C)
-       ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-       defer stop()
+        # highlight-start
+        // Handle SIGINT (CTRL+C)
+        ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+        defer stop()
 
-       // Set up OpenTelemetry.
-       otelShutdown, err := setupOTelSDK(ctx)
-       if err != nil {
-       	return err
-       }
-       // Handle shutdown properly so nothing leaks.
-       defer func() {
-        	err = errors.Join(err, otelShutdown(context.Background()))
-       }()
-       # highlight-end
+        // Set up OpenTelemetry.
+        otelShutdown, err := setupOTelSDK(ctx)
+        if err != nil {
+            return err
+        }
+        // Handle shutdown properly so nothing leaks.
+        defer func() {
+            err = errors.Join(err, otelShutdown(context.Background()))
+        }()
+        # highlight-end
 
-        r := gin.Default()
-       # highlight-start
+        router := gin.Default()
+        # highlight-start
         router.Use(otelgin.Middleware(os.Getenv("OTEL_SERVICE_NAME")))
-       # highlight-end
+        # highlight-end
         ......
     }
     ```
@@ -226,7 +221,7 @@ Go 1.23+
 
 1.  <AccountRouting />
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_go_gin/tree/otel
 

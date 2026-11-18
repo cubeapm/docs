@@ -20,7 +20,7 @@ Python 3.6+
     pip install elastic-apm
     ```
 
-2.  Add `elasticapm.contrib.django` in `settings.py`:
+1.  Add `elasticapm.contrib.django` in `settings.py`:
 
     ```python
     INSTALLED_APPS = [
@@ -28,7 +28,7 @@ Python 3.6+
     ]
     ```
 
-3.  Configure the agent.
+1.  Configure the agent.
 
     <Tabs>
        <TabItem value="file" label="settings.py">
@@ -53,13 +53,11 @@ Python 3.6+
           ELASTIC_APM_ENVIRONMENT=myenv
           ELASTIC_APM_SERVICE_VERSION=1.2.3
           ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-
           ```
-
        </TabItem>
     </Tabs>
 
-4.  <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

@@ -38,35 +38,36 @@ Following are the steps to install the New Relic agent and connect it with CubeA
        # highlight-start
        // initialize newrelic
        app, err := newrelic.NewApplication(
-		   newrelic.ConfigFromEnvironment(),
-	    )
+           newrelic.ConfigFromEnvironment(),
+       )
        # highlight-end
 
        // Start HTTP server.
-	    srv := &http.Server{
-		   Addr:         ":8000",
-         # highlight-start
-		   Handler:      newHTTPHandler(app),
-         # highlight-end
-	    }
+       srv := &http.Server{
+           Addr:    ":8000",
+           # highlight-start
+           Handler: newHTTPHandler(app),
+           # highlight-end
+       }
    }
 
    func newHTTPHandler(app *newrelic.Application) http.Handler {
-	    mux := http.NewServeMux()
+       mux := http.NewServeMux()
 
-	    handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
+       handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
            # highlight-start
            // Wrap the handler so New Relic can record metrics & traces
-		     route, wrapped := newrelic.WrapHandleFunc(app, pattern, handlerFunc)
+           route, wrapped := newrelic.WrapHandleFunc(app, pattern, handlerFunc)
            # highlight-end
-		     mux.HandleFunc(route, wrapped)
-	    }
+           mux.HandleFunc(route, wrapped)
+       }
 
-	    // Register handlers.
-	    handleFunc("/", indexFunc)
-	    return mux
+       // Register handlers.
+       handleFunc("/", indexFunc)
+       return mux
    }
    ```
+
    :::info
    For more information, refer to the [NewRelic Go documentation](https://docs.newrelic.com/docs/apm/agents/go-agent/installation/install-new-relic-go/#get-new-relic).
    :::
@@ -84,13 +85,13 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       <TabItem value="file" label="Code">
          ```go
          func main() {
-            # highlight-start
-            // initialize newrelic
-            app, err := newrelic.NewApplication(
-		        newrelic.ConfigAppName("<app_name>"),
-		        newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
-	         )
-            # highlight-end
+             # highlight-start
+             // initialize newrelic
+             app, err := newrelic.NewApplication(
+                 newrelic.ConfigAppName("<app_name>"),
+                 newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
+             )
+             # highlight-end
          }
          ```
       </TabItem>
@@ -114,16 +115,16 @@ Following are the steps to install the New Relic agent and connect it with CubeA
       <TabItem value="file" label="Code">
          ```go
          func main() {
-            // initialize newrelic
-            app, err := newrelic.NewApplication(
-		        newrelic.ConfigAppName("<app_name>"),
-		        newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
-              # highlight-start
-		        func(c *newrelic.Config) {
-			        c.Host = "<cubeapm-newrelic.yourdomain.com>" // Use your load balancer's domain name here
-		        },
-              # highlight-end
-	         )
+             // initialize newrelic
+             app, err := newrelic.NewApplication(
+                 newrelic.ConfigAppName("<app_name>"),
+                 newrelic.ConfigLicense("ABC4567890ABC4567890ABC4567890ABC4567890"),
+                 # highlight-start
+                 func(c *newrelic.Config) {
+                     c.Host = "<cubeapm-newrelic.yourdomain.com>" // Use your load balancer's domain name here
+                 },
+                 # highlight-end
+             )
          }
          ```
       </TabItem>
@@ -131,7 +132,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. <AccountRouting />
 
-### Sample App
+## Sample Application
 
 A working example with multiple instrumentations is available at https://github.com/cubeapm/sample_app_go_net_http/tree/newrelic
 
@@ -151,8 +152,8 @@ The following can be used for debugging:
    <TabItem value="file" label="Code">
       ```go
       app, err := newrelic.NewApplication(
-        newrelic.ConfigDebugLogger(os.Stdout),
-	  )
+          newrelic.ConfigDebugLogger(os.Stdout),
+      )
       ```
    </TabItem>
 </Tabs>

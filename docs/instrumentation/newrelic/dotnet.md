@@ -72,7 +72,7 @@ Following are the steps to install the New Relic agent and connect it with CubeA
 
 1. <AccountRouting />
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_dotnet_core/tree/newrelic
 

@@ -107,7 +107,7 @@ Sample content for configuration is available at https://docs.newrelic.com/docs/
       </TabItem>
    </Tabs>
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/newrelic
 

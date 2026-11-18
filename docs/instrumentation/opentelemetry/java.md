@@ -70,7 +70,7 @@ Ref: https://opentelemetry.io/docs/zero-code/java/agent/server-config/
 
 OTel agent does not support having different service name for multiple applications running in the same Tomcat instance. We recommend using New Relic agent in this case, with `enable_auto_app_naming` (ref: https://docs.newrelic.com/docs/apm/agents/java-agent/configuration/automatic-application-naming/).
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/otel
 

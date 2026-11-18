@@ -43,7 +43,7 @@ import AccountRouting from './\_account_routing.mdx';
 
 1.  <AccountRouting />
 
-## Sample App
+## Sample Application
 
 A working example is available at https://github.com/cubeapm/sample_app_java_spring/tree/elastic
 
