@@ -83,6 +83,10 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          host = <cubeapm-newrelic.yourdomain.com>
          ; (optional) to get garbage collection metrics
          gc_runtime_metrics.enabled = true
+         # (optional but highly recommended) stop irrelevant process-id-wise
+         # reporting of memory usage, as it generates large volume of metrics
+         # data, and adds very little value.
+         memory_runtime_pid_metrics.enabled = false
          # highlight-end
          ```
       </TabItem>
@@ -95,6 +99,10 @@ Following are the steps to install the New Relic agent and connect it with CubeA
          NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
          # (optional) to get garbage collection metrics
          NEW_RELIC_GC_RUNTIME_METRICS_ENABLED=true
+         # (optional but highly recommended) stop irrelevant process-id-wise
+         # reporting of memory usage, as it generates large volume of metrics
+         # data, and adds very little value.
+         NEW_RELIC_MEMORY_RUNTIME_PID_METRICS_ENABLED=false
          # highlight-end
          ```
       </TabItem>
