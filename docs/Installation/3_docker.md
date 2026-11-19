@@ -12,7 +12,7 @@ docker run -d --name cubeapm \
 -p 3125:3125 -p 3130:3130 -p 4317:4317 -p 4318:4318 \
 -v cube_data:/root/data \
 -v ./config.properties:/etc/cubeapm/config.properties \
-cubeapm/cubeapm:v1.14.0 \
+cubeapm/cubeapm:v1.15.0 \
 --config-file /etc/cubeapm/config.properties
 ```
 
@@ -26,7 +26,7 @@ The following docker compose config installs a fully working three-node cluster 
 version: "3"
 services:
   cubeapm1:
-    image: cubeapm/cubeapm:v1.14.0
+    image: cubeapm/cubeapm:v1.15.0
     volumes:
       - ./data_volume/cubeapm/cubeapm1:/root/data
       # - ./config.properties:/root/config.properties
@@ -45,7 +45,7 @@ services:
         condition: service_healthy
     restart: always
   cubeapm2:
-    image: cubeapm/cubeapm:v1.14.0
+    image: cubeapm/cubeapm:v1.15.0
     volumes:
       - ./data_volume/cubeapm/cubeapm2:/root/data
       # - ./config.properties:/root/config.properties
@@ -67,7 +67,7 @@ services:
         condition: service_healthy
     restart: always
   cubeapm3:
-    image: cubeapm/cubeapm:v1.14.0
+    image: cubeapm/cubeapm:v1.15.0
     volumes:
       - ./data_volume/cubeapm/cubeapm3:/root/data
       # - ./config.properties:/root/config.properties
@@ -128,6 +128,7 @@ services:
     ports:
       - 3125:3125
       - 3130:3130
+      - 3140:3140
       - 4317:4317
       - 4318:4318
     depends_on:
@@ -192,6 +193,22 @@ configs:
               client_max_body_size 50M;
               location / {
                   proxy_pass http://cubeapm-3130;
+                  proxy_set_header Host $$host;
+                  proxy_pass_request_headers on;
+              }
+          }
+
+          upstream cubeapm-3140 {
+              server cubeapm1:3140;
+              server cubeapm2:3140;
+              server cubeapm3:3140;
+          }
+          server {
+              listen 3140;
+              listen [::]:3140;
+              client_max_body_size 50M;
+              location / {
+                  proxy_pass http://cubeapm-3140;
                   proxy_set_header Host $$host;
                   proxy_pass_request_headers on;
               }

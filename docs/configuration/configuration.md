@@ -69,7 +69,7 @@ auth.key.session=
 # Examples: http://cube.yourdomain.com, https://yourdomain.com/cube, http://10.0.0.1:3125
 base-url=http://localhost:3125
 
-# Comma separated list of email ids of users to be given sysadmin privilege.
+# Comma separated list of email ids of users to be given sysadmin privilege. Only sysadmins can manage users and accounts.
 auth.sys-admins=
 
 # Comma separated list of all nodes in the cluster, e.g., 10.0.0.1,10.0.0.2,10.0.0.3. Leave empty for single node operation.
@@ -109,6 +109,15 @@ auth.oidc.google.client-id=
 # Client secret for Sign in with Google
 auth.oidc.google.client-secret=
 
+# Client ID for Sign in with JumpCloud
+auth.oidc.jumpcloud.client-id=
+
+# Client secret for Sign in with JumpCloud
+auth.oidc.jumpcloud.client-secret=
+
+# Issuer URL for JumpCloud OIDC
+auth.oidc.jumpcloud.issuer-url=
+
 # Client ID for Sign in with Microsoft
 auth.oidc.microsoft.client-id=
 
@@ -126,6 +135,15 @@ auth.oidc.onelogin.client-secret=
 
 # Issuer URL for OneLogin OIDC
 auth.oidc.onelogin.issuer-url=
+
+# Client ID for Sign in with PingIdentity
+auth.oidc.pingidentity.client-id=
+
+# Client secret for Sign in with PingIdentity
+auth.oidc.pingidentity.client-secret=
+
+# Issuer URL for PingIdentity OIDC
+auth.oidc.pingidentity.issuer-url=
 
 # App ID for sending alert notifications on PagerDuty.
 alertmanager.oauth.pagerduty.app-id=
@@ -232,14 +250,29 @@ metrics.gcp.config-file=
 # Logs retention period. Must be at least 24h.
 logs.retention=24h
 
+# Logs archive retention period. Must be at least 48h.
+logs.archive.retention=2160h
+
 # Metrics retention period. Must be at least 24h.
 metrics.retention=720h
 
 # Traces retention period. Must be at least 24h.
 traces.retention=168h
 
+# Profiles retention period. Must be at least 24h.
+profiles.retention=168h
+
 # Static files (e.g. javascript source maps) retention period
 files.retention=720h
+
+# Retention period for alert notification history (alert_logs table). Must be at least 24h.
+alertmanager.alert-logs.retention=720h
+
+# Retention period for SLO data (slo_data and uptime_data tables). Days older than this disappear from the SLO Data page. Must be at least 168h.
+slo.data-retention=4320h
+
+# Path to config file for retention policies.
+retention.config-file=
 
 # Minimum query duration for labeling database queries as slow.
 traces.slow-query-threshold=500ms
@@ -377,6 +410,9 @@ collector.otlp.http-port=4318
 # Disable charts in alert notifications
 alertmanager.charts.disable=false
 
+# Disable sample log in alert notifications
+alertmanager.sample-log.disable=false
+
 
 
 ## Advanced Parameters: Changing values of these parameters can impact CubeAPM performance adversely, hence these should not be changed without consultation with CubeAPM support team
@@ -426,6 +462,12 @@ collector.elastic.server-url=
 # [Deprecated] Use env-tag instead.
 #collector.env-tag=cube.environment
 
+# New Relic Browser Application Monitoring host to additionally forward data to, e.g., bam.nr-data.net
+collector.nr.bam.forward.host=
+
+# Comma-separated list of browser app id to app name mappings. Each entry is applicationID=service[;env]
+collector.nr.bam.map.app-ids=
+
 # Collect data that New Relic stores in Transaction table.
 collector.nr.collect-transaction-data=false
 
@@ -437,12 +479,21 @@ collector.nr.cors.headers=Content-Type
 # Examples: "http://*.domain.com", "*"
 collector.nr.cors.origins=*
 
+# Disable logs forwarding in New Relic agents.
+collector.nr.logs-forwarding-disable=false
+
+# Do not save metrics sent by New Relic agents by default. Only select metrics will be saved if set to true, and all metrics will be saved if set to false.
+collector.nr.skip-metrics=false
+
 # Do not deny service to unsupported agent protocols. Provide best-effort service instead.
 collector.nr.skip-protocol-check=false
 
 # Comma separated list of allowed origins for CORS requests.
 # Examples: "http://*.domain.com", "*"
 collector.otlp.http.cors.origins=
+
+# Whether to disable sampling, i.e., save all traces.
+collector.sampling.disable=false
 
 # Number of error traces to sample per sampling window (~5 minutes). The count is applied seperately for every service-api-error_type combination. Zero means dynamic sampling, which provides good performance while ensuring at least some samples of every kind of error are saved.
 collector.sampling.error-count=0
@@ -473,7 +524,7 @@ metrics.custom-labels-config-file=
 
 # Compatibility mode for integration using Datadog agent.
 # Possible values are legacy, modern
-metrics.dd.compatibility-mode=modern
+metrics.dd.compatibility-mode=legacy
 
 # Operation mode for downsampler. Downsampler periodically creates compressed copies of apm metrics. This speeds up apm queries over longer time ranges.
 # Possible values are off, on, backfill-YYYY-MM-DD
@@ -487,17 +538,17 @@ metrics.gcp.application-credentials-file=
 metrics.infra-correlation.enable=false
 
 # Compatibility mode for integration using New Relic agent.
-# Possible values are legacy, modern
-metrics.nr.compatibility-mode=legacy
+# Possible values are legacy, v2, modern
+metrics.nr.compatibility-mode=v2
 
 # Whether to forward data received from New Relic agent to New Relic as well.
 metrics.nr.forwarder.enable=false
 
+# Comma-separated list of services to forward to New Relic when metrics.nr.forwarder.enable is true. Each entry is service[;env[;accountID]] - env defaults to UNSET, and an entry without accountID matches the service in every account. Empty forwards all services.
+metrics.nr.forwarder.services=
+
 # Whether to perfer HTTP status code description as error description in the reported metrics. By default, exception name is preferred and HTTP status code description is used if no exception occured.
 metrics.prefer-http-status-as-error-desc=false
-
-# Path to config file for SLOs (Service Level Objectives).
-metrics.slo.config-file=/etc/cubeapm/slo.yml
 
 # Whether to treat HTTP 4xx response as error in the reported metrics.
 metrics.treat-4xx-as-error=false
