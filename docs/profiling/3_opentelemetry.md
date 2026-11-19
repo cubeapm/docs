@@ -31,7 +31,7 @@ Not supported: Windows, macOS, platforms that do not allow root pods in the host
 
 ## How it works
 
-The profiler sends one profile per process about few seconds. Each carries the process id, the executable, and the container id when the process runs in a container.
+The profiler sends one profile per process every few seconds. Each carries the process id, the executable, and the container id when the process runs in a container.
 
 CubeAPM keeps a profile when it has:
 
@@ -98,11 +98,6 @@ One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Co
      jaeger-grpc: { enabled: false }
      zipkin: { enabled: false }
 
-   extraEnvs:
-     - name: CUBE_TOKEN
-       valueFrom:
-         secretKeyRef: { name: cube-token, key: token }
-
    config:
      receivers:
        otlp: null
@@ -116,7 +111,7 @@ One profiler pod per Linux node (DaemonSet), installed with the OpenTelemetry Co
          wait_for_metadata: true
      exporters:
        otlp_http/cube:
-         profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
+         profiles_endpoint: "http://<ip_address_of_cubeapm_server>:4318/v1development/profiles"
          compression: gzip
      service:
        pipelines:
@@ -180,7 +175,7 @@ For a host without Kubernetes that runs a single containerized service, with any
 
    exporters:
      otlp_http/cube:
-       profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
+       profiles_endpoint: "http://<ip_address_of_cubeapm_server>:4318/v1development/profiles"
        compression: gzip
 
    service:
@@ -233,7 +228,7 @@ processors:
 
 exporters:
   otlp_http/cube:
-    profiles_endpoint: "http://${env:CUBEAPM_HOST}:4318/v1development/profiles"
+    profiles_endpoint: "http://<ip_address_of_cubeapm_server>:4318/v1development/profiles"
     compression: gzip
 
 service:
@@ -342,7 +337,7 @@ Reasons in the partial-success message:
 
 | Symptom                                                                                          | Check                                                                                                          |
 | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| The profiler exits with `failed to load eBPF tracer`                                             | Privileges and kernel: the privileged settings above, kernel 5.10 or newer                                     |
+| The profiler exits with `failed to load eBPF tracer`                                             | Privileges and kernel: the privileges above, kernel 5.10 or newer                                              |
 | The profiler refuses its configuration: `gated under the "service.profilesSupport" feature gate` | Add `--feature-gates=+service.profilesSupport`                                                                 |
 | The profiler refuses its configuration: `telemetry type is not supported`                        | Remove any `batch` processor from the profiles pipeline                                                        |
 | The profiler exits with a `k8s_attributes` error                                                 | The ServiceAccount, ClusterRole and ClusterRoleBinding, and access to the API server                           |

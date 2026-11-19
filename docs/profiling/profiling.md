@@ -43,5 +43,3 @@ Overall, OTel is the recommended method for getting baseline profiling support f
 ## FAQ
 
 **Does profiling slow down my application?** The profilers are built to run in production. Their cost depends on the profiler and its settings. See the documentation of the [Datadog profiler](https://docs.datadoghq.com/profiler/), the [New Relic Java agent](https://docs.newrelic.com/docs/apm/agents/java-agent/features/real-time-profiling-java-using-jfr-metrics/) or the [OpenTelemetry eBPF profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler).
-
-**My profiles do not show up.** Check the environment picker first: a profile with an env shows only under that env, and `UNSET` shows only profiles without one. Then widen the time range, and follow the troubleshooting section of your source: [Datadog](./1_datadog.md#troubleshooting), [New Relic Java](./2_newrelic.md#troubleshooting), [OpenTelemetry](./3_opentelemetry.md#troubleshooting).

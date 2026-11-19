@@ -48,7 +48,7 @@ As of November 2026, New Relic has mature profiling support for Java, and _early
          ```shell
          NEW_RELIC_APP_NAME=<app_name>
          NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         # Use your load balancer\'s domain name here
+         # Use your load balancer's domain name here
          # highlight-start
          NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
          NEW_RELIC_JFR_ENABLED=true
