@@ -31,30 +31,30 @@ Python 3.6+
 1.  Configure the agent.
 
     <Tabs>
-       <TabItem value="file" label="settings.py">
-          ```python
-          ELASTIC_APM = {
-          'SERVICE_NAME': '<app_name>',
-          # send traces to CubeAPM
-          'SERVER_URL': 'http://<ip_address_of_cubeapm_server>:3130',
-          # optional settings
-          'ENVIRONMENT': 'myenv',
-          'SERVICE_VERSION': '1.2.3',
-          'GLOBAL_LABELS': 'mykey1=myvalue1,mykey2=myvalue2',
-          }
-          ```
-       </TabItem>
-       <TabItem value="env" label="Environment Variables">
-          ```shell
-          ELASTIC_APM_SERVICE_NAME=<app_name>
-          # send traces to CubeAPM
-          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-          # optional settings
-          ELASTIC_APM_ENVIRONMENT=myenv
-          ELASTIC_APM_SERVICE_VERSION=1.2.3
-          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-          ```
-       </TabItem>
+    <TabItem value="file" label="settings.py">
+        ```python
+        ELASTIC_APM = {
+        'SERVICE_NAME': '<app_name>',
+        # send traces to CubeAPM
+        'SERVER_URL': 'http://<ip_address_of_cubeapm_server>:3130',
+        # optional settings
+        'ENVIRONMENT': 'myenv',
+        'SERVICE_VERSION': '1.2.3',
+        'GLOBAL_LABELS': 'mykey1=myvalue1,mykey2=myvalue2',
+        }
+        ```
+    </TabItem>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        ELASTIC_APM_SERVICE_NAME=<app_name>
+        # send traces to CubeAPM
+        ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+        # optional settings
+        ELASTIC_APM_ENVIRONMENT=myenv
+        ELASTIC_APM_SERVICE_VERSION=1.2.3
+        ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+        ```
+    </TabItem>
     </Tabs>
 
 1.  <AccountRouting />

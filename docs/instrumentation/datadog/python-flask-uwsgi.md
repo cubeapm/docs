@@ -4,7 +4,7 @@ title: "Python Flask uWSGI"
 slug: /instrumentation/datadog/python-flask-uwsgi
 ---
 
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -14,49 +14,49 @@ Python 3+
 
 Following are the steps to install the Datadog agent and connect it with CubeAPM. If Datadog agent is already installed, you can jump to step 4.
 
-1. Install dependencies:
+1.  Install dependencies:
 
-   ```shell
-   pip install ddtrace
-   ```
+    ```shell
+    pip install ddtrace
+    ```
 
-1. Initialize the Datadog tracer when your application starts:
+1.  Initialize the Datadog tracer when your application starts:
 
-   ```shell
-   ddtrace-run uwsgi --http :8000 --wsgi-file app.py --callable app --master -p 4 --enable-threads --need-app
-   ```
+    ```shell
+    ddtrace-run uwsgi --http :8000 --wsgi-file app.py --callable app --master -p 4 --enable-threads --need-app
+    ```
 
-1. Modify the application run command as follows:
+1.  Modify the application run command as follows:
 
-   ```shell
-   DD_SERVICE=<app_name> \
-   # Send data to Datadog Agent
-   DD_AGENT_HOST=<datadog_agent_host_name> \
-   # Enable runtime metrics
-   DD_RUNTIME_METRICS_ENABLED=true \
-   DD_RUNTIME_METRICS_RUNTIME_ID_ENABLED=true \
-   # optional settings
-   DD_ENV=UNSET \
-   DD_VERSION=1.2.3 \
-   DD_TAGS=mykey1:myvalue1,mykey2:myvalue2 \
-   ddtrace-run uwsgi --http :8000 --wsgi-file app.py --callable app --master -p 4 --enable-threads --need-app
-   ```
+    ```shell
+    export DD_SERVICE=<app_name>
+    # Send data to Datadog Agent
+    export DD_AGENT_HOST=<datadog_agent_host_name>
+    # Enable runtime metrics
+    export DD_RUNTIME_METRICS_ENABLED=true
+    export DD_RUNTIME_METRICS_RUNTIME_ID_ENABLED=true
+    # optional settings
+    export DD_ENV=UNSET
+    export DD_VERSION=1.2.3
+    export DD_TAGS=mykey1:myvalue1,mykey2:myvalue2
+    ddtrace-run uwsgi --http :8000 --wsgi-file app.py --callable app --master -p 4 --enable-threads --need-app
+    ```
 
-1. Configure Datadog Agent to forward metrics and traces to CubeAPM
+1.  Configure Datadog Agent to forward metrics and traces to CubeAPM
 
-   ```shell
-   DD_API_KEY=<your_datadog_key>
-   # send runtime metrics to CubeAPM
-   DD_DD_URL=http://host.docker.internal:3130
-   # send traces to CubeAPM
-   DD_APM_DD_URL=http://host.docker.internal:3130
+    ```shell
+    DD_API_KEY=<your_datadog_key>
+    # send runtime metrics to CubeAPM
+    DD_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+    # send traces to CubeAPM
+    DD_APM_DD_URL=http://<ip_address_of_cubeapm_server>:3130
 
-   # Accept traces and metrics from applications running outside the agent host
-   DD_APM_NON_LOCAL_TRAFFIC=true
-   DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-   ```
+    # Accept traces and metrics from applications running outside the agent host
+    DD_APM_NON_LOCAL_TRAFFIC=true
+    DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+    ```
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

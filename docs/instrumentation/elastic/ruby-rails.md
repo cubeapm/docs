@@ -19,20 +19,19 @@ import AccountRouting from './\_account_routing.mdx';
 1.  Configure the agent:
 
     <Tabs>
-       <TabItem value="env" label="Environment Variables">
-          ```shell
-          ELASTIC_APM_SERVICE_NAME=<app_name>
-          # send traces to CubeAPM
-          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        ELASTIC_APM_SERVICE_NAME=<app_name>
+        # send traces to CubeAPM
+        ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
 
-          # optional settings
-          # Elastic agent sets environment from ENV['RAILS_ENV'] by default
-          ELASTIC_APM_ENVIRONMENT=UNSET
-          ELASTIC_APM_SERVICE_VERSION=1.1.1
-          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-          ```
-
-       </TabItem>
+        # optional settings
+        # Elastic agent sets environment from ENV['RAILS_ENV'] by default
+        ELASTIC_APM_ENVIRONMENT=UNSET
+        ELASTIC_APM_SERVICE_VERSION=1.1.1
+        ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+        ```
+    </TabItem>
     </Tabs>
 
 1.  <AccountRouting />

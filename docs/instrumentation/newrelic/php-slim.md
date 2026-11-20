@@ -15,39 +15,39 @@ New Relic PHP agent version >= 10.0.0
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 3.
 
-1. Follow this link to install New Relic agent: https://docs.newrelic.com/docs/apm/agents/php-agent/installation/php-agent-installation-overview.
+1.  Follow this link to install New Relic agent: https://docs.newrelic.com/docs/apm/agents/php-agent/installation/php-agent-installation-overview.
 
-1. Configure the agent (the config file is generally available at `/etc/php/<php_version>/mods-available/newrelic.ini`).
+1.  Configure the agent (the config file is generally available at `/etc/php/<php_version>/mods-available/newrelic.ini`).
 
-   ```ini title="newrelic.ini"
-   newrelic.license = ABC4567890ABC4567890ABC4567890ABC4567890
-   newrelic.appname = <app_name>
-   ```
+    ```ini title="newrelic.ini"
+    newrelic.license = ABC4567890ABC4567890ABC4567890ABC4567890
+    newrelic.appname = <app_name>
+    ```
 
-1. <ProxySetup />
+1.  <ProxySetup />
 
-   :::info
-   Below timeout values need to be set for queue worker, but these values impact web worker performance negatively, so they should not be set for web workers in production.
-   1. `newrelic.daemon.app_connect_timeout = 15s`
-   1. `newrelic.daemon.start_timeout = 5s`
+    :::info
+    Below timeout values need to be set for queue worker, but these values impact web worker performance negatively, so they should not be set for web workers in production.
+    1.  `newrelic.daemon.app_connect_timeout = 15s`
+    1.  `newrelic.daemon.start_timeout = 5s`
 
-   :::
+    :::
 
-1. Tell the agent to connect with CubeAPM instead of New Relic:
+1.  Tell the agent to connect with CubeAPM instead of New Relic:
 
-   ```ini title="newrelic.ini"
-   ; Use your load balancer's domain name here
-   newrelic.daemon.collector_host = <cubeapm-newrelic.yourdomain.com>
+    ```ini title="newrelic.ini"
+    ; Use your load balancer's domain name here
+    newrelic.daemon.collector_host = <cubeapm-newrelic.yourdomain.com>
 
-   ; remove irrelevant spans from traces (optional but highly recommended)
-   ; Ref: https://docs.newrelic.com/docs/apm/agents/php-agent/configuration/php-agent-configuration/#inivar-tt-detail
-   newrelic.transaction_tracer.detail = 0
+    ; remove irrelevant spans from traces (optional but highly recommended)
+    ; Ref: https://docs.newrelic.com/docs/apm/agents/php-agent/configuration/php-agent-configuration/#inivar-tt-detail
+    newrelic.transaction_tracer.detail = 0
 
-   ; don't report E_WARNING as errors (optional)
-   newrelic.error_collector.ignore_errors = E_WARNING
-   ```
+    ; don't report E_WARNING as errors (optional)
+    newrelic.error_collector.ignore_errors = E_WARNING
+    ```
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

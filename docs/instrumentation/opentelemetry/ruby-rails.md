@@ -13,39 +13,39 @@ import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
-1. Add dependencies in Gemfile:
+1.  Add dependencies in Gemfile:
 
-   ```ruby
-   gem 'opentelemetry-sdk'
-   gem 'opentelemetry-exporter-otlp'
-   gem 'opentelemetry-instrumentation-all'
-   ```
+    ```ruby
+    gem 'opentelemetry-sdk'
+    gem 'opentelemetry-exporter-otlp'
+    gem 'opentelemetry-instrumentation-all'
+    ```
 
-1. Create a file `config/initializers/opentelemetry.rb` in your project directory, with the following content:
+1.  Create a file `config/initializers/opentelemetry.rb` in your project directory, with the following content:
 
-   ```ruby title="config/initializers/opentelemetry.rb"
-   require 'opentelemetry/sdk'
-   require 'opentelemetry/instrumentation/all'
-   require 'opentelemetry-exporter-otlp'
-   OpenTelemetry::SDK.configure do |c|
-       c.use_all() # enables all instrumentation!
-   end
-   ```
+    ```ruby title="config/initializers/opentelemetry.rb"
+    require 'opentelemetry/sdk'
+    require 'opentelemetry/instrumentation/all'
+    require 'opentelemetry-exporter-otlp'
+    OpenTelemetry::SDK.configure do |c|
+        c.use_all() # enables all instrumentation!
+    end
+    ```
 
-1. Modify the application run command as follows:
+1.  Modify the application run command as follows:
 
-   ```shell
-   OTEL_SERVICE_NAME=<app_name> \
-   OTEL_TRACES_EXPORTER=otlp \
-   OTEL_METRICS_EXPORTER=none \
-   OTEL_LOGS_EXPORTER=none \
-   OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
-   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
-   OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
-   bin/rails server
-   ```
+    ```shell
+    OTEL_SERVICE_NAME=<app_name> \
+    OTEL_TRACES_EXPORTER=otlp \
+    OTEL_METRICS_EXPORTER=none \
+    OTEL_LOGS_EXPORTER=none \
+    OTEL_RESOURCE_ATTRIBUTES=cube.environment=UNSET,service.version=1.2.3,mykey1=myvalue1,mykey2=myvalue2 \
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://<ip_address_of_cubeapm_server>:4318/v1/traces \
+    OTEL_EXPORTER_OTLP_COMPRESSION=gzip \
+    bin/rails server
+    ```
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

@@ -8,21 +8,21 @@ import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
-1. Follow this link to install Elastic APM PHP agent: https://www.elastic.co/docs/reference/apm/agents/php/set-up-apm-php-agent.
+1.  Follow this link to install Elastic APM PHP agent: https://www.elastic.co/docs/reference/apm/agents/php/set-up-apm-php-agent.
 
-1. Configure the agent (the config file is generally available at `/opt/elastic/apm-agent-php/etc/elastic-apm-custom.ini`).
+1.  Configure the agent (the config file is generally available at `/opt/elastic/apm-agent-php/etc/elastic-apm-custom.ini`).
 
-   ```ini title="elastic-apm-custom.ini"
-   elastic_apm.service_name = "<app_name>"
-   # send traces to CubeAPM
-   elastic_apm.server_url = "http://<ip_address_of_cubeapm_server>:3130"
-   # optional settings
-   elastic_apm.environment = "UNSET"
-   elastic_apm.service_version = "1.2.3"
-   elastic_apm.global_labels = "mykey1=myvalue1,mykey2=myvalue2"
-   ```
+    ```ini title="elastic-apm-custom.ini"
+    elastic_apm.service_name = "<app_name>"
+    # send traces to CubeAPM
+    elastic_apm.server_url = "http://<ip_address_of_cubeapm_server>:3130"
+    # optional settings
+    elastic_apm.environment = "UNSET"
+    elastic_apm.service_version = "1.2.3"
+    elastic_apm.global_labels = "mykey1=myvalue1,mykey2=myvalue2"
+    ```
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

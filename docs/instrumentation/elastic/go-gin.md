@@ -12,54 +12,54 @@ import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
-1. Install dependencies:
+1.  Install dependencies:
 
-   ```shell
-   go get go.elastic.co/apm/v2 \
-    go.elastic.co/apm/module/apmgin/v2
-   ```
+    ```shell
+    go get go.elastic.co/apm/v2 \
+        go.elastic.co/apm/module/apmgin/v2
+    ```
 
-1. Add the highlighted lines below to your project's `main.go` file:
+1.  Add the highlighted lines below to your project's `main.go` file:
 
-   ```go
-   package main
+    ```go
+    package main
 
-   # highlight-start
-   import "go.elastic.co/apm/module/apmgin/v2"
-   import "go.elastic.co/apm/v2"
-   # highlight-end
+    # highlight-start
+    import "go.elastic.co/apm/module/apmgin/v2"
+    import "go.elastic.co/apm/v2"
+    # highlight-end
 
-   func main() {
-       // Create Gin router
-       router := gin.Default()
-       # highlight-start
-       router.Use(gin.Recovery())
-       router.Use(apmgin.Middleware(router))
-       # highlight-end
-   }
-   ```
+    func main() {
+        // Create Gin router
+        router := gin.Default()
+        # highlight-start
+        router.Use(gin.Recovery())
+        router.Use(apmgin.Middleware(router))
+        # highlight-end
+    }
+    ```
 
-   :::info
-   For more information, refer to the [Elastic APM Go agent](https://www.elastic.co/docs/reference/apm/agents/go/set-up-apm-go-agent#installation).
-   :::
+    :::info
+    For more information, refer to the [Elastic APM Go agent](https://www.elastic.co/docs/reference/apm/agents/go/set-up-apm-go-agent#installation).
+    :::
 
-1. Configure the agent.
+1.  Configure the agent.
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         ELASTIC_APM_SERVICE_NAME=<app_name>
-         # send traces to CubeAPM
-         ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional settings
-         ELASTIC_APM_ENVIRONMENT=myenv
-         ELASTIC_APM_SERVICE_VERSION=1.2.3
-         ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-         ```
-      </TabItem>  
-   </Tabs>
+    <Tabs>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        ELASTIC_APM_SERVICE_NAME=<app_name>
+        # send traces to CubeAPM
+        ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+        # optional settings
+        ELASTIC_APM_ENVIRONMENT=myenv
+        ELASTIC_APM_SERVICE_VERSION=1.2.3
+        ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+        ```
+    </TabItem>
+    </Tabs>
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

@@ -10,25 +10,25 @@ import AccountRouting from './\_account_routing.mdx';
 
 ## Installation
 
-1. Follow this link to install Elastic agent: https://www.elastic.co/docs/reference/apm/agents/dotnet/setup-dotnet-net-core#zero-code-change-setup.
+1.  Follow this link to install Elastic agent: https://www.elastic.co/docs/reference/apm/agents/dotnet/setup-dotnet-net-core#zero-code-change-setup.
 
-1. Configure the agent.
+1.  Configure the agent.
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         ELASTIC_APM_SERVICE_NAME=<app_name>
-         # send traces to CubeAPM
-         ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
-         # optional settings
-         ELASTIC_APM_ENVIRONMENT=myenv
-         ELASTIC_APM_SERVICE_VERSION=1.2.3
-         ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-         ```
-      </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        ELASTIC_APM_SERVICE_NAME=<app_name>
+        # send traces to CubeAPM
+        ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+        # optional settings
+        ELASTIC_APM_ENVIRONMENT=myenv
+        ELASTIC_APM_SERVICE_VERSION=1.2.3
+        ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+        ```
+    </TabItem>
+    </Tabs>
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 

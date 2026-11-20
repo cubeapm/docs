@@ -5,10 +5,10 @@ sidebar_position: 4
 
 # Instrumentation
 
-To monitor your applications with CubeAPM, you need to instrument them — that is, add code or agents that collect telemetry data and send it to CubeAPM. CubeAPM supports mutiple instrumentation agents to make this process easier.
+To monitor your applications with CubeAPM, you need to instrument them — that is, add code or agents that collect telemetry data and send it to CubeAPM. CubeAPM supports multiple instrumentation agents to make this process easier.
 
 :::info
-All the instrumentation agents supported by CubeAPM are open-sourced under permissible licences, e.g., Apache 2.0. Their source code and the accompanying licences are also available on GitHub. There is no commercial obligation attached to the use of these agents.
+All the instrumentation agents supported by CubeAPM are open-sourced under permissive licenses, e.g., Apache 2.0. Their source code and the accompanying licenses are also available on GitHub. There is no commercial obligation attached to the use of these agents.
 :::
 
 ## Datadog

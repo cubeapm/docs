@@ -13,72 +13,72 @@ import AccountRouting from './\_account_routing.mdx';
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 4.
 
-1. Download the Java APM agent and unzip it.
+1.  Download the Java APM agent and unzip it.
 
-   ```shell
-   curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
-   unzip newrelic-java.zip
-   ```
+    ```shell
+    curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+    unzip newrelic-java.zip
+    ```
 
-1. Configure the agent:
+1.  Configure the agent:
 
-   <Tabs>
-      <TabItem value="file" label="newrelic.yml">
-         ```yaml
-         app_name: <app_name>
-         license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         NEW_RELIC_APP_NAME=<app_name>
-         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         ```
-      </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="file" label="newrelic.yml">
+        ```yaml
+        app_name: <app_name>
+        license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
+        ```
+    </TabItem>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        NEW_RELIC_APP_NAME=<app_name>
+        NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+        ```
+    </TabItem>
+    </Tabs>
 
-1. Load the agent when the application starts.
+1.  Load the agent when the application starts.
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         JAVA_TOOL_OPTIONS=-javaagent:</path/newrelic-agent.jar>
-         ```
-      </TabItem>
-      <TabItem value="cmd" label="Startup Command">
-         Add `-javaagent:</path/newrelic-agent.jar>` to your application run command, e.g.,
-         ```shell
-         java -javaagent:</path/newrelic-agent.jar> -jar <myapp>.jar
-         ```
-      </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        JAVA_TOOL_OPTIONS=-javaagent:</path/newrelic-agent.jar>
+        ```
+    </TabItem>
+    <TabItem value="cmd" label="Startup Command">
+        Add `-javaagent:</path/newrelic-agent.jar>` to your application run command, e.g.,
+        ```shell
+        java -javaagent:</path/newrelic-agent.jar> -jar <myapp>.jar
+        ```
+    </TabItem>
+    </Tabs>
 
-1. <ProxySetup />
+1.  <ProxySetup />
 
-1. Tell the agent to connect with CubeAPM instead of New Relic.
+1.  Tell the agent to connect with CubeAPM instead of New Relic.
 
-   <Tabs>
-      <TabItem value="file" label="newrelic.yml">
-         ```yaml
-         app_name: <app_name>
-         license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
-         # Use your load balancer's domain name here
-         // highlight-next-line
-         host: <cubeapm-newrelic.yourdomain.com>
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         NEW_RELIC_APP_NAME=<app_name>
-         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         # Use your load balancer's domain name here
-         // highlight-next-line
-         NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
-         ```
-      </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="file" label="newrelic.yml">
+        ```yaml
+        app_name: <app_name>
+        license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
+        # Use your load balancer's domain name here
+        // highlight-next-line
+        host: <cubeapm-newrelic.yourdomain.com>
+        ```
+    </TabItem>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        NEW_RELIC_APP_NAME=<app_name>
+        NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+        # Use your load balancer's domain name here
+        // highlight-next-line
+        NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
+        ```
+    </TabItem>
+    </Tabs>
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Collect JMX Metrics (Optional)
 
@@ -86,26 +86,26 @@ Create a folder named `extensions` in the same path as `newrelic-agent.jar` and 
 
 Sample content for configuration is available at https://docs.newrelic.com/docs/apm/agents/java-agent/custom-instrumentation/custom-jmx-yaml-examples/
 
-   <Tabs>
-      <TabItem value="file" label="newrelic.yml">
-         ```yaml
-         app_name: <app_name>
-         license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
-         // highlight-start
-         jmx:
-           enabled: true
-         // highlight-end
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         NEW_RELIC_APP_NAME=<app_name>
-         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         // highlight-next-line
-         NEW_RELIC_JMX_ENABLED=true
-         ```
-      </TabItem>
-   </Tabs>
+<Tabs>
+<TabItem value="file" label="newrelic.yml">
+    ```yaml
+    app_name: <app_name>
+    license_key: 'ABC4567890ABC4567890ABC4567890ABC4567890'
+    // highlight-start
+    jmx:
+      enabled: true
+    // highlight-end
+    ```
+</TabItem>
+<TabItem value="env" label="Environment Variables">
+    ```shell
+    NEW_RELIC_APP_NAME=<app_name>
+    NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+    // highlight-next-line
+    NEW_RELIC_JMX_ENABLED=true
+    ```
+</TabItem>
+</Tabs>
 
 ## Sample Application
 
@@ -116,20 +116,20 @@ A working example is available at https://github.com/cubeapm/sample_app_java_spr
 The following can be used for troubleshooting:
 
 <Tabs>
-   <TabItem value="file" label="newrelic.yml">
-      ```yaml
-      // Print New Relic agent logs on screen
-      log: stdout
-      // Set New Relic agent log level to debug if needed to see detailed logs
-      log_level: debug
-      ```
-   </TabItem>
-   <TabItem value="env" label="Environment Variables">
-      ```shell
-      # Print New Relic agent logs on screen
-      NEW_RELIC_LOG=stdout
-      # Set New Relic agent log level to debug if needed to see detailed logs
-      NEW_RELIC_LOG_LEVEL=debug
-      ```
-   </TabItem>
+<TabItem value="file" label="newrelic.yml">
+    ```yaml
+    // Print New Relic agent logs on screen
+    log: stdout
+    // Set New Relic agent log level to debug if needed to see detailed logs
+    log_level: debug
+    ```
+</TabItem>
+<TabItem value="env" label="Environment Variables">
+    ```shell
+    # Print New Relic agent logs on screen
+    NEW_RELIC_LOG=stdout
+    # Set New Relic agent log level to debug if needed to see detailed logs
+    NEW_RELIC_LOG_LEVEL=debug
+    ```
+</TabItem>
 </Tabs>

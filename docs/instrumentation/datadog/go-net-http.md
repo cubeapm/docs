@@ -6,7 +6,7 @@ slug: /instrumentation/datadog/go-net-http
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import AccountRouting from './_account_routing.mdx';
+import AccountRouting from './\_account_routing.mdx';
 
 ## Prerequisites
 
@@ -16,68 +16,69 @@ Go tracer requires Go version 1.18 or higher and Datadog Agent version 5.21.1 or
 
 Following are the steps to install the Datadog agent and connect it with CubeAPM. If Datadog agent is already installed, you can jump to step 4.
 
-1. Install dependencies:
+1.  Install dependencies:
 
-   ```shell
-   go get github.com/DataDog/dd-trace-go/contrib/net/http/v2 \
-       github.com/DataDog/dd-trace-go/v2/ddtrace/tracer
-   ```
+    ```shell
+    go get github.com/DataDog/dd-trace-go/contrib/net/http/v2 \
+        github.com/DataDog/dd-trace-go/v2/ddtrace/tracer
+    ```
 
-1. Add the highlighted lines below to your project's `main.go` file:
+1.  Add the highlighted lines below to your project's `main.go` file:
 
-   ```go
-   package main
+    ```go
+    package main
 
-   # highlight-start
-   import ddhttp "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
-   import "github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-   # highlight-end
+    # highlight-start
+    import ddhttp "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
+    import "github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+    # highlight-end
 
-   func main() {
-       # highlight-start
-       tracer.Start()
-	   defer tracer.Stop()
-       # highlight-end
+    func main() {
+        # highlight-start
+        tracer.Start()
+        defer tracer.Stop()
+        # highlight-end
 
-	    handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
-       # highlight-start
-		    wrapped := ddhttp.WrapHandler(http.HandlerFunc(handlerFunc), "go-sample-app", pattern)
-		    mux.Handle(pattern, wrapped)
-       # highlight-end
-	    }
-   }
-   ```
-   :::info
-   For more information, refer to https://docs.datadoghq.com/tracing/trace_collection/library_config/go/.
-   :::
+        handleFunc := func(pattern string, handlerFunc func(http.ResponseWriter, *http.Request)) {
+            # highlight-start
+            wrapped := ddhttp.WrapHandler(http.HandlerFunc(handlerFunc), "go-sample-app", pattern)
+            mux.Handle(pattern, wrapped)
+            # highlight-end
+        }
+    }
+    ```
 
-1. Configure the tracer.
+    :::info
+    For more information, refer to https://docs.datadoghq.com/tracing/trace_collection/library_config/go/.
+    :::
 
-   <Tabs>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-          DD_SERVICE=<app_name>
-          # Send data to Datadog Agent
-          DD_AGENT_HOST=<datadog_agent_host_name>
+1.  Configure the tracer.
 
-          # Enable runtime metrics 
-          DD_RUNTIME_METRICS_ENABLED=true 
+    <Tabs>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        DD_SERVICE=<app_name>
+        # Send data to Datadog Agent
+        DD_AGENT_HOST=<datadog_agent_host_name>
 
-          # optional settings
-          DD_ENV=myenv
-          DD_VERSION=1.2.3
-          DD_TAGS=mykey1:myvalue1,mykey2:myvalue2
-         ```
-      </TabItem>
-      <TabItem value="file" label="Code">
-         ```go
-         func main() {
-             # highlight-start
-             tracer.Start(
+        # Enable runtime metrics
+        DD_RUNTIME_METRICS_ENABLED=true
+
+        # optional settings
+        DD_ENV=myenv
+        DD_VERSION=1.2.3
+        DD_TAGS=mykey1:myvalue1,mykey2:myvalue2
+        ```
+    </TabItem>
+    <TabItem value="file" label="Code">
+        ```go
+        func main() {
+            # highlight-start
+            tracer.Start(
                 tracer.WithService("<app_name>"),
                 // Send data to Datadog Agent
                 tracer.WithAgentAddr("datadog-agent:8126"),
-                tracer.WithDogstatsdAddr("datadog-agent:8125"),                
+                tracer.WithDogstatsdAddr("datadog-agent:8125"),
 
                 // Enable Runtime metrics
                 tracer.WithRuntimeMetrics(),
@@ -85,31 +86,32 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
                 // optional settings
                 tracer.WithEnv("myenv"),
                 tracer.WithServiceVersion("1.2.3"),
-                tracer.WithGlobalTag("mykey1:myvalue1,mykey2:myvalue2")
-             )
-	         defer tracer.Stop()
-             # highlight-end
-         }
-         ```
-      </TabItem>
-   </Tabs>
+                tracer.WithGlobalTag("mykey1", "myvalue1"),
+                tracer.WithGlobalTag("mykey2", "myvalue2"),
+            )
+            defer tracer.Stop()
+            # highlight-end
+        }
+        ```
+    </TabItem>
+    </Tabs>
 
-1. Configure Datadog Agent to forward metrics and traces to CubeAPM
+1.  Configure Datadog Agent to forward metrics and traces to CubeAPM
 
-   ```shell
-   DD_API_KEY=<your_datadog_key>
-   # highlight-start
-   # send runtime metrics to CubeAPM
-   DD_DD_URL=http://<ip_address_of_cubeapm_server>:3130
-   # send traces to CubeAPM
-   DD_APM_DD_URL=http://<ip_address_of_cubeapm_server>:3130
-   # highlight-end
-   # Accept traces and metrics from applications running outside the agent host
-   DD_APM_NON_LOCAL_TRAFFIC=true
-   DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-   ```
+    ```shell
+    DD_API_KEY=<your_datadog_key>
+    # highlight-start
+    # send runtime metrics to CubeAPM
+    DD_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+    # send traces to CubeAPM
+    DD_APM_DD_URL=http://<ip_address_of_cubeapm_server>:3130
+    # highlight-end
+    # Accept traces and metrics from applications running outside the agent host
+    DD_APM_NON_LOCAL_TRAFFIC=true
+    DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+    ```
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 
@@ -120,24 +122,23 @@ A working example is available at https://github.com/cubeapm/sample_app_go_net_h
 The following can be used for debugging:
 
 <Tabs>
-   <TabItem value="env" label="Environment Variables">
-      ```shell
-      # Print Datadog tracer startup logs on screen
-      DD_TRACE_STARTUP_LOGS=true
-      # Enable Datadog tracer debug logging if needed to see detailed logs
-      DD_TRACE_DEBUG=true
-      ```
-   </TabItem>
-   <TabItem value="file" label="Code">
-      ```go
-          tracer.Start(
-              // Print Datadog tracer startup logs on screen
-              tracer.WithLogStartup(true)
-              // Enable Datadog tracer debug logging if needed to see detailed logs
-              tracer.WithDebugMode(true)
-          )
-	      defer tracer.Stop()
-         # highlight-end
-      ```
-   </TabItem>
+<TabItem value="env" label="Environment Variables">
+    ```shell
+    # Print Datadog tracer startup logs on screen
+    DD_TRACE_STARTUP_LOGS=true
+    # Enable Datadog tracer debug logging if needed to see detailed logs
+    DD_TRACE_DEBUG=true
+    ```
+</TabItem>
+<TabItem value="file" label="Code">
+    ```go
+    tracer.Start(
+        // Print Datadog tracer startup logs on screen
+        tracer.WithLogStartup(true),
+        // Enable Datadog tracer debug logging if needed to see detailed logs
+        tracer.WithDebugMode(true),
+    )
+    defer tracer.Stop()
+    ```
+</TabItem>
 </Tabs>

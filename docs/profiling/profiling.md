@@ -6,7 +6,7 @@ slug: /profiling
 
 Profiling shows where your services spend CPU time, memory and wait time, down to the function. Traces tell you which request was slow. Profiles tell you which code made it slow.
 
-CubeAPM supports mutiple profiling agents to make integration easier. Not all agents provide same capability. Read the following sections to understand each agent's capabilities and decide the best approach.
+CubeAPM supports multiple profiling agents to make integration easier. Not all agents provide same capability. Read the following sections to understand each agent's capabilities and decide the best approach.
 
 ## Datadog
 

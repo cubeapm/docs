@@ -22,28 +22,27 @@ Following are the steps to install the Datadog agent and connect it with CubeAPM
 
     ```ruby title="config/initializers/datadog.rb"
     Datadog.configure do |c|
-     # Add additional configuration here.
-     # Activate integrations, change tracer settings, etc...
-     # https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/ruby/#rails
+        # Add additional configuration here.
+        # Activate integrations, change tracer settings, etc...
+        # https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/dd_libraries/ruby/#rails
     end
     ```
 
 1.  Configure the tracer.
 
     <Tabs>
-       <TabItem value="env" label="Environment Variables">
-          ```shell
-          DD_SERVICE=<app_name>
-          # Send data to Datadog Agent
-          DD_AGENT_HOST=datadog-agent
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        DD_SERVICE=<app_name>
+        # Send data to Datadog Agent
+        DD_AGENT_HOST=datadog-agent
 
-          # optional settings
-          DD_ENV=myenv
-          DD_VERSION=1.2.3
-          DD_TAGS=mykey1:myvalue1,mykey2:myvalue2
-          ```
-
-       </TabItem>
+        # optional settings
+        DD_ENV=myenv
+        DD_VERSION=1.2.3
+        DD_TAGS=mykey1:myvalue1,mykey2:myvalue2
+        ```
+    </TabItem>
     </Tabs>
 
 1.  Configure Datadog Agent to forward metrics and traces to CubeAPM

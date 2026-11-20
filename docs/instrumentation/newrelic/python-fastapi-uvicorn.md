@@ -13,96 +13,96 @@ import AccountRouting from './\_account_routing.mdx';
 
 Following are the steps to install the New Relic agent and connect it with CubeAPM. If New Relic agent is already installed, you can jump to step 5.
 
-1. Install dependencies:
+1.  Install dependencies:
 
-   ```shell
-   pip install newrelic
-   ```
+    ```shell
+    pip install newrelic
+    ```
 
-1. (Optional) From `lib/pythonx.xx/site-packages/newrelic`, copy `newrelic.ini` into the root directory of your application.
+1.  (Optional) From `lib/pythonx.xx/site-packages/newrelic`, copy `newrelic.ini` into the root directory of your application.
 
-1. Configure the agent.
+1.  Configure the agent.
 
-   <Tabs>
-      <TabItem value="file" label="newrelic.ini">
-         ```ini
-         [newrelic]
-         app_name = <app_name>
-         license_key = ABC4567890ABC4567890ABC4567890ABC4567890
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         NEW_RELIC_APP_NAME=<app_name>
-         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         ```
-      </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="file" label="newrelic.ini">
+        ```ini
+        [newrelic]
+        app_name = <app_name>
+        license_key = ABC4567890ABC4567890ABC4567890ABC4567890
+        ```
+    </TabItem>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        NEW_RELIC_APP_NAME=<app_name>
+        NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+        ```
+    </TabItem>
+    </Tabs>
 
-1. Add the highlighted lines below to your project's `main.py` file:
+1.  Add the highlighted lines below to your project's `main.py` file:
 
-   <Tabs>
-      <TabItem value="file" label="newrelic.ini">
-         ```python title="main.py"
-         from fastapi import FastAPI
-         # highlight-start
-         import newrelic.agent
-         newrelic.agent.initialize("newrelic.ini")
-         # highlight-end
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```python title="main.py"
-         from fastapi import FastAPI
-         # highlight-start
-         import newrelic.agent
-         newrelic.agent.initialize()
-         # highlight-end
-         ```
-        </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="file" label="newrelic.ini">
+        ```python title="main.py"
+        from fastapi import FastAPI
+        # highlight-start
+        import newrelic.agent
+        newrelic.agent.initialize("newrelic.ini")
+        # highlight-end
+        ```
+    </TabItem>
+    <TabItem value="env" label="Environment Variables">
+        ```python title="main.py"
+        from fastapi import FastAPI
+        # highlight-start
+        import newrelic.agent
+        newrelic.agent.initialize()
+        # highlight-end
+        ```
+    </TabItem>
+    </Tabs>
 
-1. <ProxySetup />
+1.  <ProxySetup />
 
-1. Tell the agent to connect with CubeAPM instead of New Relic:
+1.  Tell the agent to connect with CubeAPM instead of New Relic:
 
-   <Tabs>
-      <TabItem value="file" label="newrelic.ini">
-         ```ini
-         [newrelic]
-         app_name = <app_name>
-         license_key = ABC4567890ABC4567890ABC4567890ABC4567890
-         # highlight-start
-         ; Use your load balancer's domain name here
-         host = <cubeapm-newrelic.yourdomain.com>
-         ; (optional) to get garbage collection metrics
-         gc_runtime_metrics.enabled = true
-         # (optional but highly recommended) stop irrelevant process-id-wise
-         # reporting of memory usage, as it generates large volume of metrics
-         # data, and adds very little value.
-         memory_runtime_pid_metrics.enabled = false
-         # highlight-end
-         ```
-      </TabItem>
-      <TabItem value="env" label="Environment Variables">
-         ```shell
-         NEW_RELIC_APP_NAME=<app_name>
-         NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
-         # highlight-start
-         # Use your load balancer's domain name here
-         NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
-         # (optional) to get garbage collection metrics
-         NEW_RELIC_GC_RUNTIME_METRICS_ENABLED=true
-         # (optional but highly recommended) stop irrelevant process-id-wise
-         # reporting of memory usage, as it generates large volume of metrics
-         # data, and adds very little value.
-         NEW_RELIC_MEMORY_RUNTIME_PID_METRICS_ENABLED=false
-         # highlight-end
-         ```
-      </TabItem>
-   </Tabs>
+    <Tabs>
+    <TabItem value="file" label="newrelic.ini">
+        ```ini
+        [newrelic]
+        app_name = <app_name>
+        license_key = ABC4567890ABC4567890ABC4567890ABC4567890
+        # highlight-start
+        ; Use your load balancer's domain name here
+        host = <cubeapm-newrelic.yourdomain.com>
+        ; (optional) to get garbage collection metrics
+        gc_runtime_metrics.enabled = true
+        # (optional but highly recommended) stop irrelevant process-id-wise
+        # reporting of memory usage, as it generates large volume of metrics
+        # data, and adds very little value.
+        memory_runtime_pid_metrics.enabled = false
+        # highlight-end
+        ```
+    </TabItem>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        NEW_RELIC_APP_NAME=<app_name>
+        NEW_RELIC_LICENSE_KEY=ABC4567890ABC4567890ABC4567890ABC4567890
+        # highlight-start
+        # Use your load balancer's domain name here
+        NEW_RELIC_HOST=<cubeapm-newrelic.yourdomain.com>
+        # (optional) to get garbage collection metrics
+        NEW_RELIC_GC_RUNTIME_METRICS_ENABLED=true
+        # (optional but highly recommended) stop irrelevant process-id-wise
+        # reporting of memory usage, as it generates large volume of metrics
+        # data, and adds very little value.
+        NEW_RELIC_MEMORY_RUNTIME_PID_METRICS_ENABLED=false
+        # highlight-end
+        ```
+    </TabItem>
+    </Tabs>
 
-1. <AccountRouting />
+1.  <AccountRouting />
 
 ## Sample Application
 
@@ -113,21 +113,21 @@ A working example is available at https://github.com/cubeapm/sample_app_python_f
 The following can be used for troubleshooting:
 
 <Tabs>
-   <TabItem value="file" label="newrelic.ini">
-      ```ini
-      [newrelic]
-      ; Print New Relic agent logs on screen
-      log_file = stdout
-      ; Set New Relic agent log level to debug if needed to see detailed logs
-      log_level = debug
-      ```
-   </TabItem>
-   <TabItem value="env" label="Environment Variables">
-      ```shell
-      # Print New Relic agent logs on screen
-      NEW_RELIC_LOG=stdout
-      # Set New Relic agent log level to debug if needed to see detailed logs
-      NEW_RELIC_LOG_LEVEL=debug
-      ```
-   </TabItem>
+<TabItem value="file" label="newrelic.ini">
+    ```ini
+    [newrelic]
+    ; Print New Relic agent logs on screen
+    log_file = stdout
+    ; Set New Relic agent log level to debug if needed to see detailed logs
+    log_level = debug
+    ```
+</TabItem>
+<TabItem value="env" label="Environment Variables">
+    ```shell
+    # Print New Relic agent logs on screen
+    NEW_RELIC_LOG=stdout
+    # Set New Relic agent log level to debug if needed to see detailed logs
+    NEW_RELIC_LOG_LEVEL=debug
+    ```
+</TabItem>
 </Tabs>

@@ -78,22 +78,18 @@ NEW_RELIC_APP_NAME=order-service;sandbox
 The following command can be tried on the application host server to check connectivity to CubeAPM server(s):
 <Tabs groupId="shells">
 <TabItem value="bash" label="bash">
-
-```shell
-curl -X POST -v -d '[]' 'https://<domain_of_cubeapm_server>/agent_listener/invoke_raw_method?marshal_format=json&protocol_version=17&method=preconnect' -H 'content-type: application/json'
-```
-
+    ```shell
+    curl -X POST -v -d '[]' 'https://<domain_of_cubeapm_server>/agent_listener/invoke_raw_method?marshal_format=json&protocol_version=17&method=preconnect' -H 'content-type: application/json'
+    ```
 </TabItem>
 <TabItem value="powershell" label="powershell">
-
-```shell
-$uri = 'https://<domain_of_cubeapm_server>/agent_listener/invoke_raw_method?marshal_format=json&protocol_version=17&method=preconnect'
-$headers = @{
-    'content-type' = 'application/json'
-}
-Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body '[]'
-```
-
+    ```shell
+    $uri = 'https://<domain_of_cubeapm_server>/agent_listener/invoke_raw_method?marshal_format=json&protocol_version=17&method=preconnect'
+    $headers = @{
+        'content-type' = 'application/json'
+    }
+    Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body '[]'
+    ```
 </TabItem>
 </Tabs>
 

@@ -17,24 +17,23 @@ import AccountRouting from './\_account_routing.mdx';
 1.  Configure the agent:
 
     <Tabs>
-       <TabItem value="env" label="Environment Variables">
-          ```shell
-          JAVA_TOOL_OPTIONS=-javaagent:</path/elastic-apm-agent.jar>
+    <TabItem value="env" label="Environment Variables">
+        ```shell
+        JAVA_TOOL_OPTIONS=-javaagent:</path/elastic-apm-agent.jar>
 
-          ELASTIC_APM_SERVICE_NAME=<app_name>
-          # send traces to CubeAPM
-          ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
+        ELASTIC_APM_SERVICE_NAME=<app_name>
+        # send traces to CubeAPM
+        ELASTIC_APM_SERVER_URL=http://<ip_address_of_cubeapm_server>:3130
 
-          # capture jvm non-heap buffer pool metrics (optional but recommended)
-          ELASTIC_APM_CAPTURE_JMX_METRICS=object_name[java.nio:type=BufferPool,name=*] attribute[*]
+        # capture jvm non-heap buffer pool metrics (optional but recommended)
+        ELASTIC_APM_CAPTURE_JMX_METRICS=object_name[java.nio:type=BufferPool,name=*] attribute[*]
 
-          # optional settings
-          ELASTIC_APM_ENVIRONMENT=UNSET
-          ELASTIC_APM_SERVICE_VERSION=1.2.3
-          ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
-          ```
-
-       </TabItem>
+        # optional settings
+        ELASTIC_APM_ENVIRONMENT=UNSET
+        ELASTIC_APM_SERVICE_VERSION=1.2.3
+        ELASTIC_APM_GLOBAL_LABELS=mykey1=myvalue1,mykey2=myvalue2
+        ```
+    </TabItem>
     </Tabs>
 
     :::info
