@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 slug: /configure/single-sign-on/sign-in-with-google
 ---
 
