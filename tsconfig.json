@@ -2,7 +2,13 @@
   // This file is not used in compilation. It is here just for a nice editor experience.
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": ".",
+    // TypeScript 7 removed baseUrl; unset the one inherited from @docusaurus/tsconfig
+    // and declare paths here so they resolve relative to this file.
+    "baseUrl": null,
+    "paths": {
+      "@site/*": ["./*"],
+      "*": ["./*"]
+    },
     "module": "Node16",
     "moduleResolution": "Node16"
   }
